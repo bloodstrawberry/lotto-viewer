@@ -9,6 +9,7 @@
     "dev": "next dev -p 8082 --turbopack",
     "start": "next start -p 8082",
     "build": "next build",
+    "export": "next export",
     "predeploy": "npm run build && touch out/.nojekyll",
     "deploy": "gh-pages -d out",
     "touch": "touch out/.nojekyll",
