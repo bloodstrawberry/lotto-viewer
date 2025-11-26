@@ -13,7 +13,7 @@ import type { NextConfig } from 'next';
  *
  * NOTE: Remove all "generateStaticParams()" functions if not using static exports.
  */
-const isStaticExport = false;
+const isStaticExport = true;
 
 // ----------------------------------------------------------------------
 

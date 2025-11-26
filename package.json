@@ -1,5 +1,6 @@
 {
-  "name": "@minimal-kit/next-ts",
+  "name": "lotto-viewer",
+  "homepage": "https://bloodstrawberry.github.io/lotto-viewer",
   "author": "Minimals",
   "version": "7.3.0",
   "description": "Next & TypeScript",
@@ -8,6 +9,12 @@
     "dev": "next dev -p 8082 --turbopack",
     "start": "next start -p 8082",
     "build": "next build",
+    "predeploy": "npm run build && touch out/.nojekyll",
+    "deploy": "gh-pages -d out",
+    "preexport": "rimraf out",
+    "export": "next export",
+    "touch": "touch out/.nojekyll",
+    "posttouch": "touch out/_next/.nojekyll",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:print": "npx eslint --print-config eslint.config.mjs > eslint-show-config.json",
@@ -130,8 +137,10 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-unused-imports": "^4.1.4",
+    "gh-pages": "^6.3.0",
     "globals": "^16.2.0",
     "prettier": "^3.5.3",
+    "rimraf": "^6.1.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.34.1"
   }
