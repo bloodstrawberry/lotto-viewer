@@ -18,6 +18,8 @@ const isStaticExport = true;
 // ----------------------------------------------------------------------
 
 const nextConfig: NextConfig = {
+  basePath: '/lotto-viewer',
+  assetPrefix: '/lotto-viewer',
   trailingSlash: true,
   output: isStaticExport ? 'export' : undefined,
   env: {
