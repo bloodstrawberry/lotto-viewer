@@ -11,6 +11,8 @@
     "build": "next build",
     "predeploy": "npm run build && touch out/.nojekyll",
     "deploy": "gh-pages -d out",
+    "preexport": "rimraf out",
+    "export": "next export",
     "touch": "touch out/.nojekyll",
     "posttouch": "touch out/_next/.nojekyll",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
