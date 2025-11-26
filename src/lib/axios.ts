@@ -13,19 +13,6 @@ const axiosInstance = axios.create({
   },
 });
 
-/**
- * Optional: Add token (if using auth)
- *
- axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-*
-*/
-
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -42,16 +29,48 @@ export default axiosInstance;
 export const fetcher = async <T = unknown>(
   args: string | [string, AxiosRequestConfig]
 ): Promise<T> => {
-  try {
-    const [url, config] = Array.isArray(args) ? args : [args, {}];
+  const [url] = Array.isArray(args) ? args : [args, {}];
 
-    const res = await axiosInstance.get<T>(url, config);
-
-    return res.data;
-  } catch (error) {
-    console.error('Fetcher failed:', error);
-    throw error;
+  if (url === endpoints.chat) {
+    return { messages: [] } as any;
   }
+  if (url === endpoints.kanban) {
+    return { board: { columns: [] } } as any;
+  }
+  if (url === endpoints.calendar) {
+    return { events: [] } as any;
+  }
+  if (url === endpoints.auth.me) {
+    return {
+      user: {
+        id: 'e99f09a7-dd88-49d5-b1c8-1daf80c2d7b1',
+        displayName: 'Jaydon Frankie',
+        email: 'demo@minimals.cc',
+        photoURL: '/assets/images/avatar/avatar-25.jpg',
+        phoneNumber: '+1 415-555-2671',
+        country: 'United States',
+        address: '90210 Broadway, LA',
+        state: 'California',
+        city: 'Los Angeles',
+        zipCode: '90210',
+        about:
+          'Praesent turpis. Phasellus viverra nulla ut metus varius laoreet. Phasellus tempus.',
+        role: 'admin',
+        isPublic: true,
+      },
+    } as any;
+  }
+  if (url === endpoints.mail.list) {
+    return { mails: [] } as any;
+  }
+  if (url === endpoints.post.list) {
+    return { posts: [] } as any;
+  }
+  if (url === endpoints.product.list) {
+    return { products: [] } as any;
+  }
+
+  return Promise.resolve({} as any);
 };
 
 // ----------------------------------------------------------------------
