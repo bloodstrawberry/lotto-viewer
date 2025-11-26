@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[8621],{18621:e=>{e.exports=JSON.parse('{"languageSwitch":{"success":"La langue a \xe9t\xe9 chang\xe9e!","error":"Erreur lors du changement de langue!","loading":"Chargement..."}}')}}]);

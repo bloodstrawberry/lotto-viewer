@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[2614],{82614:e=>{e.exports=JSON.parse('{"languageSwitch":{"success":"Ng\xf4n ngữ đ\xe3 được thay đổi!","error":"Lỗi khi thay đổi ng\xf4n ngữ!","loading":"Đang tải..."}}')}}]);
