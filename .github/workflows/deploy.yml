@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy Next.js to GitHub Pages
 
 on:
   push:
@@ -10,22 +10,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      # 1. 리포지토리 체크아웃
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      # 2. Node.js 설치
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: 20
 
+      # 3. 의존성 설치
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
 
-      - name: Build
-        run: yarn build
+      # 4. Next.js 빌드
+      - name: Build Next.js
+        run: |
+          npm run build
+          npm run export
 
+      # 5. GitHub Pages에 배포
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v7
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./out
+          keep_files: true
