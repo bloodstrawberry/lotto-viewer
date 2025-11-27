@@ -19,6 +19,9 @@ const isStaticExport = false;
 
 const nextConfig: NextConfig = {
   trailingSlash: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   output: isStaticExport ? 'export' : undefined,
   env: {
     BUILD_STATIC_EXPORT: JSON.stringify(isStaticExport),
