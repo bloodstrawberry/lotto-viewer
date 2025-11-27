@@ -5,7 +5,9 @@ import type { IKanban, IKanbanTask, IKanbanColumn } from 'src/types/kanban';
 import useSWR, { mutate } from 'swr';
 import { useMemo, startTransition } from 'react';
 
-import axios, { fetcher, endpoints } from 'src/lib/axios';
+import axios, { endpoints } from 'src/lib/axios';
+
+import { BOARD_DATA } from './kanban-dummy-data';
 
 // ----------------------------------------------------------------------
 
@@ -26,9 +28,13 @@ type BoardData = {
 };
 
 export function useGetBoard() {
-  const { data, isLoading, error, isValidating } = useSWR<BoardData>(KANBAN_ENDPOINT, fetcher, {
-    ...swrOptions,
-  });
+  const { data, isLoading, error, isValidating } = useSWR<BoardData>(
+    KANBAN_ENDPOINT,
+    () => Promise.resolve({ board: BOARD_DATA }),
+    {
+      ...swrOptions,
+    }
+  );
 
   const memoizedValue = useMemo(() => {
     const tasks = data?.board.tasks ?? {};

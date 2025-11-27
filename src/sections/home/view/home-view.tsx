@@ -16,6 +16,7 @@ import { HomeIntegrations } from '../home-integrations';
 import { HomeAdvertisement } from '../home-advertisement';
 import { HomeHugePackElements } from '../home-hugepack-elements';
 import { HomeHighlightFeatures } from '../home-highlight-features';
+import { HomeLottoDisplay } from '../home-lotto-display';
 
 // ----------------------------------------------------------------------
 
@@ -35,6 +36,8 @@ export function HomeView() {
       <HomeHero />
 
       <Stack sx={{ position: 'relative', bgcolor: 'background.default' }}>
+        <HomeLottoDisplay />
+
         <HomeMinimal />
 
         <HomeHugePackElements />
