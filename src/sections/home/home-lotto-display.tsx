@@ -35,6 +35,16 @@ const Ball = styled(Box)(({ theme }) => ({
   position: 'relative',
   textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
   border: '2px solid rgba(255,255,255,0.2)',
+  [theme.breakpoints.down('md')]: {
+    width: 60,
+    height: 60,
+    fontSize: '1.5rem',
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: 36,
+    height: 36,
+    fontSize: '0.875rem',
+  },
 }));
 
 // ----------------------------------------------------------------------
@@ -50,10 +60,10 @@ export function HomeLottoDisplay() {
 
       <Stack
         direction="row"
-        spacing={{ xs: 1, md: 3 }}
+        spacing={{ xs: 0.5, sm: 1, md: 3 }}
         justifyContent="center"
         alignItems="center"
-        flexWrap="wrap"
+        flexWrap="nowrap"
       >
         {NUMBERS.map((num, index) => (
           <m.div key={num} variants={varFade('inUp')} custom={index}>
@@ -70,7 +80,7 @@ export function HomeLottoDisplay() {
         ))}
 
         <m.div variants={varFade('inUp')} custom={6}>
-          <Typography variant="h3" sx={{ mx: 2, color: 'text.secondary' }}>
+          <Typography variant="h3" sx={{ mx: { xs: 0.5, sm: 1, md: 2 }, fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' }, color: 'text.secondary' }}>
             +
           </Typography>
         </m.div>
