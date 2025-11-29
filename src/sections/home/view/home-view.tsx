@@ -25,38 +25,8 @@ export function HomeView() {
 
   return (
     <>
-      <ScrollProgress
-        variant="linear"
-        progress={pageProgress.scrollYProgress}
-        sx={[(theme) => ({ position: 'fixed', zIndex: theme.zIndex.appBar + 1 })]}
-      />
-
-      <BackToTopButton />
-
-      <HomeHero />
-
       <Stack sx={{ position: 'relative', bgcolor: 'background.default' }}>
         <HomeLottoDisplay />
-
-        <HomeMinimal />
-
-        <HomeHugePackElements />
-
-        <HomeForDesigner />
-
-        <HomeHighlightFeatures />
-
-        <HomeIntegrations />
-
-        <HomePricing />
-
-        <HomeTestimonials />
-
-        <HomeFAQs />
-
-        <HomeZoneUI />
-
-        <HomeAdvertisement />
       </Stack>
     </>
   );

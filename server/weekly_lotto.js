@@ -76,16 +76,10 @@ const updateLottoJson = async (targetDateStr) => {
   }
 };
 
-// // Execute if run directly
-// if (require.main === module) {
-//     // Check for command line argument or use default/example
-//     const argDate = process.argv[2] || '2025-11-22';
-//     updateLottoJson(argDate);
-// }
+// Execute if run directly
+if (require.main === module) {
+    // Check for command line argument or use default/example
+    const argDate = process.argv[2] || '2025-11-29';
+    updateLottoJson(argDate);
+}
 
-
-const filePath = "../json/lottoNumber.json";  
-const data = fs.readFileSync(filePath, "utf-8");
-const lottoJson = JSON.parse(data);
-
-console.log(lottoJson[lottoJson.length - 1]);
