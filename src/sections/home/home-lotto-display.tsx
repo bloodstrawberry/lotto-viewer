@@ -25,18 +25,18 @@ export function HomeLottoDisplay() {
     <Container component={MotionViewport} sx={{ py: 10, textAlign: 'center' }}>
       <m.div variants={varFade('inUp')}>
         <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          spacing={3}
+          direction="row"
+          spacing={{ xs: 1, sm: 2, md: 3 }}
           justifyContent="center"
           alignItems="center"
           sx={{ mb: 5 }}
         >
           {/* Left Side: Draw No & Date */}
-          <Stack alignItems={{ xs: 'center', md: 'flex-start' }}>
-            <Typography variant="h3" sx={{ color: '#007aff', fontWeight: 'bold' }}>
+          <Stack alignItems={{ xs: 'flex-end', md: 'flex-start' }} sx={{ minWidth: { xs: 'auto', md: 'auto' } }}>
+            <Typography variant="h3" sx={{ color: '#007aff', fontWeight: 'bold', fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' }, whiteSpace: 'nowrap' }}>
               {drwNo}회
             </Typography>
-            <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+            <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, whiteSpace: 'nowrap' }}>
               {drwNoDate}
             </Typography>
           </Stack>
@@ -44,15 +44,15 @@ export function HomeLottoDisplay() {
           {/* Divider */}
           <Box
             sx={{
-              width: { xs: '100%', md: '1px' },
-              height: { xs: '1px', md: '60px' },
+              width: '1px',
+              height: { xs: '40px', md: '60px' },
               bgcolor: 'divider',
-              my: { xs: 2, md: 0 },
+              mx: { xs: 1, md: 2 },
             }}
           />
 
           {/* Right Side: Win Amount & Count */}
-          <Stack alignItems={{ xs: 'center', md: 'flex-start' }}>
+          <Stack alignItems="flex-start">
             <Box
               sx={{
                 bgcolor: '#007aff',
@@ -60,19 +60,19 @@ export function HomeLottoDisplay() {
                 px: 1,
                 py: 0.5,
                 borderRadius: 0.5,
-                mb: 1,
+                mb: 0.5,
                 display: 'inline-block',
                 fontWeight: 'bold',
-                fontSize: '0.875rem',
+                fontSize: { xs: '0.75rem', md: '0.875rem' },
               }}
             >
               1등
             </Box>
-            <Stack direction="row" alignItems="baseline" spacing={1} flexWrap="wrap" justifyContent="center">
-              <Typography variant="h3" sx={{ color: '#007aff', fontWeight: 'bold' }}>
+            <Stack direction="row" alignItems="baseline" spacing={0.5} flexWrap="nowrap">
+              <Typography variant="h3" sx={{ color: '#007aff', fontWeight: 'bold', fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' }, whiteSpace: 'nowrap' }}>
                 {new Intl.NumberFormat('ko-KR').format(firstWinamnt)}원
               </Typography>
-              <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+              <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, whiteSpace: 'nowrap' }}>
                 총 {firstPrzwnerCo}게임 당첨
               </Typography>
             </Stack>
