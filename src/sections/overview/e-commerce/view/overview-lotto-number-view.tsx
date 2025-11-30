@@ -212,6 +212,17 @@ function DataRow({
   round: any;
   showBonus: boolean;
 }) {
+  const [clickedNumbers, setClickedNumbers] = useState<number[]>([]);
+
+  const handleClick = (num: number, isWinning: boolean, isBonus: boolean) => {
+    if (!isWinning) return; // 당첨 번호만 클릭 가능
+    if (clickedNumbers.includes(num)) {
+      setClickedNumbers(clickedNumbers.filter((n) => n !== num));
+    } else {
+      setClickedNumbers([...clickedNumbers, num]);
+    }
+  };
+
   return (
     <div
       style={{ display: "flex", alignItems: "center" }}
@@ -236,9 +247,10 @@ function DataRow({
         {Array.from({ length: 45 }, (_, i) => i + 1).map((num) => {
           const isWinning = round.numbers.includes(num);
           const isBonus = showBonus && round.bonus === num;
-          const isActive = isWinning || isBonus;
+          const isClicked = clickedNumbers.includes(num);
+
           let bgColor = "#F1F3F4";
-          if (isWinning) bgColor = "#658effff";
+          if (isWinning) bgColor = isClicked ? "#ff4444" : "#658effff";
           if (isBonus) bgColor = "#FFB74D";
 
           const showDivider = num % 5 === 0 && num !== 45;
@@ -246,17 +258,17 @@ function DataRow({
           return (
             <React.Fragment key={`r-${round.drwNo}-${num}`}>
               <div
+                onClick={() => handleClick(num, isWinning, isBonus)}
                 style={{
                   flex: 1,
                   aspectRatio: "1/1",
                   backgroundColor: bgColor,
                   borderRadius: "20%",
-                  boxShadow: isActive
+                  boxShadow: isWinning || isBonus
                     ? "inset 0 -2px 0 rgba(0,0,0,0.15)"
                     : "inset 0 -1px 0 rgba(0,0,0,0.05)",
                   boxSizing: "border-box",
-                  cursor: "pointer",
-                  minWidth: 0,
+                  cursor: isWinning ? "pointer" : "default",
                 }}
               />
               {showDivider && (
@@ -275,3 +287,4 @@ function DataRow({
     </div>
   );
 }
+
