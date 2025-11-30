@@ -53,6 +53,10 @@ export const getBallColor = (num: number) => {
   return '#b0d840';
 };
 
+export const getLength = () => {
+    return lottoNumber.length;
+}
+
 export const getLatestLottoNumber = () => {
   if (!lottoNumber || lottoNumber.length === 0) {
     return null;

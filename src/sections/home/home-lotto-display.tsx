@@ -8,12 +8,12 @@ import Typography from '@mui/material/Typography';
 
 import { varFade, MotionViewport } from 'src/components/animate';
 
-import { Ball, getBallColor, getLatestLottoNumber } from 'src/api/lottolibrary';
+import * as LottoLibrary from 'src/api/lottolibrary';
 
 // ----------------------------------------------------------------------
 
 export function HomeLottoDisplay() {
-  const latestLotto = getLatestLottoNumber();
+  const latestLotto = LottoLibrary.getLatestLottoNumber();
 
   if (!latestLotto) {
     return null;
@@ -89,15 +89,15 @@ export function HomeLottoDisplay() {
       >
         {numbers.map((num, index) => (
           <m.div key={num} variants={varFade('inUp')} custom={index}>
-            <Ball
+            <LottoLibrary.Ball
               sx={{
-                background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${getBallColor(
+                background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${LottoLibrary.getBallColor(
                   num
                 )}`,
               }}
             >
               {num}
-            </Ball>
+            </LottoLibrary.Ball>
           </m.div>
         ))}
 
@@ -108,15 +108,15 @@ export function HomeLottoDisplay() {
         </m.div>
 
         <m.div variants={varFade('inUp')} custom={7}>
-          <Ball
+          <LottoLibrary.Ball
             sx={{
-              background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${getBallColor(
+              background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${LottoLibrary.getBallColor(
                 bonus
               )}`,
             }}
           >
             {bonus}
-          </Ball>
+          </LottoLibrary.Ball>
         </m.div>
       </Stack>
     </Container>
