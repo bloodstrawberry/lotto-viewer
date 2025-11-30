@@ -70,7 +70,7 @@ export function HomeLottoDisplay() {
   return (
     <Container component={MotionViewport} sx={{ py: 10, px: { xs: 3, sm: 4, md: 0 }, textAlign: 'center' }}>
       <m.div variants={varFade('inUp')}>
-        <Stack direction="row" alignItems="center" justifyContent="center" spacing={{ xs: 1, md: 1 }} sx={{ mb: 5 }}>
+        <Stack direction="row" alignItems="center" justifyContent="center" spacing={{ xs: 0.5, md: 2 }} sx={{ mb: 5 }}>
           <IconButton onClick={handlePrev} disabled={currentIndex === 0}>
             <Iconify icon="eva:arrow-ios-back-fill" width={28} />
           </IconButton>
