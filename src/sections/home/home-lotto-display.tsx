@@ -70,9 +70,9 @@ export function HomeLottoDisplay() {
   return (
     <Container component={MotionViewport} sx={{ py: 10, px: { xs: 3, sm: 4, md: 0 }, textAlign: 'center' }}>
       <m.div variants={varFade('inUp')}>
-        <Stack direction="row" alignItems="center" justifyContent="center" spacing={{ xs: 1, md: 3 }} sx={{ mb: 5 }}>
+        <Stack direction="row" alignItems="center" justifyContent="center" spacing={{ xs: 1, md: 1 }} sx={{ mb: 5 }}>
           <IconButton onClick={handlePrev} disabled={currentIndex === 0}>
-            <Iconify icon="eva:arrow-ios-back-fill" width={32} />
+            <Iconify icon="eva:arrow-ios-back-fill" width={28} />
           </IconButton>
 
           <Stack
@@ -145,7 +145,7 @@ export function HomeLottoDisplay() {
                 width: '1px',
                 height: { xs: '40px', md: '60px' },
                 bgcolor: 'divider',
-                mx: { xs: 1, md: 2 },
+                mx: { xs: 1, md: 1 },
               }}
             />
 
@@ -178,7 +178,7 @@ export function HomeLottoDisplay() {
           </Stack>
 
           <IconButton onClick={handleNext} disabled={currentIndex === LottoLibrary.getLength() - 1}>
-            <Iconify icon="eva:arrow-ios-forward-fill" width={32} />
+            <Iconify icon="eva:arrow-ios-forward-fill" width={28} />
           </IconButton>
         </Stack>
       </m.div>
