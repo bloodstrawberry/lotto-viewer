@@ -70,3 +70,17 @@ export const getLatestLottoNumber = () => {
     bonus: latest.bnusNo
   };
 };
+
+export const getLottoByIndex = (index: number) => {
+  if (!lottoNumber || lottoNumber.length === 0 || index < 0 || index >= lottoNumber.length) {
+    return null;
+  }
+
+  const target = lottoNumber[index];
+
+  return {
+    ...target,
+    numbers: [target.drwtNo1, target.drwtNo2, target.drwtNo3, target.drwtNo4, target.drwtNo5, target.drwtNo6],
+    bonus: target.bnusNo
+  };
+};

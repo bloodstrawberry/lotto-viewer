@@ -3,7 +3,6 @@
 import Stack from '@mui/material/Stack';
 
 import { HomeLottoDisplay } from '../home-lotto-display';
-import { LottoPickerPaper } from '../lotto-picker-paper';
 
 // ----------------------------------------------------------------------
 
@@ -11,8 +10,7 @@ export function HomeView() {
   return (
     <>
       <Stack sx={{ position: 'relative', bgcolor: 'background.default', gap: 3, alignItems: 'center', py: 5 }}>
-        <HomeLottoDisplay />
-        <LottoPickerPaper />
+        <HomeLottoDisplay />        
       </Stack>
     </>
   );

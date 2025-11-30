@@ -1,86 +1,118 @@
+import { useState } from 'react';
 import { m } from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 
-
-import { varFade, MotionViewport } from 'src/components/animate';
+import { Iconify } from 'src/components/iconify';
+import { varFade, varContainer, MotionViewport } from 'src/components/animate';
 
 import * as LottoLibrary from 'src/api/lottolibrary';
 
 // ----------------------------------------------------------------------
 
 export function HomeLottoDisplay() {
-  const latestLotto = LottoLibrary.getLatestLottoNumber();
+  const [currentIndex, setCurrentIndex] = useState(LottoLibrary.getLength() - 1);
+  const currentLotto = LottoLibrary.getLottoByIndex(currentIndex);
 
-  if (!latestLotto) {
+  if (!currentLotto) {
     return null;
   }
 
-  const { numbers, bonus, drwNo, drwNoDate, firstWinamnt, firstPrzwnerCo } = latestLotto;
+  const { numbers, bonus, drwNo, drwNoDate, firstWinamnt, firstPrzwnerCo } = currentLotto;
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex < LottoLibrary.getLength() - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+  };
 
   return (
     <Container component={MotionViewport} sx={{ py: 10, textAlign: 'center' }}>
       <m.div variants={varFade('inUp')}>
-        <Stack
-          direction="row"
-          spacing={{ xs: 1, sm: 2, md: 3 }}
-          justifyContent="center"
-          alignItems="center"
-          sx={{ mb: 5 }}
-        >
-          {/* Left Side: Draw No & Date */}
-          <Stack alignItems={{ xs: 'flex-end', md: 'flex-start' }} sx={{ minWidth: { xs: 'auto', md: 'auto' } }}>
-            <Typography variant="h3" sx={{ color: '#007aff', fontWeight: 'bold', fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' }, whiteSpace: 'nowrap' }}>
-              {drwNo}회
-            </Typography>
-            <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, whiteSpace: 'nowrap' }}>
-              {drwNoDate}
-            </Typography>
-          </Stack>
+        <Stack direction="row" alignItems="center" justifyContent="center" spacing={{ xs: 1, md: 3 }} sx={{ mb: 5 }}>
+          <IconButton onClick={handlePrev} disabled={currentIndex === 0}>
+            <Iconify icon="eva:arrow-ios-back-fill" width={32} />
+          </IconButton>
 
-          {/* Divider */}
-          <Box
-            sx={{
-              width: '1px',
-              height: { xs: '40px', md: '60px' },
-              bgcolor: 'divider',
-              mx: { xs: 1, md: 2 },
-            }}
-          />
-
-          {/* Right Side: Win Amount & Count */}
-          <Stack alignItems="flex-start">
-            <Box
-              sx={{
-                bgcolor: '#007aff',
-                color: 'white',
-                px: 1,
-                py: 0.5,
-                borderRadius: 0.5,
-                mb: 0.5,
-                display: 'inline-block',
-                fontWeight: 'bold',
-                fontSize: { xs: '0.75rem', md: '0.875rem' },
-              }}
-            >
-              1등
-            </Box>
-            <Stack direction="row" alignItems="baseline" spacing={0.5} flexWrap="nowrap">
+          <Stack
+            direction="row"
+            spacing={{ xs: 1, sm: 2, md: 3 }}
+            justifyContent="center"
+            alignItems="center"
+          >
+            {/* Left Side: Draw No & Date */}
+            <Stack alignItems={{ xs: 'flex-end', md: 'flex-start' }} sx={{ minWidth: { xs: 'auto', md: 'auto' } }}>
               <Typography variant="h3" sx={{ color: '#007aff', fontWeight: 'bold', fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' }, whiteSpace: 'nowrap' }}>
-                {new Intl.NumberFormat('ko-KR').format(firstWinamnt)}원
+                {drwNo}회
               </Typography>
               <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, whiteSpace: 'nowrap' }}>
-                총 {firstPrzwnerCo}게임 당첨
+                {drwNoDate}
               </Typography>
             </Stack>
+
+            {/* Divider */}
+            <Box
+              sx={{
+                width: '1px',
+                height: { xs: '40px', md: '60px' },
+                bgcolor: 'divider',
+                mx: { xs: 1, md: 2 },
+              }}
+            />
+
+            {/* Right Side: Win Amount & Count */}
+            <Stack alignItems="flex-start">
+              <Box
+                sx={{
+                  bgcolor: '#007aff',
+                  color: 'white',
+                  px: 1,
+                  py: 0.5,
+                  borderRadius: 0.5,
+                  mb: 0.5,
+                  display: 'inline-block',
+                  fontWeight: 'bold',
+                  fontSize: { xs: '0.75rem', md: '0.875rem' },
+                }}
+              >
+                1등
+              </Box>
+              <Stack direction="row" alignItems="baseline" spacing={0.5} flexWrap="nowrap">
+                <Typography variant="h3" sx={{ color: '#007aff', fontWeight: 'bold', fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' }, whiteSpace: 'nowrap' }}>
+                  {new Intl.NumberFormat('ko-KR').format(firstWinamnt)}원
+                </Typography>
+                <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, whiteSpace: 'nowrap' }}>
+                  총 {firstPrzwnerCo}게임 당첨
+                </Typography>
+              </Stack>
+            </Stack>
           </Stack>
+
+          <IconButton onClick={handleNext} disabled={currentIndex === LottoLibrary.getLength() - 1}>
+            <Iconify icon="eva:arrow-ios-forward-fill" width={32} />
+          </IconButton>
         </Stack>
       </m.div>
 
       <Stack
+        key={drwNo}
+        component={m.div}
+        initial="initial"
+        animate="animate"
+        variants={{
+          initial: {},
+          ...varContainer(),
+        }}
         direction="row"
         spacing={{ xs: 0.5, sm: 1, md: 3 }}
         justifyContent="center"
