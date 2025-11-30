@@ -18,10 +18,13 @@ export function OverviewLottoNumberView() {
   const [data, setData] = useState<any[]>([]);
   const [visibleCount, setVisibleCount] = useState(50);
   const [showBonus, setShowBonus] = useState(false);
-  const [isReversed, setIsReversed] = useState(false); // false: newest first, true: oldest‑first view within current slice
-  const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]); // User selected numbers (max 6)
+  const [isReversed, setIsReversed] = useState(false);
 
-  // Load all draws sorted newest‑first
+  // ⭐ 숫자 보기 토글 (ON → 숫자 전체 보임)
+  const [showNumbers, setShowNumbers] = useState(true);
+
+  const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
+
   useEffect(() => {
     const allData = getAllLottoNumbers();
     const sortedDesc = [...allData].sort((a, b) => b.drwNo - a.drwNo);
@@ -29,20 +32,16 @@ export function OverviewLottoNumberView() {
     setVisibleCount(50);
   }, []);
 
-  // Determine which draws to display based on the toggle
   const displayed = (() => {
     const slice = data.slice(0, visibleCount);
     return isReversed ? [...slice].reverse() : slice;
   })();
 
-  // Handle number selection
   const handleNumberClick = (num: number) => {
     if (selectedNumbers.includes(num)) {
-      // Deselect
       setSelectedNumbers(selectedNumbers.filter((n) => n !== num));
     } else if (selectedNumbers.length < 6) {
-      // Select (max 6)
-      setSelectedNumbers([...selectedNumbers, num].sort((a, b) => a - b));
+      setSelectedNumbers([...selectedNumbers, num].sort((a,b)=>a-b));
     }
   };
 
@@ -50,43 +49,51 @@ export function OverviewLottoNumberView() {
     <DashboardContent maxWidth="xl">
       <Card>
         <CardHeader
-          title="로또 번호 전체 회차 시각화"
+          title="Pattern"
           sx={{ mb: 2 }}
           action={
             <>
               <FormControlLabel
                 control={
                   <Switch
-                    checked={showBonus}
-                    onChange={(e) => setShowBonus(e.target.checked)}
-                    color="primary"
+                    checked={showNumbers}
+                    onChange={(e) => setShowNumbers(e.target.checked)}
                   />
                 }
-                label="보너스 번호 보기"
+                label="숫자"
               />
+
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={showBonus}
+                    onChange={(e) => setShowBonus(e.target.checked)}
+                  />
+                }
+                label="보너스 번호"
+              />
+
               <FormControlLabel
                 control={
                   <Switch
                     checked={isReversed}
                     onChange={(e) => setIsReversed(e.target.checked)}
-                    color="primary"
                   />
                 }
-                label="역순 보기"
+                label="역순"
               />
             </>
           }
         />
         <Box sx={{ p: 2 }}>
-          {/* Up arrow at top when reversed */}
           {isReversed && (
-            <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
+            <Box sx={{ display:"flex", justifyContent:"center", mb:1 }}>
               <Button
                 variant="soft"
                 color="inherit"
-                onClick={() => setVisibleCount((prev) => Math.min(prev + 50, data.length))}
+                onClick={() => setVisibleCount((prev)=>Math.min(prev+50, data.length))}
                 disabled={visibleCount >= data.length}
-                sx={{ minWidth: 40 }}
+                sx={{ minWidth:40 }}
               >
                 ↑
               </Button>
@@ -94,31 +101,40 @@ export function OverviewLottoNumberView() {
           )}
 
           <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
-            {/* Predict row at top if not reversed */}
             {!isReversed && (
-              <PredictRow selectedNumbers={selectedNumbers} handleNumberClick={handleNumberClick} />
+              <PredictRow
+                selectedNumbers={selectedNumbers}
+                handleNumberClick={handleNumberClick}
+                showNumbers={showNumbers}
+              />
             )}
 
-            {/* Existing data rows */}
             {displayed.map((round) => (
-              <DataRow key={round.drwNo} round={round} showBonus={showBonus} />
+              <DataRow
+                key={round.drwNo}
+                round={round}
+                showBonus={showBonus}
+                showNumbers={showNumbers}
+              />
             ))}
 
-            {/* Predict row at bottom if reversed */}
             {isReversed && (
-              <PredictRow selectedNumbers={selectedNumbers} handleNumberClick={handleNumberClick} />
+              <PredictRow
+                selectedNumbers={selectedNumbers}
+                handleNumberClick={handleNumberClick}
+                showNumbers={showNumbers}
+              />
             )}
           </div>
 
-          {/* Down arrow at bottom when normal */}
           {!isReversed && (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 3, mb: 1 }}>
+            <Box sx={{ display:"flex", justifyContent:"center", mt:3, mb:1 }}>
               <Button
                 variant="soft"
                 color="inherit"
-                onClick={() => setVisibleCount((prev) => Math.min(prev + 50, data.length))}
+                onClick={() => setVisibleCount((prev)=>Math.min(prev+50, data.length))}
                 disabled={visibleCount >= data.length}
-                sx={{ minWidth: 40 }}
+                sx={{ minWidth:40 }}
               >
                 ↓
               </Button>
@@ -130,69 +146,70 @@ export function OverviewLottoNumberView() {
   );
 }
 
-// ------------------ PredictRow ------------------
+// ----------------------------------------------------------------------
+// Predict Row
+// ----------------------------------------------------------------------
+
 function PredictRow({
   selectedNumbers,
   handleNumberClick,
+  showNumbers,
 }: {
   selectedNumbers: number[];
   handleNumberClick: (num: number) => void;
+  showNumbers: boolean;
 }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", marginBottom: "2px" }}>
+    <div style={{ display:"flex", alignItems:"center", marginBottom:"2px" }}>
       <Box
         sx={{
-          width: "40px",
-          flexShrink: 0,
-          fontSize: "10px",
-          lineHeight: 1,
-          textAlign: "right",
-          marginRight: "6px",
-          color: "#999",
-          fontFamily: "monospace",
-          display: { xs: "none", sm: "block" },
+          width:"40px",
+          flexShrink:0,
+          fontSize:"10px",
+          textAlign:"right",
+          marginRight:"6px",
+          color:"#999",
+          fontFamily:"monospace",
+          display:{ xs:"none", sm:"block" },
         }}
       >
         예측
       </Box>
-      <div style={{ flex: 1, display: "flex", gap: "1px" }}>
-        {Array.from({ length: 45 }, (_, i) => i + 1).map((num) => {
+
+      <div style={{ flex:1, display:"flex", gap:"1px" }}>
+        {Array.from({ length:45 }, (_,i)=>i+1).map((num)=>{
           const isSelected = selectedNumbers.includes(num);
           const showDivider = num % 5 === 0 && num !== 45;
+
+          const shouldShowNumber = showNumbers ? true : isSelected;
 
           return (
             <React.Fragment key={num}>
               <div
-                title={`${num}번`}
                 onClick={() => handleNumberClick(num)}
                 style={{
-                  flex: 1,
-                  aspectRatio: "1/1",
-                  backgroundColor: isSelected ? "#ff4444" : "#F1F3F4",
-                  borderRadius: "20%",
-                  boxShadow: isSelected
-                    ? "inset 0 -2px 0 rgba(0,0,0,0.2)"
-                    : "inset 0 -1px 0 rgba(0,0,0,0.05)",
-                  boxSizing: "border-box",
-                  cursor: "pointer",
-                  minWidth: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "10px",
-                  fontWeight: "bold",
-                  color: isSelected ? "#fff" : "transparent",
-                  transition: "all 0.2s ease",
+                  flex:1,
+                  aspectRatio:"1/1",
+                  backgroundColor: isSelected ? "#ff4444" : "#E8EAED",
+                  borderRadius:"20%",
+                  cursor:"pointer",
+
+                  display:"flex",
+                  alignItems:"center",
+                  justifyContent:"center",
+                  fontWeight:"bold",
+                  fontSize:"clamp(0.1px, 1.8vw, 12px)",
+                  color: shouldShowNumber ? (isSelected?"#fff":"#555") : "transparent",
                 }}
               >
-                {isSelected ? num : ""}
+                {shouldShowNumber ? num : ""}
               </div>
+
               {showDivider && (
                 <div
                   style={{
-                    width: "1px",
-                    backgroundColor: "#999999ff",
-                    margin: "0 0.5px",
+                    width:"1px",
+                    backgroundColor:"#999",
                   }}
                 />
               )}
@@ -204,50 +221,52 @@ function PredictRow({
   );
 }
 
-// ------------------ DataRow ------------------
+// ----------------------------------------------------------------------
+// Data Row
+// ----------------------------------------------------------------------
+
 function DataRow({
   round,
   showBonus,
+  showNumbers,
 }: {
   round: any;
   showBonus: boolean;
+  showNumbers: boolean;
 }) {
-  const [clickedNumbers, setClickedNumbers] = useState<number[]>([]);
+  const [clicked, setClicked] = useState<number[]>([]);
 
-  const handleClick = (num: number, isWinning: boolean, isBonus: boolean) => {
-    if (!isWinning) return; // 당첨 번호만 클릭 가능
-    if (clickedNumbers.includes(num)) {
-      setClickedNumbers(clickedNumbers.filter((n) => n !== num));
+  const handleClick = (num: number, isWinning: boolean) => {
+    if (!isWinning) return;
+
+    if (clicked.includes(num)) {
+      setClicked(clicked.filter((n)=>n !== num));
     } else {
-      setClickedNumbers([...clickedNumbers, num]);
+      setClicked([...clicked, num]);
     }
   };
 
   return (
-    <div
-      style={{ display: "flex", alignItems: "center" }}
-      title={`${round.drwNo}회 (${round.drwNoDate})`}
-    >
+    <div style={{ display:"flex", alignItems:"center" }}>
       <Box
         sx={{
-          width: "40px",
-          flexShrink: 0,
-          fontSize: "10px",
-          lineHeight: 1,
-          textAlign: "right",
-          marginRight: "6px",
-          color: "#999",
-          fontFamily: "monospace",
-          display: { xs: "none", sm: "block" },
+          width:"40px",
+          fontSize:"10px",
+          textAlign:"right",
+          marginRight:"6px",
+          color:"#999",
+          fontFamily:"monospace",
+          display:{ xs:"none", sm:"block" },
         }}
       >
         {round.drwNo}
       </Box>
-      <div style={{ flex: 1, display: "flex", gap: "1px" }}>
-        {Array.from({ length: 45 }, (_, i) => i + 1).map((num) => {
+
+      <div style={{ flex:1, display:"flex", gap:"1px" }}>
+        {Array.from({ length:45 }, (_,i)=>i+1).map((num)=>{
           const isWinning = round.numbers.includes(num);
           const isBonus = showBonus && round.bonus === num;
-          const isClicked = clickedNumbers.includes(num);
+          const isClicked = clicked.includes(num);
 
           let bgColor = "#F1F3F4";
           if (isWinning) bgColor = isClicked ? "#ff4444" : "#658effff";
@@ -255,28 +274,37 @@ function DataRow({
 
           const showDivider = num % 5 === 0 && num !== 45;
 
+          // ⭐ 숫자를 보여줄지 결정
+          const shouldShowNumber = showNumbers || isClicked;
+
           return (
-            <React.Fragment key={`r-${round.drwNo}-${num}`}>
+            <React.Fragment key={`${round.drwNo}-${num}`}>
               <div
-                onClick={() => handleClick(num, isWinning, isBonus)}
+                onClick={() => handleClick(num, isWinning)}
                 style={{
-                  flex: 1,
-                  aspectRatio: "1/1",
-                  backgroundColor: bgColor,
-                  borderRadius: "20%",
-                  boxShadow: isWinning || isBonus
-                    ? "inset 0 -2px 0 rgba(0,0,0,0.15)"
-                    : "inset 0 -1px 0 rgba(0,0,0,0.05)",
-                  boxSizing: "border-box",
-                  cursor: isWinning ? "pointer" : "default",
+                  flex:1,
+                  aspectRatio:"1/1",
+                  backgroundColor:bgColor,
+                  borderRadius:"20%",
+                  cursor:isWinning ? "pointer" : "default",
+
+                  display:"flex",
+                  alignItems:"center",
+                  justifyContent:"center",
+
+                  fontSize:"clamp(1px, 1.8vw, 12px)",
+                  fontWeight:"bold",
+                  color: shouldShowNumber ? "#fff" : "transparent",
                 }}
-              />
+              >
+                {shouldShowNumber ? num : ""}
+              </div>
+
               {showDivider && (
                 <div
                   style={{
-                    width: "1px",
-                    backgroundColor: "#999999ff",
-                    margin: "0 0.5px",
+                    width:"1px",
+                    backgroundColor:"#999",
                   }}
                 />
               )}
@@ -287,4 +315,3 @@ function DataRow({
     </div>
   );
 }
-
