@@ -140,7 +140,7 @@ function LottoColumn({ columnId, selectedNumbers, isAuto, onToggleNumber, onTogg
   return (
     <Stack
       sx={{
-        width: 140,
+        width: 200,
         border: '1px solid #ff6b6b',
         flexShrink: 0,
       }}
@@ -171,38 +171,40 @@ function LottoColumn({ columnId, selectedNumbers, isAuto, onToggleNumber, onTogg
                 <Box
                   onClick={() => onToggleNumber(num)}
                   sx={{
-                    width: 16,
-                    height: 24,
+                    width: 24,
+                    height: 28,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '10px',
+                    fontSize: '13px',
+                    fontWeight: 'bold',
                     cursor: 'pointer',
-                    border: '1px solid',
-                    borderColor: isSelected ? 'black' : '#ddd',
-                    bgcolor: isSelected ? 'black' : 'transparent',
-                    color: isSelected ? 'white' : 'text.secondary',
-                    position: 'relative',
+                    userSelect: 'none',
+
+                    ...(isSelected ? {
+                        bgcolor: '#333',
+                        color: 'white',
+                        border: '1px solid #333',
+                    } : {
+                        color: '#ff6b6b',
+                        bgcolor: 'transparent',
+                        borderLeft: '1px solid #ff6b6b',
+                        borderRight: '1px solid #ff6b6b',
+                        backgroundImage: `
+                            linear-gradient(to right, #ff6b6b 5px, transparent 5px, transparent calc(100% - 5px), #ff6b6b calc(100% - 5px)),
+                            linear-gradient(to right, #ff6b6b 5px, transparent 5px, transparent calc(100% - 5px), #ff6b6b calc(100% - 5px))
+                        `,
+                        backgroundPosition: 'top, bottom',
+                        backgroundSize: '100% 1px',
+                        backgroundRepeat: 'no-repeat',
+                    }),
+
                     '&:hover': {
-                      bgcolor: isSelected ? 'black' : alpha('#000', 0.05),
+                      bgcolor: isSelected ? '#333' : alpha('#ff6b6b', 0.1),
                     },
-                    // Mark effect (vertical bar)
-                    ...(isSelected && {
-                        '&::after': {
-                            content: '""',
-                            position: 'absolute',
-                            width: '4px',
-                            height: '16px',
-                            bgcolor: 'white',
-                        }
-                    })
                   }}
                 >
-                  {/* We hide the number text if selected to look like a mark, or keep it? 
-                      Real OMR covers the number. Let's keep number visible for usability or mimic mark.
-                      The image shows [ ] brackets around numbers. 
-                  */}
-                  {!isSelected && `[${num}]`}
+                  {num}
                 </Box>
               </Grid>
             );
