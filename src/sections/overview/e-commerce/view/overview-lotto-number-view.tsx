@@ -111,23 +111,37 @@ export function OverviewLottoNumberView() {
                     let bgColor = "#F1F3F4";
                     if (isWinning) bgColor = "#658effff";
                     if (isBonus) bgColor = "#FFB74D";
+                    
+                    const showDivider = num % 5 === 0 && num !== 45;
+                    
                     return (
-                      <div
-                        key={num}
-                        title={`${num}번`}
-                        style={{
-                          flex: 1,
-                          aspectRatio: "1/1",
-                          backgroundColor: bgColor,
-                          borderRadius: "20%",
-                          boxShadow: isActive
-                            ? "inset 0 -2px 0 rgba(0,0,0,0.15)"
-                            : "inset 0 -1px 0 rgba(0,0,0,0.05)",
-                          boxSizing: "border-box",
-                          cursor: "pointer",
-                          minWidth: 0,
-                        }}
-                      />
+                      <>
+                        <div
+                          key={num}
+                          title={`${num}번`}
+                          style={{
+                            flex: 1,
+                            aspectRatio: "1/1",
+                            backgroundColor: bgColor,
+                            borderRadius: "20%",
+                            boxShadow: isActive
+                              ? "inset 0 -2px 0 rgba(0,0,0,0.15)"
+                              : "inset 0 -1px 0 rgba(0,0,0,0.05)",
+                            boxSizing: "border-box",
+                            cursor: "pointer",
+                            minWidth: 0,
+                          }}
+                        />
+                        {showDivider && (
+                          <div
+                            style={{
+                              width: "1px",
+                              backgroundColor: "#999999ff",
+                              margin: "0 0.5px",
+                            }}
+                          />
+                        )}
+                      </>
                     );
                   })}
                 </div>
