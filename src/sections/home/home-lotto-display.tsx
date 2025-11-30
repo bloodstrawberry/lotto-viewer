@@ -68,7 +68,7 @@ export function HomeLottoDisplay() {
   };
 
   return (
-    <Container component={MotionViewport} sx={{ py: 10, px: { xs: 2, sm: 3, md: 0 }, textAlign: 'center' }}>
+    <Container component={MotionViewport} sx={{ py: 10, px: { xs: 3, sm: 4, md: 0 }, textAlign: 'center' }}>
       <m.div variants={varFade('inUp')}>
         <Stack direction="row" alignItems="center" justifyContent="center" spacing={{ xs: 1, md: 3 }} sx={{ mb: 5 }}>
           <IconButton onClick={handlePrev} disabled={currentIndex === 0}>
