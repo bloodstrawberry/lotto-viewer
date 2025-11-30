@@ -95,17 +95,7 @@ export function NavVertical({
       sx={sx}
       {...other}
     >
-      <NavToggleButton
-        isNavMini={isNavMini}
-        onClick={onToggleNav}
-        sx={[
-          (theme) => ({
-            display: 'none',
-            [theme.breakpoints.up(layoutQuery)]: { display: 'inline-flex' },
-          }),
-        ]}
-      />
-      {isNavMini ? renderNavMini() : renderNavVertical()}
+      {renderNavMini()}
     </NavRoot>
   );
 }

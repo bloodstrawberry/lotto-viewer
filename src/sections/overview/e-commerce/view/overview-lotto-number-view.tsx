@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -92,144 +92,24 @@ export function OverviewLottoNumberView() {
               </Button>
             </Box>
           )}
-          
+
           <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
-            {/* Dummy row for user selection */}
-            <div
-              style={{ display: "flex", alignItems: "center", marginBottom: "2px" }}
-              title="번호를 클릭하여 선택하세요 (최대 6개)"
-            >
-              <Box
-                sx={{
-                  width: "40px",
-                  flexShrink: 0,
-                  fontSize: "10px",
-                  lineHeight: 1,
-                  textAlign: "right",
-                  marginRight: "6px",
-                  color: "#999",
-                  fontFamily: "monospace",
-                  display: { xs: "none", sm: "block" },
-                }}
-              >
-                예측
-              </Box>
-              <div style={{ flex: 1, display: "flex", gap: "1px" }}>
-                {Array.from({ length: 45 }, (_, i) => i + 1).map((num) => {
-                  const isSelected = selectedNumbers.includes(num);
-                  const showDivider = num % 5 === 0 && num !== 45;
-                  
-                  return (
-                    <>
-                      <div
-                        key={num}
-                        title={`${num}번`}
-                        onClick={() => handleNumberClick(num)}
-                        style={{
-                          flex: 1,
-                          aspectRatio: "1/1",
-                          backgroundColor: isSelected ? "#ff4444" : "#F1F3F4",
-                          borderRadius: "20%",
-                          boxShadow: isSelected
-                            ? "inset 0 -2px 0 rgba(0,0,0,0.2)"
-                            : "inset 0 -1px 0 rgba(0,0,0,0.05)",
-                          boxSizing: "border-box",
-                          cursor: "pointer",
-                          minWidth: 0,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "10px",
-                          fontWeight: "bold",
-                          color: isSelected ? "#fff" : "transparent",
-                          transition: "all 0.2s ease",
-                        }}
-                      >
-                        {isSelected ? num : ""}
-                      </div>
-                      {showDivider && (
-                        <div
-                          style={{
-                            width: "1px",
-                            backgroundColor: "#999999ff",
-                            margin: "0 0.5px",
-                          }}
-                        />
-                      )}
-                    </>
-                  );
-                })}
-              </div>
-            </div>
+            {/* Predict row at top if not reversed */}
+            {!isReversed && (
+              <PredictRow selectedNumbers={selectedNumbers} handleNumberClick={handleNumberClick} />
+            )}
 
             {/* Existing data rows */}
             {displayed.map((round) => (
-              <div
-                key={round.drwNo}
-                style={{ display: "flex", alignItems: "center" }}
-                title={`${round.drwNo}회 (${round.drwNoDate})`}
-              >
-                <Box
-                  sx={{
-                    width: "40px",
-                    flexShrink: 0,
-                    fontSize: "10px",
-                    lineHeight: 1,
-                    textAlign: "right",
-                    marginRight: "6px",
-                    color: "#999",
-                    fontFamily: "monospace",
-                    display: { xs: "none", sm: "block" }, // Hide on extra-small screens
-                  }}
-                >
-                  {round.drwNo}
-                </Box>
-                <div style={{ flex: 1, display: "flex", gap: "1px" }}>
-                  {Array.from({ length: 45 }, (_, i) => i + 1).map((num) => {
-                    const isWinning = round.numbers.includes(num);
-                    const isBonus = showBonus && round.bonus === num;
-                    const isActive = isWinning || isBonus;
-                    let bgColor = "#F1F3F4";
-                    if (isWinning) bgColor = "#658effff";
-                    if (isBonus) bgColor = "#FFB74D";
-                    
-                    const showDivider = num % 5 === 0 && num !== 45;
-                    
-                    return (
-                      <>
-                        <div
-                          key={num}
-                          title={`${num}번`}
-                          style={{
-                            flex: 1,
-                            aspectRatio: "1/1",
-                            backgroundColor: bgColor,
-                            borderRadius: "20%",
-                            boxShadow: isActive
-                              ? "inset 0 -2px 0 rgba(0,0,0,0.15)"
-                              : "inset 0 -1px 0 rgba(0,0,0,0.05)",
-                            boxSizing: "border-box",
-                            cursor: "pointer",
-                            minWidth: 0,
-                          }}
-                        />
-                        {showDivider && (
-                          <div
-                            style={{
-                              width: "1px",
-                              backgroundColor: "#999999ff",
-                              margin: "0 0.5px",
-                            }}
-                          />
-                        )}
-                      </>
-                    );
-                  })}
-                </div>
-              </div>
+              <DataRow key={round.drwNo} round={round} showBonus={showBonus} />
             ))}
+
+            {/* Predict row at bottom if reversed */}
+            {isReversed && (
+              <PredictRow selectedNumbers={selectedNumbers} handleNumberClick={handleNumberClick} />
+            )}
           </div>
-          
+
           {/* Down arrow at bottom when normal */}
           {!isReversed && (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 3, mb: 1 }}>
@@ -247,5 +127,151 @@ export function OverviewLottoNumberView() {
         </Box>
       </Card>
     </DashboardContent>
+  );
+}
+
+// ------------------ PredictRow ------------------
+function PredictRow({
+  selectedNumbers,
+  handleNumberClick,
+}: {
+  selectedNumbers: number[];
+  handleNumberClick: (num: number) => void;
+}) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", marginBottom: "2px" }}>
+      <Box
+        sx={{
+          width: "40px",
+          flexShrink: 0,
+          fontSize: "10px",
+          lineHeight: 1,
+          textAlign: "right",
+          marginRight: "6px",
+          color: "#999",
+          fontFamily: "monospace",
+          display: { xs: "none", sm: "block" },
+        }}
+      >
+        예측
+      </Box>
+      <div style={{ flex: 1, display: "flex", gap: "1px" }}>
+        {Array.from({ length: 45 }, (_, i) => i + 1).map((num) => {
+          const isSelected = selectedNumbers.includes(num);
+          const showDivider = num % 5 === 0 && num !== 45;
+
+          return (
+            <React.Fragment key={num}>
+              <div
+                title={`${num}번`}
+                onClick={() => handleNumberClick(num)}
+                style={{
+                  flex: 1,
+                  aspectRatio: "1/1",
+                  backgroundColor: isSelected ? "#ff4444" : "#F1F3F4",
+                  borderRadius: "20%",
+                  boxShadow: isSelected
+                    ? "inset 0 -2px 0 rgba(0,0,0,0.2)"
+                    : "inset 0 -1px 0 rgba(0,0,0,0.05)",
+                  boxSizing: "border-box",
+                  cursor: "pointer",
+                  minWidth: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "10px",
+                  fontWeight: "bold",
+                  color: isSelected ? "#fff" : "transparent",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {isSelected ? num : ""}
+              </div>
+              {showDivider && (
+                <div
+                  style={{
+                    width: "1px",
+                    backgroundColor: "#999999ff",
+                    margin: "0 0.5px",
+                  }}
+                />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ------------------ DataRow ------------------
+function DataRow({
+  round,
+  showBonus,
+}: {
+  round: any;
+  showBonus: boolean;
+}) {
+  return (
+    <div
+      style={{ display: "flex", alignItems: "center" }}
+      title={`${round.drwNo}회 (${round.drwNoDate})`}
+    >
+      <Box
+        sx={{
+          width: "40px",
+          flexShrink: 0,
+          fontSize: "10px",
+          lineHeight: 1,
+          textAlign: "right",
+          marginRight: "6px",
+          color: "#999",
+          fontFamily: "monospace",
+          display: { xs: "none", sm: "block" },
+        }}
+      >
+        {round.drwNo}
+      </Box>
+      <div style={{ flex: 1, display: "flex", gap: "1px" }}>
+        {Array.from({ length: 45 }, (_, i) => i + 1).map((num) => {
+          const isWinning = round.numbers.includes(num);
+          const isBonus = showBonus && round.bonus === num;
+          const isActive = isWinning || isBonus;
+          let bgColor = "#F1F3F4";
+          if (isWinning) bgColor = "#658effff";
+          if (isBonus) bgColor = "#FFB74D";
+
+          const showDivider = num % 5 === 0 && num !== 45;
+
+          return (
+            <React.Fragment key={`r-${round.drwNo}-${num}`}>
+              <div
+                style={{
+                  flex: 1,
+                  aspectRatio: "1/1",
+                  backgroundColor: bgColor,
+                  borderRadius: "20%",
+                  boxShadow: isActive
+                    ? "inset 0 -2px 0 rgba(0,0,0,0.15)"
+                    : "inset 0 -1px 0 rgba(0,0,0,0.05)",
+                  boxSizing: "border-box",
+                  cursor: "pointer",
+                  minWidth: 0,
+                }}
+              />
+              {showDivider && (
+                <div
+                  style={{
+                    width: "1px",
+                    backgroundColor: "#999999ff",
+                    margin: "0 0.5px",
+                  }}
+                />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
+    </div>
   );
 }
