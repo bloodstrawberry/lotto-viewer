@@ -1,1 +1,1 @@
-export * from './overview-ecommerce-view';
+export * from './overview-lotto-number-view';

@@ -84,3 +84,11 @@ export const getLottoByIndex = (index: number) => {
     bonus: target.bnusNo
   };
 };
+
+export const getAllLottoNumbers = () => {
+  return lottoNumber.map((item) => ({
+    ...item,
+    numbers: [item.drwtNo1, item.drwtNo2, item.drwtNo3, item.drwtNo4, item.drwtNo5, item.drwtNo6],
+    bonus: item.bnusNo,
+  }));
+};
