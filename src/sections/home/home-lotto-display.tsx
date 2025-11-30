@@ -6,6 +6,7 @@ import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import TextField from '@mui/material/TextField';
 
 import { Iconify } from 'src/components/iconify';
 import { varFade, varContainer, MotionViewport } from 'src/components/animate';
@@ -16,6 +17,9 @@ import * as LottoLibrary from 'src/api/lottolibrary';
 
 export function HomeLottoDisplay() {
   const [currentIndex, setCurrentIndex] = useState(LottoLibrary.getLength() - 1);
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempRound, setTempRound] = useState('');
+
   const currentLotto = LottoLibrary.getLottoByIndex(currentIndex);
 
   if (!currentLotto) {
@@ -36,6 +40,33 @@ export function HomeLottoDisplay() {
     }
   };
 
+  const handleRoundClick = () => {
+    setTempRound(String(drwNo));
+    setIsEditing(true);
+  };
+
+  const handleRoundChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTempRound(event.target.value);
+  };
+
+  const handleRoundSubmit = () => {
+    const newRound = parseInt(tempRound, 10);
+    const maxRound = LottoLibrary.getLength();
+
+    if (!isNaN(newRound) && newRound >= 1 && newRound <= maxRound) {
+      setCurrentIndex(newRound - 1);
+    }
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleRoundSubmit();
+    } else if (event.key === 'Escape') {
+      setIsEditing(false);
+    }
+  };
+
   return (
     <Container component={MotionViewport} sx={{ py: 10, textAlign: 'center' }}>
       <m.div variants={varFade('inUp')}>
@@ -52,9 +83,57 @@ export function HomeLottoDisplay() {
           >
             {/* Left Side: Draw No & Date */}
             <Stack alignItems={{ xs: 'flex-end', md: 'flex-start' }} sx={{ minWidth: { xs: 'auto', md: 'auto' } }}>
-              <Typography variant="h3" sx={{ color: '#007aff', fontWeight: 'bold', fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' }, whiteSpace: 'nowrap' }}>
-                {drwNo}회
-              </Typography>
+              <Box sx={{ minHeight: { xs: '2rem', sm: '2.5rem', md: '3.5rem' }, display: 'flex', alignItems: 'center' }}>
+                {isEditing ? (
+                  <TextField
+                    variant="standard"
+                    autoFocus
+                    value={tempRound}
+                    onChange={handleRoundChange}
+                    onBlur={handleRoundSubmit}
+                    onKeyDown={handleKeyDown}
+                    sx={{
+                      width: '80px',
+                      '& .MuiInputBase-root': {
+                        lineHeight: 1.5,
+                      },
+                      '& .MuiInputBase-input': {
+                        fontSize: { xs: '1.0rem', sm: '1.2rem', md: '1.5rem' },
+                        fontWeight: 'bold',
+                        color: '#007aff',
+                        textAlign: 'left',
+                        p: 0,
+                        pb: '2px',
+                        caretColor: 'rgba(0, 122, 255, 0.4)',
+                      },
+                      '& .MuiInput-underline:before': {
+                        borderBottomColor: 'rgba(0, 122, 255, 0.2)',
+                      },
+                      '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
+                        borderBottomColor: 'rgba(0, 122, 255, 0.3)',
+                      },
+                      '& .MuiInput-underline:after': {
+                        borderBottomColor: 'rgba(0, 122, 255, 0.4)',
+                      },
+                    }}
+                  />
+                ) : (
+                  <Typography
+                    variant="h3"
+                    onClick={handleRoundClick}
+                    sx={{
+                      color: '#007aff',
+                      fontWeight: 'bold',
+                      fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' },
+                      whiteSpace: 'nowrap',
+                      cursor: 'pointer',
+                      '&:hover': { opacity: 0.8 },
+                    }}
+                  >
+                    {drwNo}회
+                  </Typography>
+                )}
+              </Box>
               <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, whiteSpace: 'nowrap' }}>
                 {drwNoDate}
               </Typography>
