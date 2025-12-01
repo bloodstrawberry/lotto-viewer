@@ -16,12 +16,15 @@ import { getAllLottoNumbers } from "src/api/lottolibrary";
 
 export function OverviewLottoNumberView() {
   const [data, setData] = useState<any[]>([]);
-  const [visibleCount, setVisibleCount] = useState(50);
+  const [visibleCount, setVisibleCount] = useState(30);
   const [showBonus, setShowBonus] = useState(false);
   const [isReversed, setIsReversed] = useState(false);
 
   // ⭐ 숫자 보기 토글 (ON → 숫자 전체 보임)
   const [showNumbers, setShowNumbers] = useState(true);
+  
+  // ⭐ 구분선 보기 토글 (ON → 5의 배수마다 구분선 표시)
+  const [showDivider, setShowDivider] = useState(true);
 
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
 
@@ -29,7 +32,7 @@ export function OverviewLottoNumberView() {
     const allData = getAllLottoNumbers();
     const sortedDesc = [...allData].sort((a, b) => b.drwNo - a.drwNo);
     setData(sortedDesc);
-    setVisibleCount(50);
+    setVisibleCount(30);
   }, []);
 
   const displayed = (() => {
@@ -76,6 +79,16 @@ export function OverviewLottoNumberView() {
               <FormControlLabel
                 control={
                   <Switch
+                    checked={showDivider}
+                    onChange={(e) => setShowDivider(e.target.checked)}
+                  />
+                }
+                label="구분선"
+              />
+
+              <FormControlLabel
+                control={
+                  <Switch
                     checked={isReversed}
                     onChange={(e) => setIsReversed(e.target.checked)}
                   />
@@ -91,7 +104,7 @@ export function OverviewLottoNumberView() {
               <Button
                 variant="soft"
                 color="inherit"
-                onClick={() => setVisibleCount((prev)=>Math.min(prev+50, data.length))}
+                onClick={() => setVisibleCount((prev)=>Math.min(prev+30, data.length))}
                 disabled={visibleCount >= data.length}
                 sx={{ minWidth:40 }}
               >
@@ -107,6 +120,7 @@ export function OverviewLottoNumberView() {
                   selectedNumbers={selectedNumbers}
                   handleNumberClick={handleNumberClick}
                   showNumbers={showNumbers}
+                  showDivider={showDivider}
                 />
               )}
 
@@ -116,6 +130,7 @@ export function OverviewLottoNumberView() {
                   round={round}
                   showBonus={showBonus}
                   showNumbers={showNumbers}
+                  showDivider={showDivider}
                 />
               ))}
 
@@ -124,6 +139,7 @@ export function OverviewLottoNumberView() {
                   selectedNumbers={selectedNumbers}
                   handleNumberClick={handleNumberClick}
                   showNumbers={showNumbers}
+                  showDivider={showDivider}
                 />
               )}
             </div>
@@ -134,7 +150,7 @@ export function OverviewLottoNumberView() {
               <Button
                 variant="soft"
                 color="inherit"
-                onClick={() => setVisibleCount((prev)=>Math.min(prev+50, data.length))}
+                onClick={() => setVisibleCount((prev)=>Math.min(prev+30, data.length))}
                 disabled={visibleCount >= data.length}
                 sx={{ minWidth:40 }}
               >
@@ -156,10 +172,12 @@ function PredictRow({
   selectedNumbers,
   handleNumberClick,
   showNumbers,
+  showDivider,
 }: {
   selectedNumbers: number[];
   handleNumberClick: (num: number) => void;
   showNumbers: boolean;
+  showDivider: boolean;
 }) {
   return (
     <div style={{ display:"flex", alignItems:"center", marginBottom:"2px" }}>
@@ -181,7 +199,7 @@ function PredictRow({
       <div style={{ flex:1, display:"flex", gap:"1px" }}>
         {Array.from({ length:45 }, (_,i)=>i+1).map((num)=>{
           const isSelected = selectedNumbers.includes(num);
-          const showDivider = num % 5 === 0 && num !== 45;
+          const shouldShowDivider = showDivider && num % 5 === 0 && num !== 45;
 
           const shouldShowNumber = showNumbers ? true : isSelected;
 
@@ -208,7 +226,7 @@ function PredictRow({
                 {shouldShowNumber ? num : ""}
               </div>
 
-              {showDivider && (
+              {shouldShowDivider && (
                 <div
                   style={{
                     width:"1px",
@@ -232,10 +250,12 @@ function DataRow({
   round,
   showBonus,
   showNumbers,
+  showDivider,
 }: {
   round: any;
   showBonus: boolean;
   showNumbers: boolean;
+  showDivider: boolean;
 }) {
   const [clicked, setClicked] = useState<number[]>([]);
 
@@ -275,7 +295,7 @@ function DataRow({
           if (isWinning) bgColor = isClicked ? "#ff4444" : "#658effff";
           if (isBonus) bgColor = "#FFB74D";
 
-          const showDivider = num % 5 === 0 && num !== 45;
+          const shouldShowDivider = showDivider && num % 5 === 0 && num !== 45;
 
           // ⭐ 숫자를 보여줄지 결정
           const shouldShowNumber = showNumbers || isClicked;
@@ -304,7 +324,7 @@ function DataRow({
                 {shouldShowNumber ? num : ""}
               </div>
 
-              {showDivider && (
+              {shouldShowDivider && (
                 <div
                   style={{
                     width:"1px",
