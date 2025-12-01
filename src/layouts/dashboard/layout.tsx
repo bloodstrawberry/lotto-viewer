@@ -72,7 +72,7 @@ export function DashboardLayout({
 
   const navData = slotProps?.nav?.data ?? dashboardNavData;
 
-  const isNavMini = settings.state.navLayout === 'mini';
+  const isNavMini = true;
   const isNavHorizontal = settings.state.navLayout === 'horizontal';
   const isNavVertical = isNavMini || settings.state.navLayout === 'vertical';
 

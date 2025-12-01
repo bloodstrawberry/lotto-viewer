@@ -100,32 +100,34 @@ export function OverviewLottoNumberView() {
             </Box>
           )}
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
-            {!isReversed && (
-              <PredictRow
-                selectedNumbers={selectedNumbers}
-                handleNumberClick={handleNumberClick}
-                showNumbers={showNumbers}
-              />
-            )}
+          <Box sx={{ overflowX: "auto", width: "100%" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1px", minWidth: "600px" }}>
+              {!isReversed && (
+                <PredictRow
+                  selectedNumbers={selectedNumbers}
+                  handleNumberClick={handleNumberClick}
+                  showNumbers={showNumbers}
+                />
+              )}
 
-            {displayed.map((round) => (
-              <DataRow
-                key={round.drwNo}
-                round={round}
-                showBonus={showBonus}
-                showNumbers={showNumbers}
-              />
-            ))}
+              {displayed.map((round) => (
+                <DataRow
+                  key={round.drwNo}
+                  round={round}
+                  showBonus={showBonus}
+                  showNumbers={showNumbers}
+                />
+              ))}
 
-            {isReversed && (
-              <PredictRow
-                selectedNumbers={selectedNumbers}
-                handleNumberClick={handleNumberClick}
-                showNumbers={showNumbers}
-              />
-            )}
-          </div>
+              {isReversed && (
+                <PredictRow
+                  selectedNumbers={selectedNumbers}
+                  handleNumberClick={handleNumberClick}
+                  showNumbers={showNumbers}
+                />
+              )}
+            </div>
+          </Box>
 
           {!isReversed && (
             <Box sx={{ display:"flex", justifyContent:"center", mt:3, mb:1 }}>
@@ -189,6 +191,7 @@ function PredictRow({
                 onClick={() => handleNumberClick(num)}
                 style={{
                   flex:1,
+                  minWidth: 0,
                   aspectRatio:"1/1",
                   backgroundColor: isSelected ? "#ff4444" : "#E8EAED",
                   borderRadius:"20%",
@@ -283,6 +286,7 @@ function DataRow({
                 onClick={() => handleClick(num, isWinning)}
                 style={{
                   flex:1,
+                  minWidth: 0,
                   aspectRatio:"1/1",
                   backgroundColor:bgColor,
                   borderRadius:"20%",
