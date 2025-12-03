@@ -45,12 +45,64 @@ export const Ball = styled(Box)(({ theme }) => ({
   },
 }));
 
+// Theme types
+export type ThemeType = 'default' | 'range';
+
+export const THEME_NAMES: Record<ThemeType, string> = {
+  default: '기본',
+  range: '범위별',
+};
+
+// Ball color for home display (original function)
 export const getBallColor = (num: number) => {
   if (num <= 10) return '#fbc400';
   if (num <= 20) return '#69c8f2';
   if (num <= 30) return '#ff7272';
   if (num <= 40) return '#aaaaaa';
   return '#b0d840';
+};
+
+// Theme-based cell colors for pattern view
+export const getCellColorByTheme = (theme: ThemeType, num: number, isWinning: boolean, isBonus: boolean, isClicked: boolean): string => {
+  // Bonus always has priority
+  if (isBonus) return '#d54dffff';
+  
+  // Clicked state
+  if (isClicked) return '#000000ff';
+  
+  // Non-winning cells
+  if (!isWinning) return '#F1F3F4';
+  
+  // Winning cells - apply theme
+  if (theme === 'range') {
+    // Range-based colors (same as getBallColor)
+    if (num <= 10) return '#fbc400';
+    if (num <= 20) return '#69c8f2';
+    if (num <= 30) return '#ff7272';
+    if (num <= 40) return '#aaaaaa';
+    return '#b0d840';
+  }
+  
+  // Default theme
+  return '#658effff';
+};
+
+// Get predict cell color (for user selection row)
+export const getPredictCellColor = (theme: ThemeType, num: number, isSelected: boolean): string => {
+  if (isSelected) return '#000000ff';
+  
+  // Non-selected cells show theme preview
+  if (theme === 'range') {
+    // Show range colors even when not selected
+    if (num <= 10) return '#fbc400';
+    if (num <= 20) return '#69c8f2';
+    if (num <= 30) return '#ff7272';
+    if (num <= 40) return '#aaaaaa';
+    return '#b0d840';
+  }
+  
+  // Default theme
+  return '#E8EAED';
 };
 
 export const getLength = () => {

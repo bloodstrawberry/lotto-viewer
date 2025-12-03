@@ -8,9 +8,10 @@ import CardHeader from "@mui/material/CardHeader";
 import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import ButtonGroup from "@mui/material/ButtonGroup";
 
 import { DashboardContent } from "src/layouts/dashboard";
-import { getAllLottoNumbers } from "src/api/lottolibrary";
+import { getAllLottoNumbers, ThemeType, THEME_NAMES, getCellColorByTheme, getPredictCellColor } from "src/api/lottolibrary";
 
 // ----------------------------------------------------------------------
 
@@ -25,6 +26,9 @@ export function OverviewLottoNumberView() {
   
   // ⭐ 구분선 보기 토글 (ON → 5의 배수마다 구분선 표시)
   const [showDivider, setShowDivider] = useState(true);
+
+  // ⭐ 테마 선택
+  const [theme, setTheme] = useState<ThemeType>('default');
 
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
 
@@ -55,7 +59,24 @@ export function OverviewLottoNumberView() {
           title="Pattern"
           sx={{ mb: 2 }}
           action={
-            <>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+              {/* 테마 선택 버튼 그룹 */}
+              <ButtonGroup variant="outlined" size="small">
+                {(Object.keys(THEME_NAMES) as ThemeType[]).map((themeKey) => (
+                  <Button
+                    key={themeKey}
+                    onClick={() => setTheme(themeKey)}
+                    variant={theme === themeKey ? 'contained' : 'outlined'}
+                    sx={{
+                      minWidth: '70px',
+                      fontWeight: theme === themeKey ? 'bold' : 'normal',
+                    }}
+                  >
+                    {THEME_NAMES[themeKey]}
+                  </Button>
+                ))}
+              </ButtonGroup>
+
               <FormControlLabel
                 control={
                   <Switch
@@ -95,7 +116,7 @@ export function OverviewLottoNumberView() {
                 }
                 label="역순"
               />
-            </>
+            </Box>
           }
         />
         <Box sx={{ p: 2 }}>
@@ -121,6 +142,7 @@ export function OverviewLottoNumberView() {
                   handleNumberClick={handleNumberClick}
                   showNumbers={showNumbers}
                   showDivider={showDivider}
+                  theme={theme}
                 />
               )}
 
@@ -131,6 +153,7 @@ export function OverviewLottoNumberView() {
                   showBonus={showBonus}
                   showNumbers={showNumbers}
                   showDivider={showDivider}
+                  theme={theme}
                 />
               ))}
 
@@ -140,6 +163,7 @@ export function OverviewLottoNumberView() {
                   handleNumberClick={handleNumberClick}
                   showNumbers={showNumbers}
                   showDivider={showDivider}
+                  theme={theme}
                 />
               )}
             </div>
@@ -173,11 +197,13 @@ function PredictRow({
   handleNumberClick,
   showNumbers,
   showDivider,
+  theme,
 }: {
   selectedNumbers: number[];
   handleNumberClick: (num: number) => void;
   showNumbers: boolean;
   showDivider: boolean;
+  theme: ThemeType;
 }) {
   return (
     <div style={{ display:"flex", alignItems:"center", marginBottom:"2px" }}>
@@ -202,6 +228,10 @@ function PredictRow({
           const shouldShowDivider = showDivider && num % 5 === 0 && num !== 45;
 
           const shouldShowNumber = showNumbers ? true : isSelected;
+          const bgColor = getPredictCellColor(theme, num, isSelected);
+          
+          // 텍스트 색상 결정: 선택되었거나 범위별/모노크롬/파스텔 테마일 때는 흰색, 기본 테마일 때는 어두운 색
+          const textColor = isSelected || theme !== 'default' ? '#fff' : '#555';
 
           return (
             <React.Fragment key={num}>
@@ -211,16 +241,15 @@ function PredictRow({
                   flex:1,
                   minWidth: 0,
                   aspectRatio:"1/1",
-                  backgroundColor: isSelected ? "#ff4444" : "#E8EAED",
+                  backgroundColor: bgColor,
                   borderRadius:"20%",
                   cursor:"pointer",
-
                   display:"flex",
                   alignItems:"center",
                   justifyContent:"center",
                   fontWeight:"bold",
                   fontSize:"clamp(0.1px, 1.8vw, 12px)",
-                  color: shouldShowNumber ? (isSelected?"#fff":"#555") : "transparent",
+                  color: shouldShowNumber ? textColor : "transparent",
                 }}
               >
                 {shouldShowNumber ? num : ""}
@@ -251,11 +280,13 @@ function DataRow({
   showBonus,
   showNumbers,
   showDivider,
+  theme,
 }: {
   round: any;
   showBonus: boolean;
   showNumbers: boolean;
   showDivider: boolean;
+  theme: ThemeType;
 }) {
   const [clicked, setClicked] = useState<number[]>([]);
 
@@ -291,9 +322,7 @@ function DataRow({
           const isBonus = showBonus && round.bonus === num;
           const isClicked = clicked.includes(num);
 
-          let bgColor = "#F1F3F4";
-          if (isWinning) bgColor = isClicked ? "#ff4444" : "#658effff";
-          if (isBonus) bgColor = "#FFB74D";
+          const bgColor = getCellColorByTheme(theme, num, isWinning, isBonus, isClicked);
 
           const shouldShowDivider = showDivider && num % 5 === 0 && num !== 45;
 
