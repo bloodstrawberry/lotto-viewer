@@ -124,7 +124,8 @@ const updateLottoJson = async (targetDateStr) => {
     const today = new Date();
     const formatted = today.toISOString().split("T")[0];
 
-    githubWrite("json/lottoNumber.json", updatedJson, `${formatted} Update lottoNumber.json`); 
+    const githubFilePath = "json/lottoNumber.json";
+    githubWrite(githubFilePath, updatedJson, `${formatted} Update lottoNumber.json`); 
 
     console.log("Update complete.");
   } catch (error) {
