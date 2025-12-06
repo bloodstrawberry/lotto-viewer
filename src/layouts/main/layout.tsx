@@ -21,7 +21,6 @@ import { NavDesktop } from './nav/desktop';
 import { Footer, HomeFooter } from './footer';
 import { MenuButton } from '../components/menu-button';
 import { navData as mainNavData } from '../nav-config-main';
-import { SignInButton } from '../components/sign-in-button';
 import { SettingsButton } from '../components/settings-button';
 import { MainSection, LayoutSection, HeaderSection } from '../core';
 
@@ -94,23 +93,6 @@ export function MainLayout({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
             {/** @slot Settings button */}
             <SettingsButton />
-
-            {/** @slot Sign in button */}
-            <SignInButton />
-
-            {/** @slot Purchase button */}
-            <Button
-              variant="contained"
-              rel="noopener noreferrer"
-              target="_blank"
-              href={paths.minimalStore}
-              sx={(theme) => ({
-                display: 'none',
-                [theme.breakpoints.up(layoutQuery)]: { display: 'inline-flex' },
-              })}
-            >
-              Purchase
-            </Button>
           </Box>
         </>
       ),

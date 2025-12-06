@@ -5,8 +5,12 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
+
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
 import { varFade, varContainer, MotionViewport } from 'src/components/animate';
@@ -16,6 +20,8 @@ import * as LottoLibrary from 'src/api/lottolibrary';
 // ----------------------------------------------------------------------
 
 export function HomeLottoDisplay() {
+  const router = useRouter();
+
   const [currentIndex, setCurrentIndex] = useState(LottoLibrary.getLength() - 1);
   const [isEditing, setIsEditing] = useState(false);
   const [tempRound, setTempRound] = useState('');
@@ -230,6 +236,17 @@ export function HomeLottoDisplay() {
           </LottoLibrary.Ball>
         </m.div>
       </Stack>
+      
+      <m.div variants={varFade('inUp')}>
+        <Button
+          size="large"
+          variant="contained"
+          onClick={() => router.push(paths.dashboard.general.ecommerce)}
+          sx={{ mt: 5 }}
+        >
+          패턴 분석하러 가기
+        </Button>
+      </m.div>
     </Container>
   );
 }

@@ -17,18 +17,14 @@ import { useColorScheme } from '@mui/material/styles';
 import { themeConfig } from 'src/theme/theme-config';
 import { primaryColorPresets } from 'src/theme/with-settings';
 
-import { Label } from 'src/components/label';
-
 import { settingIcons } from './icons';
 import { Iconify } from '../../iconify';
-import { BaseOption } from './base-option';
 import { Scrollbar } from '../../scrollbar';
 import { SmallBlock, LargeBlock } from './styles';
 import { PresetsOptions } from './presets-options';
 import { FullScreenButton } from './fullscreen-button';
 import { FontSizeOptions, FontFamilyOptions } from './font-options';
 import { useSettingsContext } from '../context/use-settings-context';
-import { NavColorOptions, NavLayoutOptions } from './nav-layout-option';
 
 // ----------------------------------------------------------------------
 
@@ -38,15 +34,9 @@ export function SettingsDrawer({ sx, defaultSettings }: SettingsDrawerProps) {
 
   // Visible options by default settings
   const visibility = {
-    mode: hasKeys(defaultSettings, ['mode']),
-    contrast: hasKeys(defaultSettings, ['contrast']),
-    navColor: hasKeys(defaultSettings, ['navColor']),
-    fontSize: hasKeys(defaultSettings, ['fontSize']),
-    direction: hasKeys(defaultSettings, ['direction']),
-    navLayout: hasKeys(defaultSettings, ['navLayout']),
+    fontSize: hasKeys(defaultSettings, ['fontSize']),    
     fontFamily: hasKeys(defaultSettings, ['fontFamily']),
-    primaryColor: hasKeys(defaultSettings, ['primaryColor']),
-    compactLayout: hasKeys(defaultSettings, ['compactLayout']),
+    primaryColor: hasKeys(defaultSettings, ['primaryColor']),    
   };
 
   useEffect(() => {
@@ -92,68 +82,6 @@ export function SettingsDrawer({ sx, defaultSettings }: SettingsDrawerProps) {
     </Box>
   );
 
-  const renderMode = () => (
-    <BaseOption
-      label="Mode"
-      selected={settings.state.mode === 'dark'}
-      icon={<SvgIcon>{settingIcons.moon}</SvgIcon>}
-      action={
-        mode === 'system' ? (
-          <Label
-            sx={{
-              height: 20,
-              cursor: 'inherit',
-              borderRadius: '20px',
-              fontWeight: 'fontWeightSemiBold',
-            }}
-          >
-            System
-          </Label>
-        ) : null
-      }
-      onChangeOption={() => {
-        setMode(colorScheme === 'light' ? 'dark' : 'light');
-        settings.setState({ mode: colorScheme === 'light' ? 'dark' : 'light' });
-      }}
-    />
-  );
-
-  const renderContrast = () => (
-    <BaseOption
-      label="Contrast"
-      selected={settings.state.contrast === 'hight'}
-      icon={<SvgIcon>{settingIcons.contrast}</SvgIcon>}
-      onChangeOption={() => {
-        settings.setState({
-          contrast: settings.state.contrast === 'default' ? 'hight' : 'default',
-        });
-      }}
-    />
-  );
-
-  const renderDirection = () => (
-    <BaseOption
-      label="Right to left"
-      selected={settings.state.direction === 'rtl'}
-      icon={<SvgIcon>{settingIcons.alignRight}</SvgIcon>}
-      onChangeOption={() => {
-        settings.setState({ direction: settings.state.direction === 'ltr' ? 'rtl' : 'ltr' });
-      }}
-    />
-  );
-
-  const renderCompactLayout = () => (
-    <BaseOption
-      tooltip="Dashboard only and available at large resolutions > 1600px (xl)"
-      label="Compact"
-      selected={!!settings.state.compactLayout}
-      icon={<SvgIcon>{settingIcons.autofitWidth}</SvgIcon>}
-      onChangeOption={() => {
-        settings.setState({ compactLayout: !settings.state.compactLayout });
-      }}
-    />
-  );
-
   const renderPresets = () => (
     <LargeBlock
       title="Presets"
@@ -175,73 +103,6 @@ export function SettingsDrawer({ sx, defaultSettings }: SettingsDrawerProps) {
           settings.setState({ primaryColor: newOption });
         }}
       />
-    </LargeBlock>
-  );
-
-  const renderNav = () => (
-    <LargeBlock title="Nav" tooltip="Dashboard only" sx={{ gap: 2.5 }}>
-      {visibility.navLayout && (
-        <SmallBlock
-          label="Layout"
-          canReset={settings.state.navLayout !== defaultSettings.navLayout}
-          onReset={() => {
-            settings.setState({ navLayout: defaultSettings.navLayout });
-          }}
-        >
-          <NavLayoutOptions
-            value={settings.state.navLayout}
-            onChangeOption={(newOption) => {
-              settings.setState({ navLayout: newOption });
-            }}
-            options={[
-              {
-                value: 'vertical',
-                icon: (
-                  <SvgIcon sx={{ width: 1, height: 'auto' }}>{settingIcons.navVertical}</SvgIcon>
-                ),
-              },
-              {
-                value: 'horizontal',
-                icon: (
-                  <SvgIcon sx={{ width: 1, height: 'auto' }}>{settingIcons.navHorizontal}</SvgIcon>
-                ),
-              },
-              {
-                value: 'mini',
-                icon: <SvgIcon sx={{ width: 1, height: 'auto' }}>{settingIcons.navMini}</SvgIcon>,
-              },
-            ]}
-          />
-        </SmallBlock>
-      )}
-      {visibility.navColor && (
-        <SmallBlock
-          label="Color"
-          canReset={settings.state.navColor !== defaultSettings.navColor}
-          onReset={() => {
-            settings.setState({ navColor: defaultSettings.navColor });
-          }}
-        >
-          <NavColorOptions
-            value={settings.state.navColor}
-            onChangeOption={(newOption) => {
-              settings.setState({ navColor: newOption });
-            }}
-            options={[
-              {
-                label: 'Integrate',
-                value: 'integrate',
-                icon: <SvgIcon>{settingIcons.sidebarOutline}</SvgIcon>,
-              },
-              {
-                label: 'Apparent',
-                value: 'apparent',
-                icon: <SvgIcon>{settingIcons.sidebarFill}</SvgIcon>,
-              },
-            ]}
-          />
-        </SmallBlock>
-      )}
     </LargeBlock>
   );
 
@@ -323,14 +184,7 @@ export function SettingsDrawer({ sx, defaultSettings }: SettingsDrawerProps) {
             flexDirection: 'column',
           }}
         >
-          <Box sx={{ gap: 2, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
-            {visibility.mode && renderMode()}
-            {visibility.contrast && renderContrast()}
-            {visibility.direction && renderDirection()}
-            {visibility.compactLayout && renderCompactLayout()}
-          </Box>
-
-          {(visibility.navColor || visibility.navLayout) && renderNav()}
+          <Box sx={{ mt: -2 }} />
           {visibility.primaryColor && renderPresets()}
           {(visibility.fontFamily || visibility.fontSize) && renderFont()}
         </Box>

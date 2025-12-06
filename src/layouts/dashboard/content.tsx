@@ -35,7 +35,7 @@ export function DashboardContent({
   return (
     <Container
       className={mergeClasses([layoutClasses.content, className])}
-      maxWidth={settings.state.compactLayout ? maxWidth : false}
+      maxWidth={maxWidth}
       sx={[
         (theme) => ({
           display: 'flex',
@@ -46,6 +46,7 @@ export function DashboardContent({
           [theme.breakpoints.up(layoutQuery)]: {
             px: 'var(--layout-dashboard-content-px)',
             ...(isNavHorizontal && { '--layout-dashboard-content-pt': '40px' }),
+            ...({ maxWidth: '90%' }),
           },
           ...(disablePadding && {
             p: {
