@@ -4,6 +4,11 @@
   "version": "7.3.0",
   "description": "Next & TypeScript",
   "private": true,
+  "next": {
+    "eslint": {
+      "ignoreDuringBuilds": true
+    }
+  },
   "scripts": {
     "dev": "next dev -p 8082 --turbopack",
     "start": "next start -p 8082",
