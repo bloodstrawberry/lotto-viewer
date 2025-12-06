@@ -1,6 +1,51 @@
 const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
+const fetch = require("node-fetch");
+
+const { Octokit } = require("@octokit/core");
+
+const userName = "bloodstrawberry";
+const userEmail = "bloodstrawberry.library@gmail.com";
+const repo = "lotto-viewer";
+const token = process.env.GH_TOKEN;
+
+const getSHA = async (octokit, path) => {
+  const response = await octokit.request(
+    `GET /repos/${userName}/${repo}/contents/${path}`
+  );
+
+  return response.data.sha;
+};
+
+const githubWrite = async (path, contents, commitMessage) => {
+  const octokit = new Octokit({
+    auth: token,
+    request: {
+      fetch: fetch,
+    },
+  });
+
+  const fileSHA = await getSHA(octokit, path);
+
+  const response = await octokit.request(
+    `PUT /repos/${userName}/${repo}/contents/${path}`,
+    {
+      sha: fileSHA,
+      message: commitMessage,
+      committer: {
+        name: userName,
+        email: userEmail,
+      },
+
+      // btoa : 바이너리 데이터를 base64로 인코딩
+      // unescape(encodeURIComponent(())) <- 한글 처리
+      content: btoa(unescape(encodeURIComponent(`${contents}`))),
+    }
+  );
+
+  console.log(response.status);
+};
 
 const getLottoNumber = async (drwNo) => {
   try {
@@ -36,7 +81,7 @@ const getLottoRound = (date) => {
 };
 
 const updateLottoJson = async (targetDateStr) => {
-  const filePath = path.join(__dirname, "../json/lottoNumber.json");
+  const filePath = path.join(__dirname, "lotto/lottoNumber.json");
 
   try {
     const data = fs.readFileSync(filePath, "utf-8");
@@ -70,16 +115,25 @@ const updateLottoJson = async (targetDateStr) => {
       }
     }
 
-    fs.writeFileSync(filePath, JSON.stringify(lottoJson, null, 4));
+    // fs.writeFileSync(filePath, JSON.stringify(lottoJson, null, 4));
+
+    const updatedJson = JSON.stringify(lottoJson, null, 2);
+    
+    const today = new Date();
+    const formatted = today.toISOString().split("T")[0];
+
+    githubWrite(filePath, updatedJson, `${formatted} Update lottoNumber.json`); 
+
     console.log("Update complete.");
   } catch (error) {
     console.error("Error updating lotto json:", error);
   }
 };
 
-// Execute if run directly
-if (require.main === module) {
-    // Check for command line argument or use default (undefined -> Today)
-    const argDate = process.argv[2];
-    updateLottoJson(argDate);
-}
+// // Execute if run directly
+// if (require.main === module) {
+//     // Check for command line argument or use default (undefined -> Today)
+//     const argDate = process.argv[2];
+//     updateLottoJson(argDate);
+// }
+
