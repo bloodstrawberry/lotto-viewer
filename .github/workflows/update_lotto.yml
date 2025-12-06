@@ -8,6 +8,9 @@ on:
     - cron: "30 12 * * 6"   # 21:30 KST
     - cron: "45 12 * * 6"   # 21:45 KST
     - cron: "0 13 * * 6"    # 22:00 KST
+    - cron: "10 13 * * 6"    # 22:00 KST
+    - cron: "20 13 * * 6"    # 22:00 KST
+    - cron: "30 13 * * 6"    # 22:00 KST
 
 jobs:
   update-lotto:
@@ -49,17 +52,24 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
+        # 혹시 모를 로컬 변경 초기화 (가장 중요!)
+        git reset --hard HEAD
+        git clean -fd
+
+        # 최신 리모트 내용 가져오기 (충돌 방지)
+        git pull --rebase origin main
+
+        # version.md 다시 반영
+        TODAY=$(TZ=Asia/Seoul date +"%Y-%m-%d %H:%M:%S KST")
+        echo "Last Update: $TODAY" > version.md
+
         git add version.md
 
         if ! git diff --cached --quiet; then
-          git commit -m "Update version.md on $(date '+%Y-%m-%d %H:%M:%S')"
-
-          # 최신 리모트 변경사항 가져오기
-          git pull --rebase origin main
-
-          # 푸시
+          git commit -m "Update version.md on $TODAY"
           git push https://x-access-token:${{ secrets.MY_TOKEN }}@github.com/${{ github.repository }}.git
         else
           echo "No changes to commit"
         fi
+
 
