@@ -130,10 +130,10 @@ const updateLottoJson = async (targetDateStr) => {
   }
 };
 
-// // Execute if run directly
-// if (require.main === module) {
-//     // Check for command line argument or use default (undefined -> Today)
-//     const argDate = process.argv[2];
-//     updateLottoJson(argDate);
-// }
+// Execute if run directly
+if (require.main === module) {
+    // Check for command line argument or use default (undefined -> Today)
+    const argDate = process.argv[2];
+    updateLottoJson(argDate);
+}
 
