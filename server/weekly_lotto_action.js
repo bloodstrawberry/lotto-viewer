@@ -82,7 +82,7 @@ const getLottoRound = (date) => {
 
 const updateLottoJson = async (targetDateStr) => {
   const filePath = path.join(__dirname, "../json/lottoNumber.json");
-  
+
   console.log("filePath :", filePath);
 
   try {
@@ -124,7 +124,7 @@ const updateLottoJson = async (targetDateStr) => {
     const today = new Date();
     const formatted = today.toISOString().split("T")[0];
 
-    githubWrite(filePath, updatedJson, `${formatted} Update lottoNumber.json`); 
+    githubWrite("json/lottoNumber.json", updatedJson, `${formatted} Update lottoNumber.json`); 
 
     console.log("Update complete.");
   } catch (error) {
