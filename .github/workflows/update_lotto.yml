@@ -41,6 +41,9 @@ jobs:
         TODAY=$(TZ=Asia/Seoul date +"%Y-%m-%d %H:%M:%S KST")
         echo "Last Update: $TODAY" > version.md
 
+    - name: Sleep before commit & push
+      run: sleep 100
+
     - name: Commit and Push changes
       run: |
         git config --global user.name "github-actions[bot]"
