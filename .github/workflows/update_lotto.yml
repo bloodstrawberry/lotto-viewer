@@ -20,11 +20,13 @@ jobs:
       with:
         node-version: '16'
 
-    - name: Install Dependencies
+    - name: Run Script Without Repo Dependencies
       run: |
-        npm install axios --no-package-lock --no-save
-        npm install @octokit/rest@20.0.2 --no-save
-        npm install node-fetch@2 --no-save
+        mkdir temp
+        cd temp
+        npm init -y
+        npm install axios @octokit/rest@20.0.2 node-fetch@2
+        node ../server/weekly_lotto_action.js
 
     - name: Run Node.js Script
       run: node server/weekly_lotto_action.js
