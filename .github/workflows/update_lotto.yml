@@ -48,10 +48,15 @@ jobs:
 
         git add version.md
 
-        # 변경사항이 있을 때만 커밋하도록 조건문 처리
         if ! git diff --cached --quiet; then
-          git commit -m "Update version.md on $TODAY"
+          git commit -m "Update version.md on $(date '+%Y-%m-%d %H:%M:%S')"
+
+          # 최신 리모트 변경사항 가져오기
+          git pull --rebase origin main
+
+          # 푸시
           git push https://x-access-token:${{ secrets.MY_TOKEN }}@github.com/${{ github.repository }}.git
         else
           echo "No changes to commit"
         fi
+
