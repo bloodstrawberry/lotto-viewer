@@ -81,7 +81,9 @@ const getLottoRound = (date) => {
 };
 
 const updateLottoJson = async (targetDateStr) => {
-  const filePath = path.join("../json/lottoNumber.json");
+  const filePath = path.join(__dirname, "../json/lottoNumber.json");
+  
+  console.log("filePath :", filePath);
 
   try {
     const data = fs.readFileSync(filePath, "utf-8");
