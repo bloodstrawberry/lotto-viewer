@@ -3,11 +3,11 @@ name: Weekly Update Lotto
 on:
   schedule:
     - cron: "45 11 * * 6"   # 20:45 KST
-    - cron: "0 12 * * 6"   # 21:00 KST
+    - cron: "0 12 * * 6"    # 21:00 KST
     - cron: "15 12 * * 6"   # 21:15 KST
     - cron: "30 12 * * 6"   # 21:30 KST
     - cron: "45 12 * * 6"   # 21:45 KST
-    - cron: "0 13 * * 6"   # 22:00 KST
+    - cron: "0 13 * * 6"    # 22:00 KST
 
 jobs:
   update-lotto:
@@ -15,10 +15,12 @@ jobs:
 
     env:
       GH_TOKEN: ${{ secrets.MY_TOKEN }}
-      
+
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.MY_TOKEN }}
 
     - name: Set Up Node.js
       uses: actions/setup-node@v3
@@ -33,3 +35,23 @@ jobs:
 
     - name: Run Node.js Script
       run: node server/weekly_lotto_action.js
+
+    - name: Update version.md with current date
+      run: |
+        TODAY=$(TZ=Asia/Seoul date +"%Y-%m-%d %H:%M:%S KST")
+        echo "Last Update: $TODAY" > version.md
+
+    - name: Commit and Push changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+        git add version.md
+
+        # 변경사항이 있을 때만 커밋하도록 조건문 처리
+        if ! git diff --cached --quiet; then
+          git commit -m "Update version.md on $TODAY"
+          git push https://x-access-token:${{ secrets.MY_TOKEN }}@github.com/${{ github.repository }}.git
+        else
+          echo "No changes to commit"
+        fi
