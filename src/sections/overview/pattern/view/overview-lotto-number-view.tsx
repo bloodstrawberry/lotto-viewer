@@ -164,10 +164,7 @@ export function OverviewLottoNumberView() {
                  {(Object.keys(THEME_NAMES) as ThemeType[]).map((themeKey) => (
                     <Tooltip key={themeKey} title={THEME_NAMES[themeKey]}>
                       <ToggleButton value={themeKey} aria-label={THEME_NAMES[themeKey]}>
-                        <Iconify icon={(themeKey === 'default'
-                          ? 'mdi:format-color-fill'
-                          : 'mdi:palette') as any}
-                        />
+                        <Iconify icon={themeKey === 'default' ? 'mdi:format-color-fill' : 'mdi:palette'} />
                       </ToggleButton>
                     </Tooltip>
                  ))}
