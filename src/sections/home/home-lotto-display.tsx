@@ -241,7 +241,7 @@ export function HomeLottoDisplay() {
         <Button
           size="large"
           variant="contained"
-          onClick={() => router.push(paths.dashboard.general.ecommerce)}
+          onClick={() => router.push(paths.dashboard.general.pattern)}
           sx={{ mt: 5 }}
         >
           패턴 분석하러 가기

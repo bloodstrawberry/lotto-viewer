@@ -39,7 +39,7 @@ const ICONS = {
   external: icon('ic-external'),
   subpaths: icon('ic-subpaths'),
   menuItem: icon('ic-menu-item'),
-  ecommerce: icon('ic-ecommerce'),
+  pattern: icon('ic-ecommerce'),
   analytics: icon('ic-analytics'),
   dashboard: icon('ic-dashboard'),
 };
@@ -69,7 +69,7 @@ export const navData: NavSectionProps['data'] = [
     subheader: 'Overview',
     items: [
       { title: 'App', path: paths.dashboard.root, icon: ICONS.dashboard },
-      { title: 'Ecommerce', path: paths.dashboard.general.ecommerce, icon: ICONS.ecommerce },
+      { title: '패턴분석', path: paths.dashboard.general.pattern, icon: ICONS.pattern },
       { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
       { title: 'Banking', path: paths.dashboard.general.banking, icon: ICONS.banking },
       { title: 'Booking', path: paths.dashboard.general.booking, icon: ICONS.booking },

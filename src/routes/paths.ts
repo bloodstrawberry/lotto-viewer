@@ -100,7 +100,7 @@ export const paths = {
     permission: `${ROOTS.DASHBOARD}/permission`,
     general: {
       app: `${ROOTS.DASHBOARD}/app`,
-      ecommerce: `${ROOTS.DASHBOARD}/ecommerce`,
+      pattern: `${ROOTS.DASHBOARD}/pattern`,
       analytics: `${ROOTS.DASHBOARD}/analytics`,
       banking: `${ROOTS.DASHBOARD}/banking`,
       booking: `${ROOTS.DASHBOARD}/booking`,
