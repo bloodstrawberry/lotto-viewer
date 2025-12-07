@@ -98,12 +98,12 @@ export function OverviewLottoNumberView() {
   const [showNumbers, setShowNumbers] = useState(true);
   
   // ⭐ 구분선 보기 토글 (ON → 5의 배수마다 구분선 표시)
-  const [showDivider, setShowDivider] = useState(true);
+  const [showDivider, setShowDivider] = useState(false);
 
   // ⭐ 테마 선택
   const [theme, setTheme] = useState<ThemeType>('default');
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
-  const [showMissing, setShowMissing] = useState(false);
+  const [showMissing, setShowMissing] = useState(true);
   const [missingStats, setMissingStats] = useState<Record<number, Record<number, number>>>({});
 
   useEffect(() => {
