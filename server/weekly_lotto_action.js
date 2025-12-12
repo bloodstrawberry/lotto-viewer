@@ -96,24 +96,47 @@ const updateLottoJson = async (targetDateStr) => {
 
     console.log(`Last Round: ${lastDrwNo}, Target Round: ${targetRound} (Target Date: ${targetDateStr || 'Today'})`);
 
-    if (targetRound <= lastDrwNo) {
-      console.log("Already up to date.");
-      return;
+    // 최신 회차부터 3회차 전까지의 데이터를 갱신 (정보가 변경될 수 있음)
+    if (lastDrwNo > 0) {
+      const refreshStart = Math.max(1, lastDrwNo - 2); // 최신 회차부터 3회차 전까지 (최소 1회차)
+      console.log(`Refreshing rounds ${refreshStart} to ${lastDrwNo}...`);
+      
+      for (let i = refreshStart; i <= lastDrwNo; i++) {
+        console.log(`Refreshing round ${i}...`);
+        const lottoData = await getLottoNumber(i);
+        
+        if (lottoData && lottoData.returnValue === 'success') {
+          // 기존 데이터를 찾아서 업데이트
+          const existingIndex = lottoJson.findIndex(item => item.drwNo === i);
+          if (existingIndex !== -1) {
+            lottoJson[existingIndex] = lottoData;
+            console.log(`Updated round ${i}`);
+          }
+        } else {
+          console.log(`Failed to refresh round ${i}`);
+        }
+      }
     }
 
-    for (let i = lastDrwNo + 1; i <= targetRound; i++) {
-      console.log(`Fetching round ${i}...`);
-      const lottoData = await getLottoNumber(i);
-      
-      if (lottoData && lottoData.returnValue === 'success') {
-        lottoJson.push(lottoData);
-      } else {
-        console.log(`Failed to fetch round ${i} or data not available yet.`);
-        // If we fail to fetch, we might want to stop to avoid gaps, or continue?
-        // Usually if one fails, subsequent might fail too if it's future.
-        // But if it's a network error, we might want to retry.
-        // For now, break is safer to avoid gaps.
-        break; 
+    if (targetRound <= lastDrwNo) {
+      console.log("Already up to date.");
+      // 갱신만 했으므로 계속 진행하여 저장
+    } else {
+      // 새로운 회차 추가
+      for (let i = lastDrwNo + 1; i <= targetRound; i++) {
+        console.log(`Fetching round ${i}...`);
+        const lottoData = await getLottoNumber(i);
+        
+        if (lottoData && lottoData.returnValue === 'success') {
+          lottoJson.push(lottoData);
+        } else {
+          console.log(`Failed to fetch round ${i} or data not available yet.`);
+          // If we fail to fetch, we might want to stop to avoid gaps, or continue?
+          // Usually if one fails, subsequent might fail too if it's future.
+          // But if it's a network error, we might want to retry.
+          // For now, break is safer to avoid gaps.
+          break; 
+        }
       }
     }
 
