@@ -192,9 +192,13 @@ export function OverviewLottoNumberView() {
       <Card>
         <CardHeader
           title="패턴분석"
-          sx={{ mb: 1 }}
+          sx={{
+            mb: 0,
+            '& .MuiCardHeader-content': { display: { xs: 'none', sm: 'block' } },
+            '& .MuiCardHeader-action': { m: 0, width: { xs: '100%', sm: 'auto' } },
+          }}
           action={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', justifyContent: { xs: 'center', sm: 'flex-end' } }}>
               {/* 테마 선택 버튼 그룹 */}
               <ToggleButtonGroup
                 size="small"
@@ -205,8 +209,8 @@ export function OverviewLottoNumberView() {
               >
                  {(Object.keys(THEME_NAMES) as ThemeType[]).map((themeKey) => (
                     <Tooltip key={themeKey} title={THEME_NAMES[themeKey]}>
-                      <ToggleButton value={themeKey} aria-label={THEME_NAMES[themeKey]} sx={{ width: 24, height: 24 }}>
-                        <Iconify icon={themeKey === 'default' ? 'mdi:format-color-fill' : 'mdi:palette'} width={24} />
+                      <ToggleButton value={themeKey} aria-label={THEME_NAMES[themeKey]} sx={{ width: { xs: 20, sm: 22, md: 24 }, height: { xs: 20, sm: 22, md: 24 } }}>
+                        <Iconify icon={themeKey === 'default' ? 'mdi:format-color-fill' : 'mdi:palette'} width={24} sx={{ width: { xs: 14, sm: 15, md: 16 } }} />
                       </ToggleButton>
                     </Tooltip>
                  ))}
@@ -231,32 +235,32 @@ export function OverviewLottoNumberView() {
                 aria-label="view settings"
               >
                 <Tooltip title="숫자 보기">
-                  <ToggleButton value="showNumbers" aria-label="show numbers" sx={{ width: 24, height: 24 }}>
-                    <Iconify icon="mdi:numeric" width={24} />
+                  <ToggleButton value="showNumbers" aria-label="show numbers" sx={{ width: { xs: 20, sm: 22, md: 24 }, height: { xs: 20, sm: 22, md: 24 } }}>
+                    <Iconify icon="mdi:numeric" width={24} sx={{ width: { xs: 14, sm: 15, md: 16 } }} />
                   </ToggleButton>
                 </Tooltip>
                 
                 <Tooltip title="보너스 번호">
-                  <ToggleButton value="showBonus" aria-label="show bonus" sx={{ width: 24, height: 24 }}>
-                    <Iconify icon="mdi:star-circle-outline" width={24} />
+                  <ToggleButton value="showBonus" aria-label="show bonus" sx={{ width: { xs: 20, sm: 22, md: 24 }, height: { xs: 20, sm: 22, md: 24 } }}>
+                    <Iconify icon="mdi:star-circle-outline" width={24} sx={{ width: { xs: 14, sm: 15, md: 16 } }} />
                   </ToggleButton>
                 </Tooltip>
 
                 <Tooltip title="구분선">
-                  <ToggleButton value="showDivider" aria-label="show divider" sx={{ width: 24, height: 24 }}>
-                    <Iconify icon="mdi:view-week-outline" width={24} />
+                  <ToggleButton value="showDivider" aria-label="show divider" sx={{ width: { xs: 20, sm: 22, md: 24 }, height: { xs: 20, sm: 22, md: 24 } }}>
+                    <Iconify icon="mdi:view-week-outline" width={24} sx={{ width: { xs: 14, sm: 15, md: 16 } }} />
                   </ToggleButton>
                 </Tooltip>
 
                 <Tooltip title="역순">
-                  <ToggleButton value="isReversed" aria-label="reverse order" sx={{ width: 24, height: 24 }}>
-                    <Iconify icon="mdi:sort" width={24} />
+                  <ToggleButton value="isReversed" aria-label="reverse order" sx={{ width: { xs: 20, sm: 22, md: 24 }, height: { xs: 20, sm: 22, md: 24 } }}>
+                    <Iconify icon="mdi:sort" width={24} sx={{ width: { xs: 14, sm: 15, md: 16 } }} />
                   </ToggleButton>
                 </Tooltip>
 
                 <Tooltip title="미출현">
-                  <ToggleButton value="showMissing" aria-label="show missing" sx={{ width: 24, height: 24 }}>
-                    <Iconify icon="mdi:gradient" width={24} />
+                  <ToggleButton value="showMissing" aria-label="show missing" sx={{ width: { xs: 20, sm: 22, md: 24 }, height: { xs: 20, sm: 22, md: 24 } }}>
+                    <Iconify icon="mdi:gradient" width={24} sx={{ width: { xs: 14, sm: 15, md: 16 } }} />
                   </ToggleButton>
                 </Tooltip>
               </ToggleButtonGroup>
@@ -290,19 +294,19 @@ export function OverviewLottoNumberView() {
                 aria-label="pattern settings"
               >
                 <Tooltip title="연속">
-                  <ToggleButton value="consecutive" aria-label="show consecutive" sx={{ width: 24, height: 24 }}>
-                    <Iconify icon="mdi:link-variant" width={24} />
+                  <ToggleButton value="consecutive" aria-label="show consecutive" sx={{ width: { xs: 20, sm: 22, md: 24 }, height: { xs: 20, sm: 22, md: 24 } }}>
+                    <Iconify icon="mdi:link-variant" width={24} sx={{ width: { xs: 14, sm: 15, md: 16 } }} />
                   </ToggleButton>
                 </Tooltip>
 
                 <Tooltip title={jumpInterval === 0 ? "점프 (OFF)" : `점프 (${jumpInterval}회차)`}>
-                    <ToggleButton value="jump" aria-label="jump pattern" sx={{ width: 24, height: 24 }}>
+                    <ToggleButton value="jump" aria-label="jump pattern" sx={{ width: { xs: 20, sm: 22, md: 24 }, height: { xs: 20, sm: 22, md: 24 } }}>
                         {jumpInterval > 0 ? (
-                             <Box component="span" sx={{ fontWeight: 'bold', fontSize: 16, lineHeight: 1 }}>
+                             <Box component="span" sx={{ fontWeight: 'bold', fontSize: { xs: 10, sm: 11, md: 12 }, lineHeight: 1 }}>
                                 {jumpInterval}
                              </Box>
                         ) : (
-                             <Iconify icon="mdi:stairs" width={24} />
+                             <Iconify icon="mdi:stairs" width={24} sx={{ width: { xs: 14, sm: 15, md: 16 } }} />
                         )}
                     </ToggleButton>
                 </Tooltip>
