@@ -28,6 +28,7 @@ type LottoCellProps = {
   showDivider: boolean;
   onClick?: () => void;
   cursor?: string;
+  consecutiveColors?: string[];
 };
 
 const LottoCell = memo(({ 
@@ -38,7 +39,8 @@ const LottoCell = memo(({
   content, 
   showDivider, 
   onClick, 
-  cursor = "default" 
+  cursor = "default",
+  ...restProps 
 }: LottoCellProps) => (
   <React.Fragment key={num}>
     <div
@@ -58,6 +60,39 @@ const LottoCell = memo(({
         color: textColor,
         position: "relative",
         overflow: "hidden",
+        boxShadow: restProps.consecutiveColors 
+          ? (restProps.consecutiveColors.length === 1 
+              ? `inset 0 0 0 5px ${restProps.consecutiveColors[0]}`
+              : (() => {
+                  const colors = restProps.consecutiveColors!;
+                  // Map 4 sides: Top, Right, Bottom, Left
+                  // Inset Logic: 
+                  // Top: inset 0 5px 0 0
+                  // Right: inset -5px 0 0 0
+                  // Bottom: inset 0 -5px 0 0
+                  // Left: inset 5px 0 0 0
+                  
+                  // Assignment strategy:
+                  // 2 Colors: Top(0), Right(1), Bottom(1), Left(0) -> TopLeft=0, BottomRight=1
+                  // 3 Colors: Top(0), Right(1), Bottom(2), Left(0) -> TopLeft=0, Right=1, Bottom=2
+                  // 4 Colors: Top(0), Right(1), Bottom(2), Left(3)
+                  
+                  const getC = (idx: number) => colors[idx % colors.length];
+                  
+                  // If size 2, manually strict for clean diagonal look (or use side logic)
+                  // Side logic for 2: T=0, R=1, B=1, L=0.
+                  // Side logic for 3: T=0, R=1, B=2, L=0.
+                  
+                  // Construct 4 shadows
+                  const sTop = `inset 0 5px 0 0 ${getC(0)}`;
+                  const sRight = `inset -5px 0 0 0 ${getC(1)}`;
+                  const sBot = `inset 0 -5px 0 0 ${colors.length > 2 ? getC(2) : getC(1)}`;
+                  const sLeft = `inset 5px 0 0 0 ${colors.length > 3 ? getC(3) : getC(0)}`;
+                  
+                  return `${sTop}, ${sRight}, ${sBot}, ${sLeft}`;
+              })()
+            )
+          : "none",
       }}
     >
       {overlayColor && overlayColor !== 'transparent' && (
@@ -87,6 +122,30 @@ const LottoCell = memo(({
   </React.Fragment>
 ));
 
+// ----------------------------------------------------------------------
+// Helper
+// ----------------------------------------------------------------------
+
+const getConsecutiveColors = (diffSet?: Set<number>): string[] | undefined => {
+  if (!diffSet || diffSet.size === 0) return undefined;
+  
+  // if (diffSet.size > 2) return ['#ffffff']; // Removed: Support multi-colors
+
+  const getDiffColor = (d: number) => {
+    switch(d) {
+        case 1: return '#F50057'; 
+        case 2: return '#89ff29ff'; 
+        case 3: return '#ffe603ff'; 
+        case 4: return '#ff1fffff'; 
+        case 5: return '#26b12dff';
+        default: return '#000000';
+    }
+  };
+
+  const diffs = Array.from(diffSet).sort();
+  return diffs.map(d => getDiffColor(d));
+};
+
 
 export function OverviewLottoNumberView() {
   const [data, setData] = useState<any[]>([]);
@@ -106,6 +165,69 @@ export function OverviewLottoNumberView() {
   const [showMissing, setShowMissing] = useState(true);
   const [missingStats, setMissingStats] = useState<Record<number, Record<number, number>>>({});
 
+  // ⭐ 연속 보기 토글
+  const [showConsecutive, setShowConsecutive] = useState(false);
+
+  const { historyStats, predictCandidates } = useMemo(() => {
+    // Round -> Number -> Set<diff>
+    const stats: Record<number, Record<number, Set<number>>> = {};
+    const candidates: Record<number, Set<number>> = {}; // Number -> Set<diff>
+
+    if (!data || data.length < 3) return { historyStats: stats, predictCandidates: candidates };
+
+    const addStat = (drwNo: number, num: number, diff: number) => {
+        if (!stats[drwNo]) stats[drwNo] = {};
+        if (!stats[drwNo][num]) stats[drwNo][num] = new Set();
+        stats[drwNo][num].add(diff);
+    };
+
+    // 1. History Stats (Consecutive 3+)
+    for (let i = 0; i < data.length - 2; i++) {
+        const r1 = data[i];     // Newer
+        const r2 = data[i+1];
+        const r3 = data[i+2];   // Older
+
+        for (const n1 of r1.numbers) {
+            for (const n2 of r2.numbers) {
+                const diff = n1 - n2; 
+                // diff can be positive or negative. Absolute logic handles step.
+                const absDiff = Math.abs(diff);
+
+                if (diff === 0 || absDiff > 5) continue;
+
+                const n3 = n2 - diff;
+                if (r3.numbers.includes(n3)) {
+                     addStat(r1.drwNo, n1, absDiff);
+                     addStat(r2.drwNo, n2, absDiff);
+                     addStat(r3.drwNo, n3, absDiff);
+                }
+            }
+        }
+    }
+
+    // 2. Predict Candidates (Extension of latest sequence)
+    if (data.length >= 2) {
+        const r1 = data[0]; // Latest
+        const r2 = data[1]; // Previous
+        
+        for (const n1 of r1.numbers) {
+            for (const n2 of r2.numbers) {
+                 const diff = n1 - n2;
+                 const absDiff = Math.abs(diff);
+
+                 if (diff !== 0 && absDiff <= 5) {
+                     const candidate = n1 + diff;
+                     if (candidate >= 1 && candidate <= 45) {
+                         if (!candidates[candidate]) candidates[candidate] = new Set();
+                         candidates[candidate].add(absDiff);
+                     }
+                 }
+            }
+        }
+    }
+
+    return { historyStats: stats, predictCandidates: candidates };
+  }, [data]);
   useEffect(() => {
     const allData = getAllLottoNumbers();
     const sortedDesc = [...allData].sort((a, b) => b.drwNo - a.drwNo);
@@ -178,6 +300,7 @@ export function OverviewLottoNumberView() {
                   showDivider && 'showDivider',
                   isReversed && 'isReversed',
                   showMissing && 'showMissing',
+                  showConsecutive && 'showConsecutive',
                 ].filter(Boolean)}
                 onChange={(event, newValues) => {
                   setShowNumbers(newValues.includes('showNumbers'));
@@ -185,6 +308,7 @@ export function OverviewLottoNumberView() {
                   setShowDivider(newValues.includes('showDivider'));
                   setIsReversed(newValues.includes('isReversed'));
                   setShowMissing(newValues.includes('showMissing'));
+                  setShowConsecutive(newValues.includes('showConsecutive'));
                 }}
                 aria-label="view settings"
               >
@@ -217,6 +341,12 @@ export function OverviewLottoNumberView() {
                     <Iconify icon="mdi:gradient" />
                   </ToggleButton>
                 </Tooltip>
+
+                <Tooltip title="연속">
+                  <ToggleButton value="showConsecutive" aria-label="show consecutive">
+                    <Iconify icon="mdi:link-variant" />
+                  </ToggleButton>
+                </Tooltip>
               </ToggleButtonGroup>
             </Box>
           }
@@ -239,13 +369,15 @@ export function OverviewLottoNumberView() {
           <Box sx={{ overflowX: "auto", width: "100%" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: "1px", minWidth: "600px" }}>
               {!isReversed && (
-                <PredictRow
-                  selectedNumbers={selectedNumbers}
-                  handleNumberClick={handleNumberClick}
-                  showNumbers={showNumbers}
-                  showDivider={showDivider}
-                  theme={theme}
-                />
+                  <PredictRow
+                    selectedNumbers={selectedNumbers}
+                    handleNumberClick={handleNumberClick}
+                    showNumbers={showNumbers}
+                    showDivider={showDivider}
+                    theme={theme}
+                    showConsecutive={showConsecutive}
+                    consecutiveCandidates={predictCandidates}
+                  />
               )}
 
               {displayed.map((round) => (
@@ -258,17 +390,21 @@ export function OverviewLottoNumberView() {
                   theme={theme}
                   showMissing={showMissing}
                   missingStreakMap={missingStats[round.drwNo]}
+                  showConsecutive={showConsecutive}
+                  consecutiveMap={historyStats[round.drwNo]}
                 />
               ))}
 
               {isReversed && (
-                <PredictRow
-                  selectedNumbers={selectedNumbers}
-                  handleNumberClick={handleNumberClick}
-                  showNumbers={showNumbers}
-                  showDivider={showDivider}
-                  theme={theme}
-                />
+                  <PredictRow
+                    selectedNumbers={selectedNumbers}
+                    handleNumberClick={handleNumberClick}
+                    showNumbers={showNumbers}
+                    showDivider={showDivider}
+                    theme={theme}
+                    showConsecutive={showConsecutive}
+                    consecutiveCandidates={predictCandidates}
+                  />
               )}
             </div>
           </Box>
@@ -302,13 +438,18 @@ const PredictRow = memo(function PredictRow({
   showNumbers,
   showDivider,
   theme,
+  showConsecutive,
+  consecutiveCandidates,
 }: {
   selectedNumbers: number[];
   handleNumberClick: (num: number) => void;
   showNumbers: boolean;
   showDivider: boolean;
   theme: ThemeType;
+  showConsecutive: boolean;
+  consecutiveCandidates: Record<number, Set<number>>;
 }) {
+
   return (
     <div style={{ display:"flex", alignItems:"center", marginBottom:"2px" }}>
       <Box
@@ -333,6 +474,11 @@ const PredictRow = memo(function PredictRow({
           const shouldShowNumber = showNumbers || isSelected; // Simplified logic
           const bgColor = getPredictCellColor(theme, num, isSelected);
           const textColor = (isSelected || theme !== 'default') ? '#fff' : '#555';
+          
+          let consecutiveColors;
+          if (showConsecutive && isSelected) {
+              consecutiveColors = getConsecutiveColors(consecutiveCandidates[num]);
+          }
 
           return (
             <LottoCell
@@ -344,6 +490,7 @@ const PredictRow = memo(function PredictRow({
               showDivider={shouldShowDivider}
               onClick={() => handleNumberClick(num)}
               cursor="pointer"
+              consecutiveColors={consecutiveColors}
             />
           );
         })}
@@ -364,6 +511,8 @@ const DataRow = memo(function DataRow({
   theme,
   showMissing,
   missingStreakMap,
+  showConsecutive,
+  consecutiveMap,
 }: {
   round: any;
   showBonus: boolean;
@@ -372,6 +521,8 @@ const DataRow = memo(function DataRow({
   theme: ThemeType;
   showMissing: boolean;
   missingStreakMap?: Record<number, number>;
+  showConsecutive: boolean;
+  consecutiveMap?: Record<number, Set<number>>;
 }) {
   const [clicked, setClicked] = useState<number[]>([]);
 
@@ -430,6 +581,7 @@ const DataRow = memo(function DataRow({
               overlayColor={overlayColor}
               onClick={() => handleClick(num, isWinning)}
               cursor={isWinning ? "pointer" : "default"}
+              consecutiveColors={showConsecutive ? getConsecutiveColors(consecutiveMap?.[num]) : undefined}
             />
           );
         })}
