@@ -16,6 +16,8 @@ type DataRowProps = {
   missingStreakMap?: Record<number, number>;
   showConsecutive: boolean;
   consecutiveMap?: Record<number, Set<number>>;
+  onPatternClick?: (drwNo: number, num: number) => void;
+  highlightedMap?: Set<number>;
 };
 
 export const DataRow = memo(function DataRow({
@@ -28,11 +30,23 @@ export const DataRow = memo(function DataRow({
   missingStreakMap,
   showConsecutive,
   consecutiveMap,
+  onPatternClick,
+  highlightedMap,
 }: DataRowProps) {
   const [clicked, setClicked] = useState<number[]>([]);
 
   const handleClick = (num: number, isWinning: boolean) => {
     if (!isWinning) return;
+
+    // Pattern interaction
+    if (showConsecutive && consecutiveMap?.[num] && consecutiveMap[num].size > 0 && onPatternClick) {
+      onPatternClick(round.drwNo, num);
+      // Decide if we should return or allow local click. 
+      // User requirement: "Change color to dark gray". 
+      // If we also toggle local click, it might turn blue/orange (default).
+      // We likely want ONLY pattern highlight if clicking a pattern.
+      return; 
+    }
 
     if (clicked.includes(num)) {
       setClicked(clicked.filter((n)=>n !== num));
@@ -61,9 +75,13 @@ export const DataRow = memo(function DataRow({
         {LOTTO_NUMBERS.map((num)=>{
           const isWinning = round.numbers.includes(num);
           const isBonus = showBonus && round.bonus === num;
+          const isPatternHighlighted = highlightedMap?.has(num);
           const isClicked = clicked.includes(num);
 
-          const bgColor = getCellColorByTheme(theme, num, isWinning, isBonus, isClicked);
+          let bgColor = getCellColorByTheme(theme, num, isWinning, isBonus, isClicked);
+          if (isPatternHighlighted) {
+            bgColor = '#333333';
+          }
           const shouldShowDivider = showDivider && num % 5 === 0 && num !== 45;
           const shouldShowNumber = showNumbers || isClicked;
 

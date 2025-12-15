@@ -45,6 +45,9 @@ export function OverviewLottoNumberView() {
   // ⭐ 점프 보기 토글 (0=OFF, Interval 2,3,4,5)
   const [jumpInterval, setJumpInterval] = useState<number>(0);
 
+  // Pattern Highlights
+  const [patternHighlights, setPatternHighlights] = useState<Record<number, Set<number>>>({});
+
   const { historyStats, predictCandidates, jumpHistoryStats, jumpPredictCandidates } = useLottoPattern(data, consecutiveOption, jumpInterval);
   const missingStats = useLottoMissing(data);
   
@@ -175,6 +178,11 @@ export function OverviewLottoNumberView() {
     setVisibleCount(30);
   }, []);
 
+  // Clear highlights when mode changes
+  useEffect(() => {
+      setPatternHighlights({});
+  }, [consecutiveOption, jumpInterval]);
+
   const displayed = useMemo(() => {
     const slice = data.slice(0, visibleCount);
     return isReversed ? [...slice].reverse() : slice;
@@ -187,6 +195,82 @@ export function OverviewLottoNumberView() {
       setSelectedNumbers((prev) => [...prev, num].sort((a,b)=>a-b));
     }
   }, [selectedNumbers]);
+
+  const handlePatternClick = useCallback((drwNo: number, num: number) => {
+      const isConsecutive = consecutiveOption > 0;
+      const isJump = jumpInterval > 0;
+      
+      const activeStats = isConsecutive ? historyStats : jumpHistoryStats;
+      const cellStats = activeStats[drwNo]?.[num];
+      
+      
+      // If the clicked number is already highlighted, toggle it off
+      if (patternHighlights[drwNo]?.has(num)) {
+          setPatternHighlights({});
+          return;
+      }
+      
+      if (!cellStats || cellStats.size === 0) {
+          // If clicking a non-pattern number? Maybe clear?
+          // User said: "Different border number -> change to related".
+          // If simply clicking empty space, maybe clear or ignore.
+          // Let's clear if no pattern found at this spot, just to be clean.
+          setPatternHighlights({});
+          return;
+      }
+
+      const activeDiffs: number[] = [];
+      cellStats.forEach(d => {
+          if (isConsecutive) {
+              if (consecutiveOption === 99 || consecutiveOption === d) activeDiffs.push(d);
+          } else if (isJump) {
+              activeDiffs.push(d);
+          }
+      });
+
+      if (activeDiffs.length === 0) {
+          setPatternHighlights({});
+          return;
+      }
+
+      const result: Record<number, Set<number>> = {};
+      const addToResult = (r: number, n: number) => {
+          if (!result[r]) result[r] = new Set();
+          result[r].add(n);
+      };
+
+      addToResult(drwNo, num);
+      const interval = isJump ? jumpInterval : 1;
+
+      activeDiffs.forEach(diff => {
+          const visited = new Set<string>();
+          visited.add(`${drwNo}-${num}`);
+
+          const check = (r: number, n: number) => {
+               // Check both directions (Up/Down)
+               [1, -1].forEach(dir => {
+                   const nextR = r + (dir * interval);
+                   // Verify nextR exists in stats (optimization)
+                   // Note: activeStats keys are strings in JS, but we use numbers here.
+                   if (!activeStats[nextR]) return;
+
+                   [n - diff, n + diff].forEach(nextN => {
+                        if (activeStats[nextR][nextN]?.has(diff)) {
+                             const key = `${nextR}-${nextN}`;
+                             if (!visited.has(key)) {
+                                 visited.add(key);
+                                 addToResult(nextR, nextN);
+                                 check(nextR, nextN);
+                             }
+                        }
+                   });
+               });
+          };
+          check(drwNo, num);
+      });
+
+      setPatternHighlights(result);
+  }, [consecutiveOption, jumpInterval, historyStats, jumpHistoryStats, patternHighlights]);
 
   const getNextOption = (current: number) => {
       if (current === 0) return 99; // Off -> All
@@ -412,6 +496,8 @@ export function OverviewLottoNumberView() {
                   missingStreakMap={missingStats[round.drwNo]}
                   showConsecutive={consecutiveOption > 0 || jumpInterval > 0}
                   consecutiveMap={mergedStats}
+                  onPatternClick={handlePatternClick}
+                  highlightedMap={patternHighlights[round.drwNo]}
                 />
               )})}
 
