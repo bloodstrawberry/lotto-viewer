@@ -39,25 +39,25 @@ export function OverviewLottoNumberView() {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [showMissing, setShowMissing] = useState(true);
 
-  // ⭐ 연속 보기 토글
-  const [showConsecutive, setShowConsecutive] = useState(false);
+  // ⭐ 연속 보기 토글 (0=OFF, 99=ALL, 1-5=Diff)
+  const [consecutiveOption, setConsecutiveOption] = useState<number>(0);
   
-  // ⭐ 점프 보기 토글 (0=OFF, 2,3,4,5)
-  const [jumpInterval, setJumpInterval] = useState<number>(0);
+  // ⭐ 점프 보기 토글 (0=OFF, 99=ALL, 1-5=Diff)
+  const [jumpOption, setJumpOption] = useState<number>(0);
 
-  const { historyStats, predictCandidates, jumpHistoryStats, jumpPredictCandidates } = useLottoPattern(data, jumpInterval);
+  const { historyStats, predictCandidates, jumpHistoryStats, jumpPredictCandidates } = useLottoPattern(data, consecutiveOption, jumpOption);
   const missingStats = useLottoMissing(data);
   
   const mergedPredictCandidates = useMemo(() => {
     const merged: Record<number, Set<number>> = {};
     
-    if (showConsecutive) {
+    if (consecutiveOption !== 0) {
         Object.entries(predictCandidates).forEach(([k, v]) => {
             merged[Number(k)] = new Set(v);
         });
     }
     
-    if (jumpInterval > 0) {
+    if (jumpOption !== 0) {
         Object.entries(jumpPredictCandidates).forEach(([k, v]) => {
             const n = Number(k);
             if (!merged[n]) merged[n] = new Set();
@@ -65,7 +65,7 @@ export function OverviewLottoNumberView() {
         });
     }
     return merged;
-  }, [predictCandidates, jumpPredictCandidates, showConsecutive, jumpInterval]);
+  }, [predictCandidates, jumpPredictCandidates, consecutiveOption, jumpOption]);
 
   const traceStats = useMemo(() => {
     const stats: Record<number, Record<number, Set<number>>> = {};
@@ -74,90 +74,84 @@ export function OverviewLottoNumberView() {
     const latestRound = data[0]; 
 
     selectedNumbers.forEach((candidate) => {
-      // Use merged candidates for trace? Ideally yes, but trace logic is tricky.
-      // For now, let's look at mergedPredictCandidates to see "why" a number is selected.
       const diffs = mergedPredictCandidates[candidate];
       if (!diffs) return;
 
       diffs.forEach((absDiff) => {
-        // Trace logic currently supports "Consecutive" (Interval 1)
-        // Adjusting for Jump requires knowing which pattern caused this diff.
-        // Since we merged them, we don't distinguish if diff comes from Jump or Consecutive here easily.
-        // However, we can try both checks.
-        
         // 1. Check Interval 1 (Consecutive)
-        if (showConsecutive) {
-             [candidate - absDiff, candidate + absDiff].forEach((n1) => {
-                if (!latestRound.numbers.includes(n1)) return;
-                const signedDiff = candidate - n1;
-                if (Math.abs(signedDiff) !== absDiff) return;
+        if (consecutiveOption !== 0) {
+             // Filter by consecutiveOption if precise
+             if (consecutiveOption !== 99 && consecutiveOption !== absDiff) {
+                 // Skip if strict match required and fails
+             } else {
+                 [candidate - absDiff, candidate + absDiff].forEach((n1) => {
+                    if (!latestRound.numbers.includes(n1)) return;
+                    const signedDiff = candidate - n1;
+                    if (Math.abs(signedDiff) !== absDiff) return;
 
-                let currentNum = n1;
-                let currentIdx = 0;
-                // ... (Original logic for Interval 1)
-                while (currentIdx < data.length) {
-                    const r = data[currentIdx];
-                    if (r.numbers.includes(currentNum)) {
-                        if (!stats[r.drwNo]) stats[r.drwNo] = {};
-                        if (!stats[r.drwNo][currentNum]) stats[r.drwNo][currentNum] = new Set();
-                        stats[r.drwNo][currentNum].add(absDiff);
-                        currentNum -= signedDiff;
-                        currentIdx++;
-                    } else {
-                        break;
+                    let currentNum = n1;
+                    let currentIdx = 0;
+                    
+                    while (currentIdx < data.length) {
+                        const r = data[currentIdx];
+                        if (r.numbers.includes(currentNum)) {
+                            if (!stats[r.drwNo]) stats[r.drwNo] = {};
+                            if (!stats[r.drwNo][currentNum]) stats[r.drwNo][currentNum] = new Set();
+                            stats[r.drwNo][currentNum].add(absDiff);
+                            currentNum -= signedDiff;
+                            currentIdx++;
+                        } else {
+                            break;
+                        }
                     }
-                }
-             });
+                 });
+             }
         }
         
-        // 2. Check Interval Jump (if active)
-        if (jumpInterval > 0) {
-            // Check previous point: (Latest - JumpInterval)? No.
-            // Predict candidate is for NEXT round.
-            // Jump pattern means: Next, Next - Jump, Next - 2*Jump ...
-            // Points: Candidate, data[jumpInterval-1], data[2*jumpInterval-1] ...
-            // We want to highlight the existing numbers in data.
-            // Previous number is at data[jumpInterval - 1].
-            
-            const prevIdx = jumpInterval - 1;
-            if (prevIdx < data.length) {
-                const rPrev = data[prevIdx];
-                [candidate - absDiff, candidate + absDiff].forEach((nPrev) => {
-                    // Repeat logic only for diff 0? No, allow diff 0.
-                    // If diff 0, nPrev === candidate.
-                    
-                    if (rPrev.numbers.includes(nPrev)) {
-                        const signedDiff = candidate - nPrev; // If jumping 29->29, diff 0.
-                        if (Math.abs(signedDiff) !== absDiff) return;
+        // 2. Check Interval Jump (if active) - Iterate all valid intervals
+        if (jumpOption !== 0) {
+            // Filter by jumpOption if precise
+            if (jumpOption !== 99 && jumpOption !== absDiff) {
+                // Skip
+            } else {
+                const intervals = [2, 3, 4, 5];
+                intervals.forEach((jumpInterval) => {
+                    const prevIdx = jumpInterval - 1;
+                    if (prevIdx < data.length) {
+                        const rPrev = data[prevIdx];
+                        [candidate - absDiff, candidate + absDiff].forEach((nPrev) => {
+                            if (rPrev.numbers.includes(nPrev)) {
+                                const signedDiff = candidate - nPrev;
+                                if (Math.abs(signedDiff) !== absDiff) return;
 
-                        // Trace back
-                        let currentNum = nPrev;
-                        let currentIdx = prevIdx; // Start at first existing point in history
-                        
-                        // We found one point. Mark it.
-                        if (!stats[rPrev.drwNo]) stats[rPrev.drwNo] = {};
-                        if (!stats[rPrev.drwNo][currentNum]) stats[rPrev.drwNo][currentNum] = new Set();
-                        stats[rPrev.drwNo][currentNum].add(absDiff);
-
-                        // Keep going back by jumpInterval
-                        while (true) {
-                            const nextIdx = currentIdx + jumpInterval;
-                            const nextNum = currentNum - signedDiff; // Arithmetic progression
-                            
-                            if (nextIdx >= data.length) break;
-                            const rNext = data[nextIdx];
-                            
-                            if (rNext.numbers.includes(nextNum)) {
-                                if (!stats[rNext.drwNo]) stats[rNext.drwNo] = {};
-                                if (!stats[rNext.drwNo][nextNum]) stats[rNext.drwNo][nextNum] = new Set();
-                                stats[rNext.drwNo][nextNum].add(absDiff);
+                                // Trace back
+                                let currentNum = nPrev;
+                                let currentIdx = prevIdx;
                                 
-                                currentNum = nextNum;
-                                currentIdx = nextIdx;
-                            } else {
-                                break;
+                                if (!stats[rPrev.drwNo]) stats[rPrev.drwNo] = {};
+                                if (!stats[rPrev.drwNo][currentNum]) stats[rPrev.drwNo][currentNum] = new Set();
+                                stats[rPrev.drwNo][currentNum].add(absDiff);
+
+                                while (true) {
+                                    const nextIdx = currentIdx + jumpInterval;
+                                    const nextNum = currentNum - signedDiff;
+                                    
+                                    if (nextIdx >= data.length) break;
+                                    const rNext = data[nextIdx];
+                                    
+                                    if (rNext.numbers.includes(nextNum)) {
+                                        if (!stats[rNext.drwNo]) stats[rNext.drwNo] = {};
+                                        if (!stats[rNext.drwNo][nextNum]) stats[rNext.drwNo][nextNum] = new Set();
+                                        stats[rNext.drwNo][nextNum].add(absDiff);
+                                        
+                                        currentNum = nextNum;
+                                        currentIdx = nextIdx;
+                                    } else {
+                                        break;
+                                    }
+                                }
                             }
-                        }
+                        });
                     }
                 });
             }
@@ -165,7 +159,7 @@ export function OverviewLottoNumberView() {
       });
     });
     return stats;
-  }, [selectedNumbers, mergedPredictCandidates, data, showConsecutive, jumpInterval]); // Updated dependencies
+  }, [selectedNumbers, mergedPredictCandidates, data, consecutiveOption, jumpOption]);
 
   useEffect(() => {
     const allData = getAllLottoNumbers();
@@ -186,6 +180,19 @@ export function OverviewLottoNumberView() {
       setSelectedNumbers((prev) => [...prev, num].sort((a,b)=>a-b));
     }
   }, [selectedNumbers]);
+
+  const getNextOption = (current: number) => {
+      if (current === 0) return 99; // Off -> All
+      if (current === 99) return 1; // All -> 1
+      if (current < 5) return current + 1; // 1->2->3->4->5
+      return 0; // 5 -> Off
+  };
+
+  const getOptionLabel = (opt: number, label: string) => {
+      if (opt === 0) return `${label} (OFF)`;
+      if (opt === 99) return `${label} (ON)`;
+      return `${label} (${opt}로 표시)`;
+  };
 
   return (
     <DashboardContent maxWidth="xl">
@@ -269,41 +276,63 @@ export function OverviewLottoNumberView() {
               <ToggleButtonGroup
                 size="small"
                 exclusive
-                value={showConsecutive ? 'consecutive' : jumpInterval > 0 ? 'jump' : null}
+                value={consecutiveOption > 0 ? 'consecutive' : jumpOption > 0 ? 'jump' : null}
                 onChange={(event, newPattern) => {
+                    // Logic to handle exclusive switching and internal cycling
+                    // This onChange triggers when a NEW button is selected or current is deselected.
+                    
                     if (newPattern === 'consecutive') {
-                        setShowConsecutive(true);
-                        setJumpInterval(0);
-                    } else if (newPattern === 'jump') {
-                        setShowConsecutive(false);
-                        setJumpInterval(2);
-                    } else {
-                         // Clicked the active toggle
-                         if (showConsecutive) {
-                             setShowConsecutive(false);
-                         } else if (jumpInterval > 0) {
-                             // Cycle jump interval
-                            const next = jumpInterval === 2 ? 3 
-                                       : jumpInterval === 3 ? 4 
-                                       : jumpInterval === 4 ? 5 
-                                       : 0;
-                            setJumpInterval(next);
-                         }
+                        // Switching TO consecutive (or clicking it again if not handled by exclusive?)
+                        // Exclusive prop means if I click active, newPattern might be null.
+                        // But we want to cycle. So we need to handle click manually or use onClick?
+                        // ToggleButtonGroup onChange passes null if unselected.
+                        
+                        // We will handle logic in onClick of buttons instead for cycling?
+                        // Or utilize the fact that if newPattern is same, it might be null?
+                        // Actually, ToggleButtonGroup exclusive returns null if clicked again.
                     }
                 }}
                 aria-label="pattern settings"
               >
-                <Tooltip title="연속">
-                  <ToggleButton value="consecutive" aria-label="show consecutive" sx={{ width: { xs: 20, sm: 22, md: 24 }, height: { xs: 20, sm: 22, md: 24 } }}>
-                    <Iconify icon="mdi:link-variant" width={24} sx={{ width: { xs: 14, sm: 15, md: 16 } }} />
+                <Tooltip title={getOptionLabel(consecutiveOption, "연속")}>
+                  <ToggleButton 
+                    value="consecutive" 
+                    aria-label="show consecutive" 
+                    selected={consecutiveOption > 0}
+                    onClick={() => {
+                        // Cycle
+                        const next = getNextOption(consecutiveOption);
+                        setConsecutiveOption(next);
+                        // Ensure exclusive behavior manually if needed, or let Group handle visual selection
+                        if (next > 0) setJumpOption(0);
+                    }}
+                    sx={{ width: { xs: 20, sm: 22, md: 24 }, height: { xs: 20, sm: 22, md: 24 } }}
+                  >
+                    {consecutiveOption > 0 ? (
+                         <Box component="span" sx={{ fontWeight: 'bold', fontSize: { xs: 10, sm: 11, md: 12 }, lineHeight: 1 }}>
+                            {consecutiveOption === 99 ? 'On' : consecutiveOption}
+                         </Box>
+                    ) : (
+                         <Iconify icon="mdi:link-variant" width={24} sx={{ width: { xs: 14, sm: 15, md: 16 } }} />
+                    )}
                   </ToggleButton>
                 </Tooltip>
 
-                <Tooltip title={jumpInterval === 0 ? "점프 (OFF)" : `점프 (${jumpInterval}회차)`}>
-                    <ToggleButton value="jump" aria-label="jump pattern" sx={{ width: { xs: 20, sm: 22, md: 24 }, height: { xs: 20, sm: 22, md: 24 } }}>
-                        {jumpInterval > 0 ? (
+                <Tooltip title={getOptionLabel(jumpOption, "점프")}>
+                    <ToggleButton 
+                        value="jump" 
+                        aria-label="jump pattern" 
+                        selected={jumpOption > 0}
+                        onClick={() => {
+                            const next = getNextOption(jumpOption);
+                            setJumpOption(next);
+                            if (next > 0) setConsecutiveOption(0);
+                        }}
+                        sx={{ width: { xs: 20, sm: 22, md: 24 }, height: { xs: 20, sm: 22, md: 24 } }}
+                    >
+                        {jumpOption > 0 ? (
                              <Box component="span" sx={{ fontWeight: 'bold', fontSize: { xs: 10, sm: 11, md: 12 }, lineHeight: 1 }}>
-                                {jumpInterval}
+                                {jumpOption === 99 ? 'On' : jumpOption}
                              </Box>
                         ) : (
                              <Iconify icon="mdi:stairs" width={24} sx={{ width: { xs: 14, sm: 15, md: 16 } }} />
@@ -338,7 +367,7 @@ export function OverviewLottoNumberView() {
                     showNumbers={showNumbers}
                     showDivider={showDivider}
                     theme={theme}
-                    showConsecutive={showConsecutive || jumpInterval > 0}
+                    showConsecutive={consecutiveOption > 0 || jumpOption > 0}
                     consecutiveCandidates={mergedPredictCandidates}
                   />
               )}
@@ -351,13 +380,13 @@ export function OverviewLottoNumberView() {
                 // Merge consecutive and jump stats
                 let mergedStats: Record<number, Set<number>> = {};
                 
-                if (showConsecutive && roundHistory) {
+                if (consecutiveOption !== 0 && roundHistory) {
                     Object.entries(roundHistory).forEach(([k, v]) => {
                         mergedStats[Number(k)] = new Set(v);
                     });
                 }
 
-                if (jumpInterval > 0 && roundJump) {
+                if (jumpOption !== 0 && roundJump) {
                     Object.entries(roundJump).forEach(([k, v]) => {
                         const n = Number(k);
                         if (!mergedStats[n]) mergedStats[n] = new Set();
@@ -386,7 +415,7 @@ export function OverviewLottoNumberView() {
                   theme={theme}
                   showMissing={showMissing}
                   missingStreakMap={missingStats[round.drwNo]}
-                  showConsecutive={showConsecutive || jumpInterval > 0}
+                  showConsecutive={consecutiveOption > 0 || jumpOption > 0}
                   consecutiveMap={mergedStats}
                 />
               )})}
@@ -398,7 +427,7 @@ export function OverviewLottoNumberView() {
                     showNumbers={showNumbers}
                     showDivider={showDivider}
                     theme={theme}
-                    showConsecutive={showConsecutive || jumpInterval > 0}
+                    showConsecutive={consecutiveOption > 0 || jumpOption > 0}
                     consecutiveCandidates={mergedPredictCandidates}
                   />
               )}
