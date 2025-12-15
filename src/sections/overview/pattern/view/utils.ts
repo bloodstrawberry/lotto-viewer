@@ -5,6 +5,7 @@ export const getConsecutiveColors = (diffSet?: Set<number>): string[] | undefine
 
   const getDiffColor = (d: number) => {
     switch(d) {
+        case 0: return '#00BCD4'; // Cyan for repeat
         case 1: return '#F50057'; 
         case 2: return '#89ff29ff'; 
         case 3: return '#ffe603ff'; 
