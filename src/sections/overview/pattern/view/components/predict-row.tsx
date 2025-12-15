@@ -52,7 +52,7 @@ export const PredictRow = memo(function PredictRow({
           const textColor = (isSelected || theme !== 'default') ? '#fff' : '#555';
           
           let consecutiveColors;
-          if (showConsecutive && isSelected) {
+          if (showConsecutive) {
               consecutiveColors = getConsecutiveColors(consecutiveCandidates[num]);
           }
 

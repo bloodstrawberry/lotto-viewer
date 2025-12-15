@@ -45,6 +45,42 @@ export function OverviewLottoNumberView() {
   const { historyStats, predictCandidates } = useLottoPattern(data);
   const missingStats = useLottoMissing(data);
 
+  const traceStats = useMemo(() => {
+    const stats: Record<number, Record<number, Set<number>>> = {};
+    if (selectedNumbers.length === 0 || !data || data.length < 2) return stats;
+
+    const latestRound = data[0]; 
+
+    selectedNumbers.forEach((candidate) => {
+      const diffs = predictCandidates[candidate];
+      if (!diffs) return;
+
+      diffs.forEach((absDiff) => {
+        [candidate - absDiff, candidate + absDiff].forEach((n1) => {
+          if (!latestRound.numbers.includes(n1)) return;
+          const signedDiff = candidate - n1;
+          if (Math.abs(signedDiff) !== absDiff) return;
+
+          let currentNum = n1;
+          let currentIdx = 0;
+          while (currentIdx < data.length) {
+             const r = data[currentIdx];
+             if (r.numbers.includes(currentNum)) {
+                if (!stats[r.drwNo]) stats[r.drwNo] = {};
+                if (!stats[r.drwNo][currentNum]) stats[r.drwNo][currentNum] = new Set();
+                stats[r.drwNo][currentNum].add(absDiff);
+                currentNum -= signedDiff;
+                currentIdx++;
+             } else {
+                break;
+             }
+          }
+        });
+      });
+    });
+    return stats;
+  }, [selectedNumbers, predictCandidates, data]);
+
   useEffect(() => {
     const allData = getAllLottoNumbers();
     const sortedDesc = [...allData].sort((a, b) => b.drwNo - a.drwNo);
@@ -178,7 +214,24 @@ export function OverviewLottoNumberView() {
                   />
               )}
 
-              {displayed.map((round) => (
+              {displayed.map((round) => {
+                const roundHistory = historyStats[round.drwNo];
+                const roundTrace = traceStats[round.drwNo];
+                
+                let mergedStats = roundHistory;
+                if (roundTrace) {
+                    mergedStats = roundHistory ? { ...roundHistory } : {};
+                    Object.entries(roundTrace).forEach(([numStr, set]) => {
+                        const num = Number(numStr);
+                        if (mergedStats[num]) {
+                            mergedStats[num] = new Set([...mergedStats[num], ...set]);
+                        } else {
+                            mergedStats[num] = set;
+                        }
+                    });
+                }
+                
+                return (
                 <DataRow
                   key={round.drwNo}
                   round={round}
@@ -189,9 +242,9 @@ export function OverviewLottoNumberView() {
                   showMissing={showMissing}
                   missingStreakMap={missingStats[round.drwNo]}
                   showConsecutive={showConsecutive}
-                  consecutiveMap={historyStats[round.drwNo]}
+                  consecutiveMap={mergedStats}
                 />
-              ))}
+              )})}
 
               {isReversed && (
                   <PredictRow
