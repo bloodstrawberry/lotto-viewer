@@ -30,9 +30,6 @@ export function OverviewLottoNumberView() {
 
   // ⭐ 숫자 보기 토글 (ON → 숫자 전체 보임)
   const [showNumbers, setShowNumbers] = useState(true);
-  
-  // ⭐ 구분선 보기 토글 (ON → 5의 배수마다 구분선 표시)
-  const [showDivider, setShowDivider] = useState(false);
 
   // ⭐ 테마 선택
   const [theme, setTheme] = useState<ThemeType>('default');
@@ -319,14 +316,12 @@ export function OverviewLottoNumberView() {
                 value={[
                   showNumbers && 'showNumbers',
                   showBonus && 'showBonus',
-                  showDivider && 'showDivider',
                   isReversed && 'isReversed',
                   showMissing && 'showMissing',
                 ].filter(Boolean)}
                 onChange={(event, newValues) => {
                   setShowNumbers(newValues.includes('showNumbers'));
                   setShowBonus(newValues.includes('showBonus'));
-                  setShowDivider(newValues.includes('showDivider'));
                   setIsReversed(newValues.includes('isReversed'));
                   setShowMissing(newValues.includes('showMissing'));
                 }}
@@ -341,12 +336,6 @@ export function OverviewLottoNumberView() {
                 <Tooltip title="보너스 번호">
                   <ToggleButton value="showBonus" aria-label="show bonus" sx={{ width: { xs: 18, sm: 22, md: 24 }, height: { xs: 18, sm: 22, md: 24 } }}>
                     <Iconify icon="mdi:star-circle-outline" width={24} sx={{ width: { xs: 12, sm: 15, md: 16 } }} />
-                  </ToggleButton>
-                </Tooltip>
-
-                <Tooltip title="구분선">
-                  <ToggleButton value="showDivider" aria-label="show divider" sx={{ width: { xs: 18, sm: 22, md: 24 }, height: { xs: 18, sm: 22, md: 24 } }}>
-                    <Iconify icon="mdi:view-week-outline" width={24} sx={{ width: { xs: 12, sm: 15, md: 16 } }} />
                   </ToggleButton>
                 </Tooltip>
 
@@ -444,7 +433,6 @@ export function OverviewLottoNumberView() {
                     selectedNumbers={selectedNumbers}
                     handleNumberClick={handleNumberClick}
                     showNumbers={showNumbers}
-                    showDivider={showDivider}
                     theme={theme}
                     showConsecutive={consecutiveOption > 0 || jumpInterval > 0}
                     consecutiveCandidates={mergedPredictCandidates}
@@ -490,7 +478,6 @@ export function OverviewLottoNumberView() {
                   round={round}
                   showBonus={showBonus}
                   showNumbers={showNumbers}
-                  showDivider={showDivider}
                   theme={theme}
                   showMissing={showMissing}
                   missingStreakMap={missingStats[round.drwNo]}
@@ -506,7 +493,6 @@ export function OverviewLottoNumberView() {
                     selectedNumbers={selectedNumbers}
                     handleNumberClick={handleNumberClick}
                     showNumbers={showNumbers}
-                    showDivider={showDivider}
                     theme={theme}
                     showConsecutive={consecutiveOption > 0 || jumpInterval > 0}
                     consecutiveCandidates={mergedPredictCandidates}

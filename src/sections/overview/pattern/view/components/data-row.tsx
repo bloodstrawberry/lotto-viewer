@@ -10,7 +10,6 @@ type DataRowProps = {
   round: any;
   showBonus: boolean;
   showNumbers: boolean;
-  showDivider: boolean;
   theme: ThemeType;
   showMissing: boolean;
   missingStreakMap?: Record<number, number>;
@@ -24,7 +23,6 @@ export const DataRow = memo(function DataRow({
   round,
   showBonus,
   showNumbers,
-  showDivider,
   theme,
   showMissing,
   missingStreakMap,
@@ -82,7 +80,6 @@ export const DataRow = memo(function DataRow({
           if (isPatternHighlighted) {
             bgColor = '#333333';
           }
-          const shouldShowDivider = showDivider && num % 5 === 0 && num !== 45;
           const shouldShowNumber = showNumbers || isClicked;
 
           // 미출현 오버레이 계산
@@ -100,7 +97,6 @@ export const DataRow = memo(function DataRow({
               bgColor={bgColor}
               textColor="#fff" // Optimized logic: Always whites if shown
               content={shouldShowNumber ? num : ""}
-              showDivider={shouldShowDivider}
               overlayColor={overlayColor}
               onClick={() => handleClick(num, isWinning)}
               cursor={isWinning ? "pointer" : "default"}

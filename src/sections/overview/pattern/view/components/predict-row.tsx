@@ -10,7 +10,6 @@ type PredictRowProps = {
   selectedNumbers: number[];
   handleNumberClick: (num: number) => void;
   showNumbers: boolean;
-  showDivider: boolean;
   theme: ThemeType;
   showConsecutive: boolean;
   consecutiveCandidates: Record<number, Set<number>>;
@@ -20,7 +19,6 @@ export const PredictRow = memo(function PredictRow({
   selectedNumbers,
   handleNumberClick,
   showNumbers,
-  showDivider,
   theme,
   showConsecutive,
   consecutiveCandidates,
@@ -46,7 +44,6 @@ export const PredictRow = memo(function PredictRow({
       <div style={{ flex:1, display:"flex", gap:"1px" }}>
         {LOTTO_NUMBERS.map((num)=>{
           const isSelected = selectedNumbers.includes(num);
-          const shouldShowDivider = showDivider && num % 5 === 0 && num !== 45;
           const shouldShowNumber = showNumbers || isSelected; // Simplified logic
           const bgColor = getPredictCellColor(theme, num, isSelected);
           const textColor = (isSelected || theme !== 'default') ? '#fff' : '#555';
@@ -63,7 +60,6 @@ export const PredictRow = memo(function PredictRow({
               bgColor={bgColor}
               textColor={shouldShowNumber ? textColor : "transparent"}
               content={shouldShowNumber ? num : ""}
-              showDivider={shouldShowDivider}
               onClick={() => handleNumberClick(num)}
               cursor="pointer"
               consecutiveColors={consecutiveColors}

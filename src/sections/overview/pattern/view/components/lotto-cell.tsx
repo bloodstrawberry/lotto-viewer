@@ -6,7 +6,6 @@ export type LottoCellProps = {
   textColor: string;
   overlayColor?: string;
   content: string | number;
-  showDivider: boolean;
   onClick?: () => void;
   cursor?: string;
   consecutiveColors?: string[];
@@ -18,7 +17,6 @@ export const LottoCell = memo(({
   textColor, 
   overlayColor, 
   content, 
-  showDivider, 
   onClick, 
   cursor = "default",
   ...restProps 
@@ -74,14 +72,5 @@ export const LottoCell = memo(({
         {content}
       </span>
     </div>
-
-    {showDivider && (
-      <div
-        style={{
-          width: "1px",
-          backgroundColor: "#999",
-        }}
-      />
-    )}
   </React.Fragment>
 ));
