@@ -198,7 +198,7 @@ export function OverviewLottoNumberView() {
   const getOptionLabel = (opt: number, label: string) => {
       if (opt === 0) return `${label} (OFF)`;
       if (opt === 99) return `${label} (ON)`;
-      return `${label} (${opt}로 표시)`;
+      return `${label} (${opt}칸)`;
   };
 
   return (
