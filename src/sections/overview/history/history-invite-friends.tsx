@@ -15,7 +15,7 @@ type Props = BoxProps & {
   description?: string;
 };
 
-export function BankingInviteFriends({ price, title, imgUrl, description, sx, ...other }: Props) {
+export function HistoryInviteFriends({ price, title, imgUrl, description, sx, ...other }: Props) {
   return (
     <Box
       sx={[

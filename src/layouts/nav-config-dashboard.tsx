@@ -71,7 +71,7 @@ export const navData: NavSectionProps['data'] = [
       { title: 'App', path: paths.dashboard.root, icon: ICONS.dashboard },
       { title: '패턴분석', path: paths.dashboard.general.pattern, icon: ICONS.pattern },
       { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
-      { title: 'Banking', path: paths.dashboard.general.banking, icon: ICONS.banking },
+      { title: 'History', path: paths.dashboard.general.history, icon: ICONS.banking },
       { title: 'Booking', path: paths.dashboard.general.booking, icon: ICONS.booking },
       { title: 'File', path: paths.dashboard.general.file, icon: ICONS.file },
       { title: 'Course', path: paths.dashboard.general.course, icon: ICONS.course },

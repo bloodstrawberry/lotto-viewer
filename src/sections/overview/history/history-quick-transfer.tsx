@@ -49,7 +49,7 @@ type Props = BoxProps & {
   }[];
 };
 
-export function BankingQuickTransfer({ title, subheader, list, sx, ...other }: Props) {
+export function HistoryQuickTransfer({ title, subheader, list, sx, ...other }: Props) {
   const carousel = useCarousel({
     loop: true,
     dragFree: true,

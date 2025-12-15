@@ -48,7 +48,7 @@ type Props = CardProps & {
   }[];
 };
 
-export function BankingRecentTransitions({
+export function HistoryRecentTransitions({
   sx,
   title,
   subheader,

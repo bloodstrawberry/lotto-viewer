@@ -29,7 +29,7 @@ type Props = BoxProps & {
   }[];
 };
 
-export function BankingCurrentBalance({ list, sx, ...other }: Props) {
+export function HistoryCurrentBalance({ list, sx, ...other }: Props) {
   const showCurrency = useBoolean();
 
   const carousel = useCarousel();

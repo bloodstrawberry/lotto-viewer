@@ -16,7 +16,7 @@ export function OverviewHistoryView() {
     <DashboardContent maxWidth="xl">
       <Card>
         <CardHeader
-          title="패턴분석"
+          title="과거분석"
           sx={{
             mb: 0,
             '& .MuiCardHeader-content': { display: { xs: 'none', sm: 'block' } },

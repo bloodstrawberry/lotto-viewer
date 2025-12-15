@@ -27,7 +27,7 @@ type Props = CardProps & {
   };
 };
 
-export function BankingExpensesCategories({ title, subheader, chart, sx, ...other }: Props) {
+export function HistoryExpensesCategories({ title, subheader, chart, sx, ...other }: Props) {
   const theme = useTheme();
 
   const chartColors = chart.colors ?? [

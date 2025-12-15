@@ -30,7 +30,7 @@ type Props = CardProps & {
   };
 };
 
-export function BankingBalanceStatistics({ title, subheader, chart, sx, ...other }: Props) {
+export function HistoryBalanceStatistics({ title, subheader, chart, sx, ...other }: Props) {
   const theme = useTheme();
 
   const [selectedSeries, setSelectedSeries] = useState('Yearly');

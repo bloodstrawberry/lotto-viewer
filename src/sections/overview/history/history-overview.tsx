@@ -35,7 +35,7 @@ const TABS = [
   },
 ];
 
-export function BankingOverview({ sx, ...other }: CardProps) {
+export function HistoryOverview({ sx, ...other }: CardProps) {
   const theme = useTheme();
 
   const tabs = useTabs('income');

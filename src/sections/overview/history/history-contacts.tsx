@@ -26,7 +26,7 @@ type Props = CardProps & {
   }[];
 };
 
-export function BankingContacts({ title, subheader, list, sx, ...other }: Props) {
+export function HistoryContacts({ title, subheader, list, sx, ...other }: Props) {
   return (
     <Card sx={sx} {...other}>
       <CardHeader
