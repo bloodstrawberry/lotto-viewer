@@ -194,7 +194,7 @@ export function OverviewLottoNumberView() {
           title="패턴분석"
           sx={{ mb: 2 }}
           action={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 }, flexWrap: 'wrap' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexWrap: 'wrap' }}>
               {/* 테마 선택 버튼 그룹 */}
               <ToggleButtonGroup
                 size="small"
@@ -220,7 +220,6 @@ export function OverviewLottoNumberView() {
                   showDivider && 'showDivider',
                   isReversed && 'isReversed',
                   showMissing && 'showMissing',
-                  showConsecutive && 'showConsecutive',
                 ].filter(Boolean)}
                 onChange={(event, newValues) => {
                   setShowNumbers(newValues.includes('showNumbers'));
@@ -228,10 +227,6 @@ export function OverviewLottoNumberView() {
                   setShowDivider(newValues.includes('showDivider'));
                   setIsReversed(newValues.includes('isReversed'));
                   setShowMissing(newValues.includes('showMissing'));
-                  
-                  const isConsecutive = newValues.includes('showConsecutive');
-                  setShowConsecutive(isConsecutive);
-                  if (isConsecutive) setJumpInterval(0);
                 }}
                 aria-label="view settings"
               >
@@ -264,47 +259,55 @@ export function OverviewLottoNumberView() {
                     <Iconify icon="mdi:gradient" />
                   </ToggleButton>
                 </Tooltip>
-
+              </ToggleButtonGroup>
+              
+              {/* Pattern Button Group */}
+              <ToggleButtonGroup
+                size="small"
+                exclusive
+                value={showConsecutive ? 'consecutive' : jumpInterval > 0 ? 'jump' : null}
+                onChange={(event, newPattern) => {
+                    if (newPattern === 'consecutive') {
+                        setShowConsecutive(true);
+                        setJumpInterval(0);
+                    } else if (newPattern === 'jump') {
+                        setShowConsecutive(false);
+                        setJumpInterval(2);
+                    } else {
+                         // Clicked the active toggle
+                         if (showConsecutive) {
+                             setShowConsecutive(false);
+                         } else if (jumpInterval > 0) {
+                             // Cycle jump interval
+                            const next = jumpInterval === 2 ? 3 
+                                       : jumpInterval === 3 ? 4 
+                                       : jumpInterval === 4 ? 5 
+                                       : 0;
+                            setJumpInterval(next);
+                         }
+                    }
+                }}
+                aria-label="pattern settings"
+              >
                 <Tooltip title="연속">
-                  <ToggleButton value="showConsecutive" aria-label="show consecutive">
+                  <ToggleButton value="consecutive" aria-label="show consecutive">
                     <Iconify icon="mdi:link-variant" />
                   </ToggleButton>
                 </Tooltip>
+
+                <Tooltip title={jumpInterval === 0 ? "점프 (OFF)" : `점프 (${jumpInterval}회차)`}>
+                    <ToggleButton value="jump" aria-label="jump pattern">
+                        {jumpInterval > 0 ? (
+                             <Box sx={{ display:'flex', alignItems:'center', gap:0.5, fontWeight:'bold' }}>
+                                <Iconify icon="mdi:stairs" width={18} />
+                                <span>{jumpInterval}</span>
+                             </Box>
+                        ) : (
+                             <Iconify icon="mdi:stairs" width={24} />
+                        )}
+                    </ToggleButton>
+                </Tooltip>
               </ToggleButtonGroup>
-              
-              {/* Jump Button Cycle */}
-              <Tooltip title={jumpInterval === 0 ? "점프 (OFF)" : `점프 (${jumpInterval}회차)`}>
-                <Button 
-                    variant={jumpInterval > 0 ? "contained" : "outlined"} 
-                    color={jumpInterval > 0 ? "primary" : "inherit"}
-                    onClick={() => {
-                        const next = jumpInterval === 0 ? 2 
-                                   : jumpInterval === 2 ? 3 
-                                   : jumpInterval === 3 ? 4 
-                                   : jumpInterval === 4 ? 5 
-                                   : 0;
-                        setJumpInterval(next);
-                        if (next > 0) setShowConsecutive(false);
-                    }}
-                    sx={{ 
-                        minWidth: 40, 
-                        height: 40,
-                        px: 1,
-                        ml: 1,
-                        borderColor: 'rgba(145, 158, 171, 0.32)',
-                        color: jumpInterval > 0 ? '#fff' : 'text.secondary'
-                    }}
-                >
-                    {jumpInterval === 0 ? (
-                         <Iconify icon="mdi:stairs" width={24} />
-                    ) : (
-                         <Box sx={{ display:'flex', alignItems:'center', gap:0.5, fontWeight:'bold' }}>
-                            <Iconify icon="mdi:stairs" width={18} />
-                            <span>{jumpInterval}</span>
-                         </Box>
-                    )}
-                </Button>
-              </Tooltip>
             </Box>
           }
         />
