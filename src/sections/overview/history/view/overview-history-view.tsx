@@ -67,6 +67,7 @@ const LottoCell = ({
   content, 
   onClick, 
   cursor = "default",
+  borderColor,
 }: { 
   num: number; 
   bgColor: string; 
@@ -74,6 +75,7 @@ const LottoCell = ({
   content: string | number; 
   onClick?: () => void; 
   cursor?: string;
+  borderColor?: string;
 }) => (
   <div
     onClick={onClick}
@@ -92,6 +94,7 @@ const LottoCell = ({
       color: textColor,
       position: "relative",
       overflow: "hidden",
+      boxShadow: borderColor ? `inset 0 0 0 3px ${borderColor}` : "none",
     }}
   >
     <span style={{ position: 'relative', zIndex: 1 }}>
@@ -217,6 +220,7 @@ function ResultRow({
               textColor={shouldShowNumber ? "#fff" : "transparent"}
               content={shouldShowNumber ? num : ""}
               cursor="default"
+              borderColor={isBonusMatch ? "#d54dff" : undefined}
             />
           );
         })}
@@ -256,8 +260,9 @@ export function OverviewHistoryView() {
   const [data, setData] = useState<any[]>([]);
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [showNumbers, setShowNumbers] = useState(true);
-  const [theme, setTheme] = useState<ThemeType>('default');
+  const [theme, setTheme] = useState<ThemeType>('range');
   const [visibleCount, setVisibleCount] = useState(50);
+  const [sortByRank, setSortByRank] = useState(false);
 
   useEffect(() => {
     const allData = getAllLottoNumbers();
@@ -297,8 +302,27 @@ export function OverviewHistoryView() {
   }, [data, selectedNumbers]);
 
   const displayedResults = useMemo(() => {
-    return filteredResults.slice(0, visibleCount);
-  }, [filteredResults, visibleCount]);
+    let results = [...filteredResults];
+    
+    if (sortByRank && selectedNumbers.length === 6) {
+      // 등수별 정렬 (등수가 낮을수록 좋음, 같은 등수면 회차가 큰 것이 우선)
+      results.sort((a, b) => {
+        const rankA = calculatePrizeRank(selectedNumbers, a.numbers, a.bonus);
+        const rankB = calculatePrizeRank(selectedNumbers, b.numbers, b.bonus);
+        
+        // rank가 null인 경우 (낙첨)는 가장 뒤로
+        const rankValA = rankA.rank ?? 999;
+        const rankValB = rankB.rank ?? 999;
+        
+        if (rankValA !== rankValB) {
+          return rankValA - rankValB; // 낮은 등수가 우선
+        }
+        return b.drwNo - a.drwNo; // 같은 등수면 회차가 큰 것이 우선
+      });
+    }
+    
+    return results.slice(0, visibleCount);
+  }, [filteredResults, visibleCount, sortByRank, selectedNumbers]);
 
   const selectionInfo = useMemo(() => {
     if (selectedNumbers.length < 2) {
@@ -314,7 +338,7 @@ export function OverviewHistoryView() {
     <DashboardContent maxWidth="xl">
       <Card>
         <CardHeader
-          title="과거분석"
+          title="과거순위"
           sx={{
             mb: 0,
             '& .MuiCardHeader-content': { display: { xs: 'none', sm: 'block' } },
@@ -322,6 +346,17 @@ export function OverviewHistoryView() {
           }}
           action={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexWrap: 'wrap', justifyContent: { xs: 'center', sm: 'flex-end' } }}>
+              <Button
+                variant="soft"
+                color="error"
+                size="small"
+                onClick={handleClear}
+                disabled={selectedNumbers.length === 0}
+                sx={{ minWidth: 40, height: { xs: 22, sm: 26, md: 28 }, fontSize: { xs: 10, sm: 12 } }}
+              >
+                초기화
+              </Button>
+
               {/* 테마 선택 버튼 그룹 */}
               <ToggleButtonGroup
                 size="small"
@@ -341,9 +376,13 @@ export function OverviewHistoryView() {
 
               <ToggleButtonGroup
                 size="small"
-                value={showNumbers ? ['showNumbers'] : []}
+                value={[
+                  showNumbers && 'showNumbers',
+                  sortByRank && 'sortByRank',
+                ].filter(Boolean)}
                 onChange={(event, newValues) => {
                   setShowNumbers(newValues.includes('showNumbers'));
+                  setSortByRank(newValues.includes('sortByRank'));
                 }}
                 aria-label="view settings"
               >
@@ -352,18 +391,14 @@ export function OverviewHistoryView() {
                     <Iconify icon="mdi:numeric" width={24} sx={{ width: { xs: 12, sm: 15, md: 16 } }} />
                   </ToggleButton>
                 </Tooltip>
+                <Tooltip title="등수별 정렬">
+                  <ToggleButton value="sortByRank" aria-label="sort by rank" sx={{ width: { xs: 18, sm: 22, md: 24 }, height: { xs: 18, sm: 22, md: 24 } }}>
+                    <Iconify icon="mdi:sort-descending" width={24} sx={{ width: { xs: 12, sm: 15, md: 16 } }} />
+                  </ToggleButton>
+                </Tooltip>
               </ToggleButtonGroup>
 
-              <Button
-                variant="soft"
-                color="error"
-                size="small"
-                onClick={handleClear}
-                disabled={selectedNumbers.length === 0}
-                sx={{ minWidth: 40, height: { xs: 22, sm: 26, md: 28 }, fontSize: { xs: 10, sm: 12 } }}
-              >
-                초기화
-              </Button>
+              
             </Box>
           }
         />
