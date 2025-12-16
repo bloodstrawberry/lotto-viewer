@@ -156,7 +156,7 @@ function PredictRow({
       {/* 결과 행의 등수 표시 영역과 동일한 너비의 빈 공간 */}
       <Box
         sx={{
-          width: { xs: "50px", sm: "80px" },
+          width: { xs: "0px", sm: "80px" },
           marginLeft: "6px",
           flexShrink: 0,
         }}
@@ -229,7 +229,7 @@ function ResultRow({
       {/* 결과 표시 */}
       <Box
         sx={{
-          width: { xs: "50px", sm: "80px" },
+          width: { xs: "40px", sm: "80px" },
           marginLeft: "6px",
           display: "flex",
           alignItems: "center",
@@ -243,13 +243,22 @@ function ResultRow({
             bgcolor: getRankColor(rank),
             color: '#fff',
             fontWeight: 'bold',
-            fontSize: { xs: '10px', sm: '12px' },
-            height: { xs: 18, sm: 22 },
-            minWidth: { xs: 35, sm: 45 },
+            fontSize: { xs: '8px', sm: '12px' },
+            height: { xs: 14, sm: 22 },
+            minWidth: { xs: 23, sm: 45 },
+            '& .MuiChip-label': { px: 0.5 },
           }}
         />
         {hasBonus && rank === 2 && (
-          <Iconify icon="mdi:star" width={14} sx={{ color: '#FFD700' }} />
+          <Iconify 
+            icon="mdi:star" 
+            width={14} 
+            sx={{ 
+              color: '#FFD700',
+              width: { xs: 10, sm: 14 },
+              height: { xs: 10, sm: 14 }
+            }} 
+          />
         )}
       </Box>
     </div>
