@@ -68,10 +68,10 @@ export const navData: NavSectionProps['data'] = [
   {
     subheader: 'Overview',
     items: [
-      { title: 'App', path: paths.dashboard.root, icon: ICONS.dashboard },
+      { title: 'Home', path: paths.dashboard.root, icon: ICONS.dashboard },
       { title: '패턴분석', path: paths.dashboard.general.pattern, icon: ICONS.pattern },
-      { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
-      { title: 'History', path: paths.dashboard.general.history, icon: ICONS.banking },
+      { title: '통계분석', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
+      { title: '과거순위', path: paths.dashboard.general.history, icon: ICONS.banking },
       { title: 'Booking', path: paths.dashboard.general.booking, icon: ICONS.booking },
       { title: 'File', path: paths.dashboard.general.file, icon: ICONS.file },
       { title: 'Course', path: paths.dashboard.general.course, icon: ICONS.course },
