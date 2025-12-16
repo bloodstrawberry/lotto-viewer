@@ -326,10 +326,10 @@ export function OverviewHistoryView() {
 
   const selectionInfo = useMemo(() => {
     if (selectedNumbers.length < 2) {
-      return `2개 이상의 번호를 선택하세요 (현재: ${selectedNumbers.length}개)`;
+      return `2개 이상 번호 선택 (현재: ${selectedNumbers.length}개)`;
     }
     if (selectedNumbers.length === 6) {
-      return `5등 이상 당첨 회차: ${filteredResults.length}개`;
+      return `당첨 회차: ${filteredResults.length}개`;
     }
     return `선택한 번호가 모두 포함된 회차: ${filteredResults.length}개`;
   }, [selectedNumbers, filteredResults]);
@@ -415,12 +415,26 @@ export function OverviewHistoryView() {
               />
 
               {/* 선택 정보 표시 */}
-              <Box sx={{ py: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                <Typography variant="body2" color="text.secondary">
+              <Box sx={{ 
+                py: { xs: 1, sm: 1.5 }, 
+                display: 'flex', 
+                flexDirection: { xs: 'column', sm: 'row' },
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                gap: { xs: 1, sm: 1 },
+              }}>
+                <Typography 
+                  variant="body2" 
+                  color="text.secondary"
+                  sx={{ 
+                    fontSize: { xs: '11px', sm: '13px' },
+                    textAlign: 'center',
+                  }}
+                >
                   {selectionInfo}
                 </Typography>
                 {selectedNumbers.length > 0 && (
-                  <Box sx={{ display: 'flex', gap: 0.5 }}>
+                  <Box sx={{ display: 'flex', gap: { xs: 0.5, sm: 0.5 }, flexWrap: 'wrap', justifyContent: 'center' }}>
                     {selectedNumbers.map((num) => (
                       <Chip
                         key={num}
@@ -428,9 +442,10 @@ export function OverviewHistoryView() {
                         size="small"
                         onDelete={() => handleNumberClick(num)}
                         sx={{ 
-                          height: 22, 
-                          fontSize: 11,
-                          '& .MuiChip-deleteIcon': { fontSize: 14 }
+                          height: { xs: 20, sm: 22 }, 
+                          fontSize: { xs: 10, sm: 11 },
+                          '& .MuiChip-label': { px: { xs: 0.8, sm: 1 } },
+                          '& .MuiChip-deleteIcon': { fontSize: { xs: 14, sm: 15 } }
                         }}
                       />
                     ))}
