@@ -126,7 +126,7 @@ function PredictRow({
           display: { xs: "none", sm: "block" },
         }}
       >
-        예측
+        선택
       </Box>
 
       <div style={{ flex: 1, display: "flex", gap: "1px" }}>
@@ -149,6 +149,15 @@ function PredictRow({
           );
         })}
       </div>
+
+      {/* 결과 행의 등수 표시 영역과 동일한 너비의 빈 공간 */}
+      <Box
+        sx={{
+          width: { xs: "50px", sm: "80px" },
+          marginLeft: "6px",
+          flexShrink: 0,
+        }}
+      />
     </div>
   );
 }
