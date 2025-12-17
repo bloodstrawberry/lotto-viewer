@@ -27,6 +27,8 @@ export function ShareButton() {
     const [year, month, day] = latest.drwNoDate.split('-');
     const formattedDate = `${year}년 ${month}월 ${day}일`;
 
+    const LOTTO_URL = 'https://lotto-viewer.vercel.app/';
+
     // Construct the message matching the user's requested format
     return `${latest.drwNo}회(${formattedDate} 추첨)
 
@@ -36,7 +38,7 @@ export function ShareButton() {
 총 판매금액 : ${totSellamnt}원
 1등 당첨금액 : ${firstWinamnt}원
 1등 당첨자 : ${latest.firstPrzwnerCo}명
-https://lotto-viewer.vercel.app/`;
+${LOTTO_URL}`;
   }, []);
 
   const handleShare = async () => {
