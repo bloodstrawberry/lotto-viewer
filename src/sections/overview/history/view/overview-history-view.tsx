@@ -126,7 +126,6 @@ function PredictRow({
           marginRight: "6px",
           color: "#999",
           fontFamily: "monospace",
-          display: { xs: "none", sm: "block" },
         }}
       >
         선택
@@ -156,7 +155,7 @@ function PredictRow({
       {/* 결과 행의 등수 표시 영역과 동일한 너비의 빈 공간 */}
       <Box
         sx={{
-          width: { xs: "0px", sm: "80px" },
+          width: { xs: "40px", sm: "80px" },
           marginLeft: "6px",
           flexShrink: 0,
         }}
@@ -189,7 +188,6 @@ function ResultRow({
           marginRight: "6px",
           color: "#999",
           fontFamily: "monospace",
-          display: { xs: "none", sm: "block" },
         }}
       >
         {round.drwNo}
