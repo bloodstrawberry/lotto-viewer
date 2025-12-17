@@ -255,8 +255,7 @@ export function HomeLottoDisplay() {
           size="large"
           variant="outlined"
           onClick={() => {
-            const result = getIsMobile();
-            toast.info(`Is Mobile: ${result}`);
+            getIsMobile();
           }}
           sx={{ mt: 5, ml: 2 }}
         >
