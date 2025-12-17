@@ -99,6 +99,13 @@ ${LOTTO_URL}`;
         onClose={handleCloseSnackbar}
         message={snackbarMessage}
         autoHideDuration={2000}
+        ContentProps={{
+          sx: {
+            justifyContent: 'center',
+            textAlign: 'center',
+            fontWeight: 'bold',
+          },
+        }}
       />
     </>
   );
