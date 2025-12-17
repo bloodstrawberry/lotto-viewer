@@ -40,6 +40,21 @@ export function ShareButton() {
 ${LOTTO_URL}`;
   }, []);
 
+const isMobileDevice = () => {
+  if (typeof window === 'undefined') return false;
+
+  return (
+    // 1️⃣ Web Share API는 보통 모바일에서만 UX가 정상
+    ('ontouchstart' in window) ||
+
+    // 2️⃣ 화면 너비 (태블릿 포함)
+    window.innerWidth <= 768 ||
+
+    // 3️⃣ fallback UA (최후 수단)
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+  );
+};
+
 const handleShare = async () => {
   const shareText = generateShareText();
 
@@ -49,12 +64,10 @@ const handleShare = async () => {
     return;
   }
 
-  const isMobile =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(pointer: coarse)').matches;
+  const isMobile = isMobileDevice();
 
   /**
-   * ✅ 모바일 + Web Share API
+   * ✅ 모바일에서만 Web Share API 사용
    */
   if (isMobile && navigator.share) {
     try {
@@ -64,13 +77,13 @@ const handleShare = async () => {
       });
       return;
     } catch (error) {
-      // 사용자가 취소한 경우 → 무시
-      console.warn('Share cancelled:', error);
+      // 사용자가 취소한 경우 → 정상
+      console.warn('Share cancelled or failed:', error);
     }
   }
 
   /**
-   * ✅ 웹 환경 (무조건 복사)
+   * ✅ 웹 환경 → 무조건 복사
    */
   try {
     await navigator.clipboard.writeText(shareText);
@@ -82,6 +95,7 @@ const handleShare = async () => {
     setOpenSnackbar(true);
   }
 };
+
 
   return (
     <>
