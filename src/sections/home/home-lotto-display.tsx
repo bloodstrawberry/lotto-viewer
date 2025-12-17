@@ -19,14 +19,7 @@ import { toast } from 'src/components/snackbar';
 
 import * as LottoLibrary from 'src/api/lottolibrary';
 
-export const getIsMobile = () => {
-  const userAgent = window.navigator.userAgent;
-  const isMobile =
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      userAgent
-    );
-  return isMobile;
-};
+import { getIsMobile } from 'src/utils/is-mobile';
 
 // ----------------------------------------------------------------------
 

@@ -8,6 +8,7 @@ import Snackbar from '@mui/material/Snackbar';
 
 import { Iconify } from 'src/components/iconify';
 import { getLatestLottoNumber } from 'src/api/lottolibrary';
+import { getIsMobile } from 'src/utils/is-mobile';
 
 // ----------------------------------------------------------------------
 
@@ -40,20 +41,7 @@ export function ShareButton() {
 ${LOTTO_URL}`;
   }, []);
 
-const isMobileDevice = () => {
-  if (typeof window === 'undefined') return false;
 
-  return (
-    // 1️⃣ Web Share API는 보통 모바일에서만 UX가 정상
-    ('ontouchstart' in window) ||
-
-    // 2️⃣ 화면 너비 (태블릿 포함)
-    window.innerWidth <= 768 ||
-
-    // 3️⃣ fallback UA (최후 수단)
-    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
-  );
-};
 
 const handleShare = async () => {
   const shareText = generateShareText();
@@ -64,7 +52,7 @@ const handleShare = async () => {
     return;
   }
 
-  const isMobile = isMobileDevice();
+  const isMobile = getIsMobile();
 
   /**
    * ✅ 모바일에서만 Web Share API 사용
