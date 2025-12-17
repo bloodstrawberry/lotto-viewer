@@ -15,7 +15,18 @@ import { useRouter } from 'src/routes/hooks';
 import { Iconify } from 'src/components/iconify';
 import { varFade, varContainer, MotionViewport } from 'src/components/animate';
 
+import { toast } from 'src/components/snackbar';
+
 import * as LottoLibrary from 'src/api/lottolibrary';
+
+export const getIsMobile = () => {
+  const userAgent = window.navigator.userAgent;
+  const isMobile =
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      userAgent
+    );
+  return isMobile;
+};
 
 // ----------------------------------------------------------------------
 
@@ -245,6 +256,18 @@ export function HomeLottoDisplay() {
           sx={{ mt: 5 }}
         >
           패턴 분석하러 가기
+        </Button>
+
+        <Button
+          size="large"
+          variant="outlined"
+          onClick={() => {
+            const result = getIsMobile();
+            toast.info(`Is Mobile: ${result}`);
+          }}
+          sx={{ mt: 5, ml: 2 }}
+        >
+          모바일 테스트
         </Button>
       </m.div>
     </Container>
