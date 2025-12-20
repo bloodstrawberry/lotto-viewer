@@ -45,7 +45,7 @@ export function OverviewLottoNumberView() {
   // Pattern Highlights
   const [patternHighlights, setPatternHighlights] = useState<Record<number, Set<number>>>({});
 
-  const { historyStats, predictCandidates, jumpHistoryStats, jumpPredictCandidates } = useLottoPattern(data, consecutiveOption, jumpInterval);
+  const { historyStats, predictCandidates, jumpHistoryStats, jumpPredictCandidates } = useLottoPattern(data, consecutiveOption, jumpInterval, showBonus);
   const missingStats = useLottoMissing(data, showBonus);
   
   const mergedPredictCandidates = useMemo(() => {
@@ -72,6 +72,8 @@ export function OverviewLottoNumberView() {
     if (selectedNumbers.length === 0 || !data || data.length < 2) return stats;
 
     const latestRound = data[0]; 
+    const getRoundNumbers = (r: any) => showBonus ? [...r.numbers, r.bonus] : r.numbers;
+    const latestRoundNums = getRoundNumbers(latestRound);
 
     selectedNumbers.forEach((candidate) => {
       const diffs = mergedPredictCandidates[candidate];
@@ -84,7 +86,7 @@ export function OverviewLottoNumberView() {
                  // Skip
              } else {
                  [candidate - absDiff, candidate + absDiff].forEach((n1) => {
-                    if (!latestRound.numbers.includes(n1)) return;
+                    if (!latestRoundNums.includes(n1)) return;
                     const signedDiff = candidate - n1;
                     if (Math.abs(signedDiff) !== absDiff) return;
 
@@ -95,7 +97,7 @@ export function OverviewLottoNumberView() {
                     
                     while (currentIdx < data.length) {
                         const r = data[currentIdx];
-                        if (r.numbers.includes(currentNum)) {
+                        if (getRoundNumbers(r).includes(currentNum)) {
                             traceMatches.push({ drwNo: r.drwNo, num: currentNum });
                             currentNum -= signedDiff;
                             currentIdx++;
@@ -123,7 +125,7 @@ export function OverviewLottoNumberView() {
             if (prevIdx < data.length) {
                 const rPrev = data[prevIdx];
                 [candidate - absDiff, candidate + absDiff].forEach((nPrev) => {
-                    if (rPrev.numbers.includes(nPrev)) {
+                    if (getRoundNumbers(rPrev).includes(nPrev)) {
                         const signedDiff = candidate - nPrev;
                         if (Math.abs(signedDiff) !== absDiff) return;
 
@@ -141,7 +143,7 @@ export function OverviewLottoNumberView() {
 
                         while (nextIdx < data.length) {
                             const rNext = data[nextIdx];
-                            if (rNext.numbers.includes(nextNum)) {
+                            if (getRoundNumbers(rNext).includes(nextNum)) {
                                 traceMatches.push({ drwNo: rNext.drwNo, num: nextNum });
                                 currentNum = nextNum;
                                 nextIdx += jumpInterval;

@@ -3,7 +3,7 @@ import { useMemo } from "react";
 // Option types: 0 (Off), 99 (All), 1-5 (Specific Diff)
 export type PatternOption = number;
 
-export function useLottoPattern(data: any[], consecutiveOption: PatternOption, jumpInterval: number) {
+export function useLottoPattern(data: any[], consecutiveOption: PatternOption, jumpInterval: number, showBonus: boolean) {
   const { historyStats, predictCandidates, jumpHistoryStats, jumpPredictCandidates } = useMemo(() => {
     // Round -> Number -> Set<diff>
     const stats: Record<number, Record<number, Set<number>>> = {};
@@ -20,6 +20,8 @@ export function useLottoPattern(data: any[], consecutiveOption: PatternOption, j
             jumpPredictCandidates: jumpCandidates
         };
     }
+
+    const getRoundNumbers = (round: any) => showBonus ? [...round.numbers, round.bonus] : round.numbers;
 
     const addStat = (targetStats: Record<number, Record<number, Set<number>>>, drwNo: number, num: number, diff: number) => {
         if (!targetStats[drwNo]) targetStats[drwNo] = {};
@@ -41,8 +43,12 @@ export function useLottoPattern(data: any[], consecutiveOption: PatternOption, j
             const r2 = data[i+1];
             const r3 = data[i+2];   // Older
 
-            for (const n1 of r1.numbers) {
-                for (const n2 of r2.numbers) {
+            const nums1 = getRoundNumbers(r1);
+            const nums2 = getRoundNumbers(r2);
+            const nums3 = getRoundNumbers(r3);
+
+            for (const n1 of nums1) {
+                for (const n2 of nums2) {
                     const diff = n1 - n2; 
                     const absDiff = Math.abs(diff);
 
@@ -52,7 +58,7 @@ export function useLottoPattern(data: any[], consecutiveOption: PatternOption, j
                     if (!isDiffAllowed(absDiff, consecutiveOption)) continue;
 
                     const n3 = n2 - diff;
-                    if (r3.numbers.includes(n3)) {
+                    if (nums3.includes(n3)) {
                          addStat(stats, r1.drwNo, n1, absDiff);
                          addStat(stats, r2.drwNo, n2, absDiff);
                          addStat(stats, r3.drwNo, n3, absDiff);
@@ -66,8 +72,11 @@ export function useLottoPattern(data: any[], consecutiveOption: PatternOption, j
             const r1 = data[0]; // Latest
             const r2 = data[1]; // Previous
             
-            for (const n1 of r1.numbers) {
-                for (const n2 of r2.numbers) {
+            const nums1 = getRoundNumbers(r1);
+            const nums2 = getRoundNumbers(r2);
+            
+            for (const n1 of nums1) {
+                for (const n2 of nums2) {
                      const diff = n1 - n2;
                      const absDiff = Math.abs(diff);
 
@@ -93,15 +102,19 @@ export function useLottoPattern(data: any[], consecutiveOption: PatternOption, j
             const r2 = data[i + jumpInterval];
             const r3 = data[i + 2 * jumpInterval];
 
-            for (const n1 of r1.numbers) {
-                for (const n2 of r2.numbers) {
+            const nums1 = getRoundNumbers(r1);
+            const nums2 = getRoundNumbers(r2);
+            const nums3 = getRoundNumbers(r3);
+
+            for (const n1 of nums1) {
+                for (const n2 of nums2) {
                     const diff = n1 - n2;
                     const absDiff = Math.abs(diff);
 
                     if (absDiff > 5) continue; // Allow 0, up to 5
 
                     const n3 = n2 - diff;
-                    if (r3.numbers.includes(n3)) {
+                    if (nums3.includes(n3)) {
                         addStat(jumpStats, r1.drwNo, n1, absDiff);
                         addStat(jumpStats, r2.drwNo, n2, absDiff);
                         addStat(jumpStats, r3.drwNo, n3, absDiff);
@@ -118,8 +131,11 @@ export function useLottoPattern(data: any[], consecutiveOption: PatternOption, j
             const r1 = data[i1]; 
             const r2 = data[i2]; 
 
-            for (const n1 of r1.numbers) {
-                for (const n2 of r2.numbers) {
+            const nums1 = getRoundNumbers(r1);
+            const nums2 = getRoundNumbers(r2);
+
+            for (const n1 of nums1) {
+                for (const n2 of nums2) {
                      const diff = n1 - n2;
                      const absDiff = Math.abs(diff);
 
@@ -141,7 +157,7 @@ export function useLottoPattern(data: any[], consecutiveOption: PatternOption, j
         jumpHistoryStats: jumpStats,
         jumpPredictCandidates: jumpCandidates
     };
-  }, [data, consecutiveOption, jumpInterval]);
+  }, [data, consecutiveOption, jumpInterval, showBonus]);
 
   return { historyStats, predictCandidates, jumpHistoryStats, jumpPredictCandidates };
 }
