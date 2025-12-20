@@ -46,7 +46,7 @@ export function OverviewLottoNumberView() {
   const [patternHighlights, setPatternHighlights] = useState<Record<number, Set<number>>>({});
 
   const { historyStats, predictCandidates, jumpHistoryStats, jumpPredictCandidates } = useLottoPattern(data, consecutiveOption, jumpInterval);
-  const missingStats = useLottoMissing(data);
+  const missingStats = useLottoMissing(data, showBonus);
   
   const mergedPredictCandidates = useMemo(() => {
     const merged: Record<number, Set<number>> = {};

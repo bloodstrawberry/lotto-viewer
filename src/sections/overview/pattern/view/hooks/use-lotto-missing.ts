@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function useLottoMissing(data: any[]) {
+export function useLottoMissing(data: any[], showBonus: boolean) {
   const [missingStats, setMissingStats] = useState<Record<number, Record<number, number>>>({});
 
   useEffect(() => {
@@ -14,7 +14,10 @@ export function useLottoMissing(data: any[]) {
     sortedAsc.forEach((round) => {
         const rowStats: Record<number, number> = {};
         for(let n = 1; n <= 45; n++) {
-            if (round.numbers.includes(n)) {
+            // 당첨번호에 포함되어 있거나, (보너스 포함 모드이고 보너스 번호와 일치하면) -> 출현으로 간주
+            const isAppeared = round.numbers.includes(n) || (showBonus && round.bonus === n);
+
+            if (isAppeared) {
                 currentStreaks[n] = 0;
             } else {
                 currentStreaks[n]++;
@@ -24,7 +27,7 @@ export function useLottoMissing(data: any[]) {
         stats[round.drwNo] = rowStats;
     });
     setMissingStats(stats);
-  }, [data]);
+  }, [data, showBonus]);
 
   return missingStats;
 }
