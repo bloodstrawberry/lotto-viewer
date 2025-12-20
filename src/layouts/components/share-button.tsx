@@ -75,7 +75,7 @@ const handleShare = async () => {
    */
   try {
     await navigator.clipboard.writeText(shareText);
-    setSnackbarMessage('최신 1등 로또 정보가 복사되었습니다!');
+    setSnackbarMessage('최신 로또 1등 정보가 복사되었습니다!');
     setOpenSnackbar(true);
   } catch (error) {
     console.error('Clipboard copy failed:', error);
