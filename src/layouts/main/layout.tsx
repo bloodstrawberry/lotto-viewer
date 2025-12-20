@@ -21,6 +21,7 @@ import { NavDesktop } from './nav/desktop';
 import { Footer, HomeFooter } from './footer';
 import { MenuButton } from '../components/menu-button';
 import { navData as mainNavData } from '../nav-config-main';
+import { ShareButton } from '../components/share-button';
 import { SettingsButton } from '../components/settings-button';
 import { MainSection, LayoutSection, HeaderSection } from '../core';
 
@@ -82,16 +83,10 @@ export function MainLayout({
       rightArea: (
         <>
           {/** @slot Nav desktop */}
-          <NavDesktop
-            data={navData}
-            sx={(theme) => ({
-              display: 'none',
-              [theme.breakpoints.up(layoutQuery)]: { mr: 2.5, display: 'flex' },
-            })}
-          />
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
             {/** @slot Settings button */}
+            <ShareButton />
             <SettingsButton />
           </Box>
         </>
