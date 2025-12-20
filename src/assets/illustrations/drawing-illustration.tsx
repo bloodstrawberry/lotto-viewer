@@ -6,7 +6,7 @@ import SvgIcon from '@mui/material/SvgIcon';
 
 // ----------------------------------------------------------------------
 
-function BookingIllustration({ sx, ...other }: SvgIconProps) {
+function DrawingIllustration({ sx, ...other }: SvgIconProps) {
   return (
     <SvgIcon
       viewBox="0 0 200 200"
@@ -304,4 +304,4 @@ function BookingIllustration({ sx, ...other }: SvgIconProps) {
   );
 }
 
-export default memo(BookingIllustration);
+export default memo(DrawingIllustration);

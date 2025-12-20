@@ -262,10 +262,10 @@ export const _bankingRecentTransitions = [
   },
 ];
 
-// BOOKING
+// DRAWING
 // ----------------------------------------------------------------------
 
-export const _bookings = Array.from({ length: 5 }, (_, index) => {
+export const _drawings = Array.from({ length: 5 }, (_, index) => {
   const status = ['Paid', 'Paid', 'Pending', 'Cancelled', 'Paid'][index];
 
   const customer = {
@@ -289,13 +289,13 @@ export const _bookings = Array.from({ length: 5 }, (_, index) => {
   };
 });
 
-export const _bookingsOverview = Array.from({ length: 3 }, (_, index) => ({
+export const _drawingsOverview = Array.from({ length: 3 }, (_, index) => ({
   status: ['Pending', 'Canceled', 'Sold'][index],
   quantity: _mock.number.nativeL(index),
   value: _mock.number.percent(index + 5),
 }));
 
-export const _bookingReview = Array.from({ length: 5 }, (_, index) => ({
+export const _drawingReview = Array.from({ length: 5 }, (_, index) => ({
   id: _mock.id(index),
   name: _mock.fullName(index),
   postedAt: _mock.time(index),
@@ -305,7 +305,7 @@ export const _bookingReview = Array.from({ length: 5 }, (_, index) => ({
   tags: ['Great sevice', 'Recommended', 'Best price'],
 }));
 
-export const _bookingNew = Array.from({ length: 8 }, (_, index) => ({
+export const _drawingNew = Array.from({ length: 8 }, (_, index) => ({
   guests: '3-5',
   id: _mock.id(index),
   bookedAt: _mock.time(index),

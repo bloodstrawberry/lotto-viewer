@@ -28,7 +28,7 @@ type Props = CardProps & {
   };
 };
 
-export function BookingAvailable({ title, subheader, chart, sx, ...other }: Props) {
+export function DrawingAvailable({ title, subheader, chart, sx, ...other }: Props) {
   const theme = useTheme();
 
   const total = sumBy(chart.series, (series) => series.value);

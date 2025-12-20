@@ -30,7 +30,7 @@ type Props = CardProps & {
   };
 };
 
-export function BookingStatistics({ title, subheader, chart, sx, ...other }: Props) {
+export function DrawingStatistics({ title, subheader, chart, sx, ...other }: Props) {
   const theme = useTheme();
 
   const [selectedSeries, setSelectedSeries] = useState('Yearly');

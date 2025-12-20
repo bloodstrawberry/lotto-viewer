@@ -35,7 +35,7 @@ type Props = CardProps & {
   }[];
 };
 
-export function BookingCustomerReviews({ title, subheader, list, sx, ...other }: Props) {
+export function DrawingCustomerReviews({ title, subheader, list, sx, ...other }: Props) {
   const carousel = useCarousel({ align: 'start' }, [AutoHeight()]);
 
   const customerInfo = list.find((_, index) => index === carousel.dots.selectedIndex);

@@ -16,7 +16,7 @@ type Props = CardProps & {
   icon: React.ReactElement;
 };
 
-export function BookingWidgetSummary({ title, percent, total, icon, sx, ...other }: Props) {
+export function DrawingWidgetSummary({ title, percent, total, icon, sx, ...other }: Props) {
   const renderTrending = () => (
     <Box
       sx={{

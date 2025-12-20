@@ -50,7 +50,7 @@ type Props = CardProps & {
   }[];
 };
 
-export function BookingDetails({ title, subheader, headCells, tableData, sx, ...other }: Props) {
+export function DrawingDetails({ title, subheader, headCells, tableData, sx, ...other }: Props) {
   return (
     <Card sx={sx} {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />

@@ -32,7 +32,7 @@ type Props = BoxProps & {
   }[];
 };
 
-export function BookingNewest({ title, subheader, list, sx, ...other }: Props) {
+export function DrawingNewest({ title, subheader, list, sx, ...other }: Props) {
   const carousel = useCarousel({
     align: 'start',
     slideSpacing: '24px',

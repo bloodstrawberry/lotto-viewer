@@ -26,7 +26,7 @@ type Props = CardProps & {
   };
 };
 
-export function BookingCheckInWidgets({ chart, sx, ...other }: Props) {
+export function DrawingCheckInWidgets({ chart, sx, ...other }: Props) {
   const theme = useTheme();
   const smUp = useMediaQuery(theme.breakpoints.up('sm'));
 

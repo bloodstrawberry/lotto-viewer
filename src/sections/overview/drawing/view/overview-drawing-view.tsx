@@ -4,40 +4,40 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _bookings, _bookingNew, _bookingReview, _bookingsOverview } from 'src/_mock';
+import { _drawings, _drawingNew, _drawingReview, _drawingsOverview } from 'src/_mock';
 import {
-  BookingIllustration,
+  DrawingIllustration,
   CheckInIllustration,
   CheckoutIllustration,
 } from 'src/assets/illustrations';
 
-import { BookingBooked } from '../booking-booked';
-import { BookingNewest } from '../booking-newest';
-import { BookingDetails } from '../booking-details';
-import { BookingAvailable } from '../booking-available';
-import { BookingStatistics } from '../booking-statistics';
-import { BookingTotalIncomes } from '../booking-total-incomes';
-import { BookingWidgetSummary } from '../booking-widget-summary';
-import { BookingCheckInWidgets } from '../booking-check-in-widgets';
-import { BookingCustomerReviews } from '../booking-customer-reviews';
+import { DrawingBooked } from '../drawing-booked';
+import { DrawingNewest } from '../drawing-newest';
+import { DrawingDetails } from '../drawing-details';
+import { DrawingAvailable } from '../drawing-available';
+import { DrawingStatistics } from '../drawing-statistics';
+import { DrawingTotalIncomes } from '../drawing-total-incomes';
+import { DrawingWidgetSummary } from '../drawing-widget-summary';
+import { DrawingCheckInWidgets } from '../drawing-check-in-widgets';
+import { DrawingCustomerReviews } from '../drawing-customer-reviews';
 
 // ----------------------------------------------------------------------
 
-export function OverviewBookingView() {
+export function OverviewDrawingView() {
   return (
     <DashboardContent maxWidth="xl">
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 4 }}>
-          <BookingWidgetSummary
-            title="Total booking"
+          <DrawingWidgetSummary
+            title="Total drawing"
             percent={2.6}
             total={714000}
-            icon={<BookingIllustration />}
+            icon={<DrawingIllustration />}
           />
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
-          <BookingWidgetSummary
+          <DrawingWidgetSummary
             title="Sold"
             percent={0.2}
             total={311000}
@@ -46,7 +46,7 @@ export function OverviewBookingView() {
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
-          <BookingWidgetSummary
+          <DrawingWidgetSummary
             title="Canceled"
             percent={-0.1}
             total={124000}
@@ -77,7 +77,7 @@ export function OverviewBookingView() {
                   gridTemplateColumns: { xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' },
                 }}
               >
-                <BookingTotalIncomes
+                <DrawingTotalIncomes
                   title="Total incomes"
                   total={18765}
                   percent={2.6}
@@ -87,14 +87,14 @@ export function OverviewBookingView() {
                   }}
                 />
 
-                <BookingBooked
+                <DrawingBooked
                   title="Booked"
-                  data={_bookingsOverview}
+                  data={_drawingsOverview}
                   sx={{ boxShadow: { md: 'none' } }}
                 />
               </Box>
 
-              <BookingCheckInWidgets
+              <DrawingCheckInWidgets
                 chart={{
                   series: [
                     { label: 'Sold', percent: 73.9, total: 38566 },
@@ -105,7 +105,7 @@ export function OverviewBookingView() {
               />
             </Box>
 
-            <BookingStatistics
+            <DrawingStatistics
               title="Statistics"
               chart={{
                 series: [
@@ -140,7 +140,7 @@ export function OverviewBookingView() {
 
           <Grid size={{ xs: 12, md: 5, lg: 4 }}>
             <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
-              <BookingAvailable
+              <DrawingAvailable
                 title="Tours available"
                 chart={{
                   series: [
@@ -150,27 +150,27 @@ export function OverviewBookingView() {
                 }}
               />
 
-              <BookingCustomerReviews
+              <DrawingCustomerReviews
                 title="Customer reviews"
-                subheader={`${_bookingReview.length} Reviews`}
-                list={_bookingReview}
+                subheader={`${_drawingReview.length} Reviews`}
+                list={_drawingReview}
               />
             </Box>
           </Grid>
         </Grid>
 
         <Grid size={12}>
-          <BookingNewest
-            title="Newest booking"
-            subheader={`${_bookingNew.length} bookings`}
-            list={_bookingNew}
+          <DrawingNewest
+            title="Newest drawing"
+            subheader={`${_drawingNew.length} drawings`}
+            list={_drawingNew}
           />
         </Grid>
 
         <Grid size={12}>
-          <BookingDetails
-            title="Booking details"
-            tableData={_bookings}
+          <DrawingDetails
+            title="Drawing details"
+            tableData={_drawings}
             headCells={[
               { id: 'destination', label: 'Destination' },
               { id: 'customer', label: 'Customer' },

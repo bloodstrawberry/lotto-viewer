@@ -29,7 +29,7 @@ type Props = CardProps & {
   };
 };
 
-export function BookingTotalIncomes({ title, total, percent, chart, sx, ...other }: Props) {
+export function DrawingTotalIncomes({ title, total, percent, chart, sx, ...other }: Props) {
   const theme = useTheme();
 
   const chartColors = chart.colors ?? [hexAlpha(theme.palette.primary.lighter, 0.64)];
