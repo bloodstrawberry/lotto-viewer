@@ -1,4 +1,4 @@
-import { toast } from 'src/components/snackbar';
+// import { toast } from 'src/components/snackbar';
 
 export const getIsMobile = () => {
   if (typeof window === 'undefined') return false;
@@ -9,7 +9,7 @@ export const getIsMobile = () => {
       userAgent
     );
 
-  toast.info(`Is Mobile: ${isMobile}`);
+  // toast.info(`Is Mobile: ${isMobile}`);
 
   return isMobile;
 };

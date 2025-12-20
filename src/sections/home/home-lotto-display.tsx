@@ -15,11 +15,7 @@ import { useRouter } from 'src/routes/hooks';
 import { Iconify } from 'src/components/iconify';
 import { varFade, varContainer, MotionViewport } from 'src/components/animate';
 
-import { toast } from 'src/components/snackbar';
-
 import * as LottoLibrary from 'src/api/lottolibrary';
-
-import { getIsMobile } from 'src/utils/is-mobile';
 
 // ----------------------------------------------------------------------
 
@@ -249,17 +245,6 @@ export function HomeLottoDisplay() {
           sx={{ mt: 5 }}
         >
           패턴 분석하러 가기
-        </Button>
-
-        <Button
-          size="large"
-          variant="outlined"
-          onClick={() => {
-            getIsMobile();
-          }}
-          sx={{ mt: 5, ml: 2 }}
-        >
-          모바일 테스트
         </Button>
       </m.div>
     </Container>
