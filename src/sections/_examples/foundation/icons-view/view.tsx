@@ -20,7 +20,7 @@ import {
 import {
   SeoIllustration,
   UploadIllustration,
-  BookingIllustration,
+  DrawingIllustration,
   CheckInIllustration,
   CheckoutIllustration,
   ForbiddenIllustration,
@@ -235,7 +235,7 @@ const DEMO_COMPONENTS = [
     name: 'Assets illustrations',
     component: (
       <ComponentBox sx={{ gap: 5 }}>
-        <BookingIllustration />
+        <DrawingIllustration />
         <CheckInIllustration />
         <CheckoutIllustration />
         <br />
