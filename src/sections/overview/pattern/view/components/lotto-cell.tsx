@@ -39,6 +39,7 @@ export const LottoCell = memo(({
         color: textColor,
         position: "relative",
         overflow: "hidden",
+        transition: "background-color 0.5s ease, box-shadow 0.5s ease",
         boxShadow: restProps.consecutiveColors 
           ? (restProps.consecutiveColors.length === 1 
               ? `inset 0 0 0 5px ${restProps.consecutiveColors[0]}`
@@ -57,17 +58,16 @@ export const LottoCell = memo(({
           : "none",
       }}
     >
-      {overlayColor && overlayColor !== 'transparent' && (
-        <div style={{
-            position: 'absolute',
-            top: 0, 
-            left: 0, 
-            right: 0, 
-            bottom: 0,
-            backgroundColor: overlayColor,
-            pointerEvents: 'none',
-        }} />
-      )}
+      <div style={{
+          position: 'absolute',
+          top: 0, 
+          left: 0, 
+          right: 0, 
+          bottom: 0,
+          backgroundColor: overlayColor || 'transparent',
+          pointerEvents: 'none',
+          transition: 'background-color 0.5s ease',
+      }} />
       <span style={{ position: 'relative', zIndex: 1 }}>
         {content}
       </span>
