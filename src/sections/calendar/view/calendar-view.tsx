@@ -160,7 +160,23 @@ export function CalendarView() {
         {canReset && renderResults()}
 
         <Card sx={{ ...flexStyles, minHeight: '50vh' }}>
-          <CalendarRoot sx={{ ...flexStyles }}>            
+          <CalendarRoot sx={{ ...flexStyles }}>
+            <CalendarToolbar
+              view={view}
+              title={title}
+              canReset={canReset}
+              loading={eventsLoading}
+              onChangeView={onChangeView}
+              onDateNavigation={onDateNavigation}
+              onOpenFilters={openFilters.onTrue}
+              viewOptions={[
+                { value: 'dayGridMonth', label: 'Month', icon: 'mingcute:calendar-month-line' },
+                { value: 'timeGridWeek', label: 'Week', icon: 'mingcute:calendar-week-line' },
+                { value: 'timeGridDay', label: 'Day', icon: 'mingcute:calendar-day-line' },
+                { value: 'listWeek', label: 'Agenda', icon: 'custom:calendar-agenda-outline' },
+              ]}
+            />
+
             <Calendar
               weekends
               editable

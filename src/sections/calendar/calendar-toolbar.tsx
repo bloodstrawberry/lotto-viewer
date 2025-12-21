@@ -141,12 +141,6 @@ export function CalendarToolbar({
       >
         Today
       </Button>
-
-      <IconButton onClick={onOpenFilters}>
-        <Badge color="error" variant="dot" invisible={!canReset}>
-          <Iconify icon="ic:round-filter-list" />
-        </Badge>
-      </IconButton>
     </Box>
   );
 
