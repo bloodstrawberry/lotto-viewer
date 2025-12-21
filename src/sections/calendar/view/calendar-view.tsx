@@ -154,36 +154,13 @@ export function CalendarView() {
             mb: { xs: 3, md: 5 },
           }}
         >
-          <Typography variant="h4">Calendar</Typography>
-          <Button
-            variant="contained"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-            onClick={onOpenForm}
-          >
-            Add event
-          </Button>
+          <Typography variant="h4">로또달력</Typography>
         </Box>
 
         {canReset && renderResults()}
 
         <Card sx={{ ...flexStyles, minHeight: '50vh' }}>
-          <CalendarRoot sx={{ ...flexStyles }}>
-            <CalendarToolbar
-              view={view}
-              title={title}
-              canReset={canReset}
-              loading={eventsLoading}
-              onChangeView={onChangeView}
-              onDateNavigation={onDateNavigation}
-              onOpenFilters={openFilters.onTrue}
-              viewOptions={[
-                { value: 'dayGridMonth', label: 'Month', icon: 'mingcute:calendar-month-line' },
-                { value: 'timeGridWeek', label: 'Week', icon: 'mingcute:calendar-week-line' },
-                { value: 'timeGridDay', label: 'Day', icon: 'mingcute:calendar-day-line' },
-                { value: 'listWeek', label: 'Agenda', icon: 'custom:calendar-agenda-outline' },
-              ]}
-            />
-
+          <CalendarRoot sx={{ ...flexStyles }}>            
             <Calendar
               weekends
               editable

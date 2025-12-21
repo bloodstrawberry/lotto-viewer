@@ -83,6 +83,7 @@ export const navData: NavSectionProps['data'] = [
   {
     subheader: 'Management',
     items: [
+      { title: '로또달력', path: paths.dashboard.calendar, icon: ICONS.calendar },
       {
         title: 'User',
         path: paths.dashboard.user.root,
@@ -172,7 +173,6 @@ export const navData: NavSectionProps['data'] = [
         ),
       },
       { title: 'Chat', path: paths.dashboard.chat, icon: ICONS.chat },
-      { title: 'Calendar', path: paths.dashboard.calendar, icon: ICONS.calendar },
       { title: 'Kanban', path: paths.dashboard.kanban, icon: ICONS.kanban },
     ],
   },
