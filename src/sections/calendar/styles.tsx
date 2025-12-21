@@ -128,6 +128,15 @@ export const CalendarRoot = styled('div')(({ theme }) => {
         fontWeight: theme.typography.fontWeightBold,
       },
     },
+    '& .lotto-event': {
+      backgroundColor: 'transparent !important',
+      border: 'none !important',
+      '& .fc-event-main': {
+        backgroundColor: 'transparent !important',
+        border: 'none !important',
+        padding: '0 !important',
+      },
+    },
     '& .fc-daygrid-event': {
       marginTop: 0,
       marginBottom: 4,

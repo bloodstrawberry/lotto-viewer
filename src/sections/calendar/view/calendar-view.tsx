@@ -3,7 +3,7 @@
 import type { Theme, SxProps } from '@mui/material/styles';
 import type { ICalendarEvent, ICalendarFilters } from 'src/types/calendar';
 
-import { startTransition } from 'react';
+import { useMemo, useCallback, startTransition } from 'react';
 import Calendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -13,10 +13,14 @@ import { useBoolean, useSetState } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+
+import * as LottoLibrary from 'src/api/lottolibrary';
+
 import DialogTitle from '@mui/material/DialogTitle';
 
 import { fIsAfter, fIsBetween } from 'src/utils/format-time';
@@ -41,6 +45,8 @@ export function CalendarView() {
   const theme = useTheme();
 
   const openFilters = useBoolean();
+  const showBonus = useBoolean(true);
+  const filterMode = useBoolean(false); // false: All, true: Calendar (matched) mode
 
   const { events, eventsLoading } = useGetEvents();
 
@@ -58,7 +64,7 @@ export function CalendarView() {
     onDropEvent,
     onChangeView,
     onSelectRange,
-    onClickEvent,
+    onClickEvent: baseOnClickEvent,
     onResizeEvent,
     onDateNavigation,
     /********/
@@ -72,16 +78,66 @@ export function CalendarView() {
     onClickEventInFilters,
   } = useCalendar();
 
+  const lottoEvents = useMemo(
+    () =>
+      LottoLibrary.getAllLottoNumbers().map((lotto) => ({
+        id: `lotto-${lotto.drwNo}`,
+        title: `${lotto.drwNo}회`,
+        start: lotto.drwNoDate,
+        allDay: true,
+        display: 'block',
+        classNames: ['lotto-event'],
+        extendedProps: {
+          type: 'lotto',
+          numbers: lotto.numbers,
+          bonus: lotto.bonus,
+          start: lotto.drwNoDate,
+        },
+      })),
+    []
+  );
+
   const currentEvent = useEvent(events, selectedEventId, selectedRange, openForm);
 
   const canReset =
     currentFilters.colors.length > 0 || (!!currentFilters.startDate && !!currentFilters.endDate);
 
-  const dataFiltered = applyFilter({
-    inputData: events,
-    filters: currentFilters,
-    dateError,
-  });
+  const dataFiltered = useMemo(() => {
+    const userEvents = applyFilter({
+      inputData: events,
+      filters: currentFilters,
+      dateError,
+    });
+
+    let filteredLotto = lottoEvents;
+
+    if (filterMode.value) {
+      filteredLotto = lottoEvents.filter((lottoEvent) => {
+        const { numbers, bonus, start } = lottoEvent.extendedProps;
+        if (!start) return false;
+
+        const [y, m, d] = start.split('-').map(Number);
+
+        const hasMatch =
+          numbers.some((n: number) => n === m || n === d) ||
+          (showBonus.value && (bonus === m || bonus === d));
+
+        return hasMatch;
+      });
+    }
+
+    return [...userEvents, ...filteredLotto];
+  }, [events, currentFilters, dateError, lottoEvents, filterMode.value, showBonus.value]);
+
+  const handleOnClickEvent = useCallback(
+    (arg: any) => {
+      if (arg.event.extendedProps.type === 'lotto') {
+        return;
+      }
+      baseOnClickEvent?.(arg);
+    },
+    [baseOnClickEvent]
+  );
 
   const flexStyles: SxProps<Theme> = {
     flex: '1 1 auto',
@@ -143,6 +199,139 @@ export function CalendarView() {
     />
   );
 
+  const renderEventContent = (eventInfo: any) => {
+    const { event } = eventInfo;
+
+    if (event.extendedProps.type === 'lotto') {
+      const { numbers, bonus, start } = event.extendedProps;
+
+      if (!start) return null;
+
+      const [y, m, d] = start.split('-').map(Number);
+
+      const renderBall = (num: number, isBonus = false) => (
+        <Box
+          key={isBonus ? `bonus-${num}` : num}
+          sx={{
+            width: { xs: 12, sm: 16, md: 22 },
+            height: { xs: 12, sm: 16, md: 22 },
+            borderRadius: '50%',
+            bgcolor: LottoLibrary.getBallColor(num),
+            color: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: { xs: 6, sm: 8, md: 10 },
+            fontWeight: 'bold',
+            boxShadow: '1px 1px 2px rgba(0,0,0,0.2)',
+            background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${LottoLibrary.getBallColor(
+              num
+            )}`,
+          }}
+        >
+          {num}
+        </Box>
+      );
+
+      if (!filterMode.value) {
+        return (
+          <Box
+            sx={{
+              display: 'flex',
+              gap: { xs: 0.1, sm: 0.2 },
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: 1,
+              height: 1,
+              py: 0.5,
+            }}
+          >
+            {numbers.map((num: number) => renderBall(num))}
+            {showBonus.value && (
+              <>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontSize: { xs: 8, sm: 10 },
+                    color: 'text.secondary',
+                    mx: { xs: 0.1, sm: 0.2 },
+                  }}
+                >
+                  +
+                </Typography>
+                {renderBall(bonus, true)}
+              </>
+            )}
+          </Box>
+        );
+      }
+
+      const mMatches = numbers.filter((n: number) => n === m);
+      const dMatches = numbers.filter((n: number) => n === d);
+      const bMatchM = showBonus.value && bonus === m;
+      const bMatchD = showBonus.value && bonus === d;
+
+      return (
+        <Stack spacing={0.2} sx={{ py: 0.5, alignItems: 'center' }}>
+          {(mMatches.length > 0 || bMatchM) && (
+            <Stack direction="row" spacing={0.4} alignItems="center">
+              <Box
+                sx={{
+                  px: 0.5,
+                  py: 0.1,
+                  borderRadius: 0.4,
+                  bgcolor: 'info.main',
+                  color: 'info.contrastText',
+                  fontSize: { xs: 7, sm: 9 },
+                  fontWeight: 'bold',
+                  lineHeight: 1,
+                }}
+              >
+                월
+              </Box>
+              {mMatches.map((num: number) => renderBall(num))}
+              {bMatchM && renderBall(bonus, true)}
+            </Stack>
+          )}
+          {(dMatches.length > 0 || bMatchD) && (
+            <Stack direction="row" spacing={0.4} alignItems="center">
+              <Box
+                sx={{
+                  px: 0.5,
+                  py: 0.1,
+                  borderRadius: 0.4,
+                  bgcolor: 'warning.main',
+                  color: 'warning.contrastText',
+                  fontSize: { xs: 7, sm: 9 },
+                  fontWeight: 'bold',
+                  lineHeight: 1,
+                }}
+              >
+                일
+              </Box>
+              {dMatches.map((num: number) => renderBall(num))}
+              {bMatchD && renderBall(bonus, true)}
+            </Stack>
+          )}
+        </Stack>
+      );
+    }
+
+    return (
+      <Box
+        sx={{
+          width: 1,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          px: 0.5,
+        }}
+      >
+        {event.title}
+      </Box>
+    );
+  };
+
   return (
     <>
       <DashboardContent maxWidth="xl" sx={{ ...flexStyles }}>
@@ -169,6 +358,10 @@ export function CalendarView() {
               onChangeView={onChangeView}
               onDateNavigation={onDateNavigation}
               onOpenFilters={openFilters.onTrue}
+              showBonus={showBonus.value}
+              onToggleBonus={showBonus.onToggle}
+              filterMode={filterMode.value ? 'calendar' : 'all'}
+              onToggleFilterMode={(mode: 'all' | 'calendar') => filterMode.setValue(mode === 'calendar')}
               viewOptions={[
                 { value: 'dayGridMonth', label: 'Month', icon: 'mingcute:calendar-month-line' },
                 { value: 'timeGridWeek', label: 'Week', icon: 'mingcute:calendar-week-line' },
@@ -184,7 +377,7 @@ export function CalendarView() {
               selectable
               allDayMaintainDuration
               eventResizableFromStart
-              firstDay={1}
+              firstDay={0}
               aspectRatio={3}
               dayMaxEvents={3}
               eventMaxStack={2}
@@ -195,7 +388,8 @@ export function CalendarView() {
               initialView={view}
               events={dataFiltered}
               select={onSelectRange}
-              eventClick={onClickEvent}
+              eventClick={handleOnClickEvent}
+              eventContent={renderEventContent}
               businessHours={{
                 daysOfWeek: [1, 2, 3, 4, 5], // Mon-Fri
               }}

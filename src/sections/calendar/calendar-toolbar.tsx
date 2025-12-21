@@ -7,12 +7,14 @@ import { usePopover } from 'minimal-shared/hooks';
 import Box from '@mui/material/Box';
 import Badge from '@mui/material/Badge';
 import Button from '@mui/material/Button';
+import Switch from '@mui/material/Switch';
 import Tooltip from '@mui/material/Tooltip';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import ToggleButton from '@mui/material/ToggleButton';
 import LinearProgress from '@mui/material/LinearProgress';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { Iconify } from 'src/components/iconify';
@@ -29,6 +31,10 @@ type CalendarToolbarProps = Partial<UseCalendarReturn> & {
     icon: IconifyName;
   }[];
   onOpenFilters: () => void;
+  showBonus?: boolean;
+  onToggleBonus?: () => void;
+  filterMode?: 'all' | 'calendar';
+  onToggleFilterMode?: (mode: 'all' | 'calendar') => void;
 };
 
 export function CalendarToolbar({
@@ -40,6 +46,10 @@ export function CalendarToolbar({
   onChangeView,
   onOpenFilters,
   onDateNavigation,
+  showBonus,
+  onToggleBonus,
+  filterMode,
+  onToggleFilterMode,
 }: CalendarToolbarProps) {
   const mobileActions = usePopover();
 
@@ -133,6 +143,31 @@ export function CalendarToolbar({
 
   const renderTodayAndFilters = () => (
     <Box sx={{ gap: 1, display: 'flex', alignItems: 'center' }}>
+      <ToggleButtonGroup
+        exclusive
+        size="small"
+        value={filterMode}
+        onChange={(e, value) => {
+          if (value !== null) onToggleFilterMode?.(value);
+        }}
+        sx={{ mr: 1 }}
+      >
+        <ToggleButton value="all" sx={{ px: 1.5, typography: 'body2' }}>
+          전체
+        </ToggleButton>
+        <ToggleButton value="calendar" sx={{ px: 1.5, typography: 'body2' }}>
+          달력
+        </ToggleButton>
+      </ToggleButtonGroup>
+
+      <FormControlLabel
+        control={
+          <Switch size="small" color="primary" checked={showBonus} onChange={onToggleBonus} />
+        }
+        label="보너스"
+        sx={{ mr: 1, '& .MuiFormControlLabel-label': { typography: 'body2' } }}
+      />
+
       <Button
         size="small"
         color="error"
