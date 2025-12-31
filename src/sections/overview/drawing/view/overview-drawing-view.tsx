@@ -355,62 +355,74 @@ export function OverviewDrawingView() {
 
       <Box
         sx={{
+          width: '100%',
           display: 'flex',
-          flexWrap: { xs: 'nowrap', md: 'wrap' },
-          gap: { xs: 0, sm: 2, md: 4 },
           justifyContent: 'center',
-          alignItems: 'flex-start',
           pb: 2,
-          px: { xs: 0, md: 1 },
-          mx: 'auto',
-          width: 'fit-content',
         }}
       >
-        {/* 왼쪽: 포함수 */}
-        <Box sx={{ 
-          flexShrink: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          width: { xs: 165, sm: 198, md: 220 },
-          transform: { xs: 'scale(0.75)', sm: 'scale(0.9)', md: 'scale(1)' },
-          transformOrigin: 'top center',
-        }}>
-           <Typography variant="subtitle1" sx={{ textAlign:'center', mb: 1, width: '100%', color: 'text.secondary', fontSize: { xs: '0.75rem', md: '1rem' }, fontWeight: 600, whiteSpace: 'nowrap' }}>
-             반드시 포함할 숫자
-           </Typography>
-           <LottoPaper
-            title="포함수"
-            selectedNumbers={includedNumbers}
-            disabledNumbers={excludedNumbers}
-            onToggle={handleToggleIncluded}
-            maxSelection={6}
-            color="#FF7575"
-          />
-        </Box>
-
-        {/* 오른쪽: 제외수 */}
-        <Box sx={{ 
-          flexShrink: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          width: { xs: 165, sm: 198, md: 220 },
-          transform: { xs: 'scale(0.75)', sm: 'scale(0.9)', md: 'scale(1)' },
-          transformOrigin: 'top center',
-        }}>
-            <Typography variant="subtitle1" sx={{ textAlign:'center', mb: 1, width: '100%', color: 'text.secondary', fontSize: { xs: '0.75rem', md: '1rem' }, fontWeight: 600, whiteSpace: 'nowrap' }}>
-             절대 나오면 안되는 숫자
-           </Typography>
+        <Stack
+          direction="row"
+          spacing={{ xs: 1, md: 4 }}
+          sx={{
+            transform: { xs: 'scale(0.8)', sm: 'scale(0.9)', md: 'scale(1)' },
+            transformOrigin: 'top center',
+            // 스케일링 후 남는 여백 문제를 해결하기 위해 축소된 만큼 실제 공간을 보정
+            width: { xs: 'calc(100% / 0.8)', sm: 'calc(100% / 0.9)', md: '100%' },
+            maxWidth: { xs: 450, sm: 500, md: '100%' },
+            justifyContent: 'center',
+          }}
+        >
+          {/* 왼쪽: 포함수 */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Typography 
+              variant="subtitle1" 
+              sx={{ 
+                textAlign: 'center', 
+                mb: 1, 
+                color: 'text.secondary', 
+                fontSize: { xs: '0.85rem', md: '1rem' }, 
+                fontWeight: 700,
+                whiteSpace: 'nowrap'
+              }}
+            >
+              반드시 포함할 숫자
+            </Typography>
             <LottoPaper
-            title="제외수"
-            selectedNumbers={excludedNumbers}
-            disabledNumbers={includedNumbers}
-            onToggle={handleToggleExcluded}
-            maxSelection={39}
-            color="#7E91FF"
-          />
-        </Box>
+              title="포함수"
+              selectedNumbers={includedNumbers}
+              disabledNumbers={excludedNumbers}
+              onToggle={handleToggleIncluded}
+              maxSelection={6}
+              color="#FF7575"
+            />
+          </Box>
+
+          {/* 오른쪽: 제외수 */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Typography 
+              variant="subtitle1" 
+              sx={{ 
+                textAlign: 'center', 
+                mb: 1, 
+                color: 'text.secondary', 
+                fontSize: { xs: '0.85rem', md: '1rem' }, 
+                fontWeight: 700,
+                whiteSpace: 'nowrap'
+              }}
+            >
+              절대 나오면 안되는 숫자
+            </Typography>
+            <LottoPaper
+              title="제외수"
+              selectedNumbers={excludedNumbers}
+              disabledNumbers={includedNumbers}
+              onToggle={handleToggleExcluded}
+              maxSelection={39}
+              color="#7E91FF"
+            />
+          </Box>
+        </Stack>
       </Box>
       
       {/* 생성 결과 - 최대 5개 세트 */}
@@ -439,6 +451,7 @@ export function OverviewDrawingView() {
                         <LottoLibrary.Ball
                           key={num}
                           sx={{
+                              flexShrink: 0, // 공이 찌그러지지 않도록 방지
                               background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${ballColor}`,
                               // outline 대신 boxShadow를 사용하여 테두리 구현 (겹침 현상 방지)
                               boxShadow: isIncluded 
