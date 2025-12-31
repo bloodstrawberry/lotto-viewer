@@ -431,12 +431,12 @@ export function OverviewDrawingView() {
               <Typography variant="h5" sx={{ mb: 3 }}>생성된 추천 번호</Typography>
               <Stack spacing={{ xs: 2.5, md: 3 }} sx={{ mt: 2 }}>
                 {generatedResults.map((result, setIndex) => (
-                  <Stack key={setIndex} direction="row" spacing={{ xs: 0.5, md: 1 }} justifyContent="center" alignItems="center">
-                    {/* 행 레이블 (A, B, C...) - 줄맞춤을 위해 너비 고정 */}
+                  <Stack key={setIndex} direction="row" spacing={0} justifyContent="center" alignItems="center">
+                    {/* 행 레이블 (A, B, C...) - 홈 화면 스타일과 맞추기 위해 너비 최적화 */}
                     <Typography 
                       variant="body2" 
                       sx={{ 
-                        minWidth: { xs: 24, md: 40 }, 
+                        minWidth: { xs: 20, md: 40 }, 
                         textAlign: 'left',
                         fontWeight: 'bold', 
                         color: 'primary.main',
@@ -446,7 +446,7 @@ export function OverviewDrawingView() {
                       {String.fromCharCode(65 + setIndex)}
                     </Typography>
 
-                    {/* 공 목록 - 그리드 정렬을 위해 각 공을 고정 너비 박스로 감쌈 */}
+                    {/* 공 목록 - home-view의 spacing과 테두리 두께를 반영한 그리드 너비 */}
                     {result.map((num) => {
                       const ballColor = LottoLibrary.getBallColor(num);
                       const isIncluded = includedNumbers.includes(num);
@@ -455,20 +455,25 @@ export function OverviewDrawingView() {
                         <Box 
                           key={num} 
                           sx={{ 
-                            width: { xs: 44, md: 72 }, // 공 크기 + 테두리 여유 공간
-                            height: { xs: 44, md: 72 }, 
+                            // home-view 간격을 기준으로 테두리 유동 공간 확보
+                            width: { xs: 48, sm: 72, md: 104 }, 
+                            height: { xs: 48, sm: 72, md: 104 }, 
                             display: 'flex', 
                             alignItems: 'center', 
-                            justifyContent: 'center' 
+                            justifyContent: 'center',
+                            flexShrink: 0,
                           }}
                         >
                           <LottoLibrary.Ball
                             sx={{
                                 flexShrink: 0,
                                 background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${ballColor}`,
-                                // boxShadow를 사용하여 레이아웃에 영향을 주지 않는 테두리 구현
+                                // 화면 크기별로 테두리 두께를 조절하여 home-view의 간격 느낌 구현
                                 boxShadow: isIncluded 
-                                  ? `0 0 0 3px white, 0 0 0 6px ${ballColor}, 0 4px 10px rgba(0,0,0,0.3)` 
+                                  ? {
+                                      xs: `0 0 0 2px white, 0 0 0 4px ${ballColor}, 0 2px 5px rgba(0,0,0,0.3)`, 
+                                      md: `0 0 0 3px white, 0 0 0 6px ${ballColor}, 0 4px 10px rgba(0,0,0,0.3)`
+                                    }
                                   : '0 4px 10px rgba(0,0,0,0.2)',
                                 transition: 'all 0.2s ease',
                             }}
