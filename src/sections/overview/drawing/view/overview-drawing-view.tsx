@@ -357,21 +357,26 @@ export function OverviewDrawingView() {
         sx={{
           display: 'flex',
           flexWrap: { xs: 'nowrap', md: 'wrap' },
-          gap: { xs: 0.5, sm: 2, md: 4 },
+          gap: { xs: 0, sm: 2, md: 4 },
           justifyContent: 'center',
           alignItems: 'flex-start',
           pb: 2,
-          px: { xs: 0.5, md: 1 },
+          px: { xs: 0, md: 1 },
+          mx: 'auto',
+          width: 'fit-content',
         }}
       >
         {/* 왼쪽: 포함수 */}
         <Box sx={{ 
           flexShrink: 0,
-          width: { xs: 165, sm: 198, md: 220 }, // 스케일에 맞춘 실제 점유 너비 (220 * scale)
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: { xs: 165, sm: 198, md: 220 },
           transform: { xs: 'scale(0.75)', sm: 'scale(0.9)', md: 'scale(1)' },
           transformOrigin: 'top center',
         }}>
-           <Typography variant="subtitle1" sx={{ textAlign:'center', mb: 1, color: 'text.secondary', fontSize: { xs: '0.7rem', md: '1rem' }, whiteSpace: 'nowrap' }}>
+           <Typography variant="subtitle1" sx={{ textAlign:'center', mb: 1, width: '100%', color: 'text.secondary', fontSize: { xs: '0.75rem', md: '1rem' }, fontWeight: 600, whiteSpace: 'nowrap' }}>
              반드시 포함할 숫자
            </Typography>
            <LottoPaper
@@ -387,11 +392,14 @@ export function OverviewDrawingView() {
         {/* 오른쪽: 제외수 */}
         <Box sx={{ 
           flexShrink: 0,
-          width: { xs: 165, sm: 198, md: 220 }, // 스케일에 맞춘 실제 점유 너비 (220 * scale)
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: { xs: 165, sm: 198, md: 220 },
           transform: { xs: 'scale(0.75)', sm: 'scale(0.9)', md: 'scale(1)' },
           transformOrigin: 'top center',
         }}>
-            <Typography variant="subtitle1" sx={{ textAlign:'center', mb: 1, color: 'text.secondary', fontSize: { xs: '0.7rem', md: '1rem' }, whiteSpace: 'nowrap' }}>
+            <Typography variant="subtitle1" sx={{ textAlign:'center', mb: 1, width: '100%', color: 'text.secondary', fontSize: { xs: '0.75rem', md: '1rem' }, fontWeight: 600, whiteSpace: 'nowrap' }}>
              절대 나오면 안되는 숫자
            </Typography>
             <LottoPaper
@@ -411,11 +419,11 @@ export function OverviewDrawingView() {
               <Typography variant="h5" sx={{ mb: 3 }}>생성된 추천 번호</Typography>
               <Stack spacing={{ xs: 2.5, md: 3 }} sx={{ mt: 2 }}>
                 {generatedResults.map((result, setIndex) => (
-                  <Stack key={setIndex} direction="row" spacing={{ xs: 1.5, sm: 2, md: 3 }} justifyContent="center" alignItems="center">
+                  <Stack key={setIndex} direction="row" spacing={{ xs: 2, sm: 2, md: 3 }} justifyContent="center" alignItems="center">
                     <Typography 
                       variant="body2" 
                       sx={{ 
-                        minWidth: { xs: 20, md: 30 }, 
+                        minWidth: { xs: 16, md: 30 }, 
                         fontWeight: 'bold', 
                         color: 'primary.main',
                         fontSize: { xs: '0.75rem', md: '1rem' }
@@ -432,10 +440,11 @@ export function OverviewDrawingView() {
                           key={num}
                           sx={{
                               background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${ballColor}`,
-                              outline: isIncluded ? { xs: `2px solid ${ballColor}`, md: `3px solid ${ballColor}` } : 'none',
-                              outlineOffset: isIncluded ? { xs: '2px', md: '3px' } : '0px',
-                              // 테두리가 공간을 차지하지 않아 겹치는 문제를 해결하기 위해 실제 margin 부여
-                              m: isIncluded ? { xs: '2px', md: '3px' } : 0,
+                              // outline 대신 boxShadow를 사용하여 테두리 구현 (겹침 현상 방지)
+                              boxShadow: isIncluded 
+                                ? `0 0 0 3px white, 0 0 0 6px ${ballColor}, 0 4px 10px rgba(0,0,0,0.3)` 
+                                : '0 4px 10px rgba(0,0,0,0.2)',
+                              m: isIncluded ? { xs: '4px', md: '6px' } : 0,
                           }}
                         >
                             {num}
