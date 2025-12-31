@@ -431,11 +431,13 @@ export function OverviewDrawingView() {
               <Typography variant="h5" sx={{ mb: 3 }}>생성된 추천 번호</Typography>
               <Stack spacing={{ xs: 2.5, md: 3 }} sx={{ mt: 2 }}>
                 {generatedResults.map((result, setIndex) => (
-                  <Stack key={setIndex} direction="row" spacing={{ xs: 2, sm: 2, md: 3 }} justifyContent="center" alignItems="center">
+                  <Stack key={setIndex} direction="row" spacing={{ xs: 0.5, md: 1 }} justifyContent="center" alignItems="center">
+                    {/* 행 레이블 (A, B, C...) - 줄맞춤을 위해 너비 고정 */}
                     <Typography 
                       variant="body2" 
                       sx={{ 
-                        minWidth: { xs: 16, md: 30 }, 
+                        minWidth: { xs: 24, md: 40 }, 
+                        textAlign: 'left',
                         fontWeight: 'bold', 
                         color: 'primary.main',
                         fontSize: { xs: '0.75rem', md: '1rem' }
@@ -443,25 +445,37 @@ export function OverviewDrawingView() {
                     >
                       {String.fromCharCode(65 + setIndex)}
                     </Typography>
+
+                    {/* 공 목록 - 그리드 정렬을 위해 각 공을 고정 너비 박스로 감쌈 */}
                     {result.map((num) => {
                       const ballColor = LottoLibrary.getBallColor(num);
                       const isIncluded = includedNumbers.includes(num);
 
                       return (
-                        <LottoLibrary.Ball
-                          key={num}
-                          sx={{
-                              flexShrink: 0, // 공이 찌그러지지 않도록 방지
-                              background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${ballColor}`,
-                              // outline 대신 boxShadow를 사용하여 테두리 구현 (겹침 현상 방지)
-                              boxShadow: isIncluded 
-                                ? `0 0 0 3px white, 0 0 0 6px ${ballColor}, 0 4px 10px rgba(0,0,0,0.3)` 
-                                : '0 4px 10px rgba(0,0,0,0.2)',
-                              m: isIncluded ? { xs: '4px', md: '6px' } : 0,
+                        <Box 
+                          key={num} 
+                          sx={{ 
+                            width: { xs: 44, md: 72 }, // 공 크기 + 테두리 여유 공간
+                            height: { xs: 44, md: 72 }, 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center' 
                           }}
                         >
-                            {num}
-                        </LottoLibrary.Ball>
+                          <LottoLibrary.Ball
+                            sx={{
+                                flexShrink: 0,
+                                background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${ballColor}`,
+                                // boxShadow를 사용하여 레이아웃에 영향을 주지 않는 테두리 구현
+                                boxShadow: isIncluded 
+                                  ? `0 0 0 3px white, 0 0 0 6px ${ballColor}, 0 4px 10px rgba(0,0,0,0.3)` 
+                                  : '0 4px 10px rgba(0,0,0,0.2)',
+                                transition: 'all 0.2s ease',
+                            }}
+                          >
+                              {num}
+                          </LottoLibrary.Ball>
+                        </Box>
                       );
                     })}
                   </Stack>
