@@ -6,11 +6,15 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
+import { getIsMobile } from 'src/utils/is-mobile';
 import * as LottoLibrary from 'src/api/lottolibrary';
 
 // ----------------------------------------------------------------------
@@ -367,6 +371,58 @@ export function OverviewDrawingView() {
     }
   }, [includedNumbers, excludedNumbers]);
 
+  const handleShare = useCallback(async () => {
+    const latest = LottoLibrary.getLatestLottoNumber();
+    if (!latest || generatedResults.length === 0) return;
+
+    const nextDrwNo = latest.drwNo + 1;
+    const nextDate = new Date(latest.drwNoDate);
+    nextDate.setDate(nextDate.getDate() + 7);
+
+    const year = nextDate.getFullYear();
+    const month = nextDate.getMonth() + 1;
+    const day = nextDate.getDate();
+
+    const formattedResults = generatedResults
+      .map((result, index) => {
+        const label = String.fromCharCode(65 + index);
+        const numbers = result
+          .sort((a, b) => a - b)
+          .map((n) => n.toString().padStart(2, '0'))
+          .join(', ');
+        return `${label} : ${numbers}`;
+      })
+      .join('\n');
+
+    const shareText = `[${nextDrwNo}]회 (${year}년 ${month}월 ${day}일 추첨)
+
+${formattedResults}
+
+https://lotto-viewer.vercel.app/`;
+
+    const isMobile = getIsMobile();
+
+    if (isMobile && navigator.share) {
+      try {
+        await navigator.share({
+          title: '추천 로또 번호',
+          text: shareText,
+        });
+        return;
+      } catch (error) {
+        console.warn('Share cancelled or failed:', error);
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareText);
+      toast.success('추천 로또 번호가 복사되었습니다!');
+    } catch (error) {
+      console.error('Clipboard copy failed:', error);
+      toast.error('복사에 실패했습니다.');
+    }
+  }, [generatedResults]);
+
 
 
   return (
@@ -496,7 +552,20 @@ export function OverviewDrawingView() {
       {/* 생성 결과 - 최대 5개 세트 */}
       {generatedResults.length > 0 && (
           <Box sx={{ mt: 8, textAlign: 'center' }}>
-              <Typography variant="h5" sx={{ mb: 3 }}>생성된 추천 번호</Typography>
+                <Stack 
+                  direction="row" 
+                  alignItems="center" 
+                  justifyContent="center" 
+                  spacing={1} 
+                  sx={{ mb: 3 }}
+                >
+                  <Typography variant="h5">생성된 추천 번호</Typography>
+                  <Tooltip title="공유하기">
+                    <IconButton onClick={handleShare}>
+                      <Iconify icon="mdi:share-variant" width={24} />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
               <Stack spacing={{ xs: 2.5, md: 3 }} sx={{ mt: 2 }}>
                 {generatedResults.map((result, setIndex) => (
                   <Stack key={setIndex} direction="row" spacing={0} justifyContent="center" alignItems="center">
