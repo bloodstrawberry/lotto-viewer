@@ -87,8 +87,14 @@ export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonu
     return [...carryOverStats].sort((a, b) => {
       const aValue = a[orderBy as keyof typeof a];
       const bValue = b[orderBy as keyof typeof b];
-      if (order === 'asc') return aValue > bValue ? 1 : -1;
-      return aValue < bValue ? 1 : -1;
+
+      if (aValue !== bValue) {
+        if (order === 'asc') return aValue > bValue ? 1 : -1;
+        return aValue < bValue ? 1 : -1;
+      }
+
+      // If values are equal (e.g., same count), always sort by number ascending
+      return a.number - b.number;
     });
   }, [carryOverStats, orderBy, order]);
 
