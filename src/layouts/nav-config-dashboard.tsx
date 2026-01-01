@@ -73,7 +73,7 @@ export const navData: NavSectionProps['data'] = [
       { title: '통계분석', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
       { title: '과거순위', path: paths.dashboard.general.history, icon: ICONS.banking },
       { title: '번호생성', path: paths.dashboard.general.drawing, icon: ICONS.drawing },
-      { title: 'File', path: paths.dashboard.general.file, icon: ICONS.file },
+      { title: '마킹패턴', path: paths.dashboard.general.marking, icon: ICONS.file },
       { title: 'Course', path: paths.dashboard.general.course, icon: ICONS.course },
     ],
   },
