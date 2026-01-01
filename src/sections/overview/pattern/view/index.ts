@@ -1,1 +1,1 @@
-export * from './overview-lotto-number-view';
+export * from './overview-pattern-view';
