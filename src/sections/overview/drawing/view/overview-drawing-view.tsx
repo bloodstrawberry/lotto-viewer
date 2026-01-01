@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
+import { toast } from 'src/components/snackbar';
 import * as LottoLibrary from 'src/api/lottolibrary';
 
 // ----------------------------------------------------------------------
@@ -21,6 +22,8 @@ type LottoPaperProps = {
   selectedNumbers: number[];
   disabledNumbers: number[];
   onToggle: (number: number) => void;
+  onReset: () => void;
+  onAutoSelect: () => void;
   maxSelection: number;
   color?: string;
 };
@@ -31,6 +34,8 @@ function LottoPaper({
   selectedNumbers,
   disabledNumbers,
   onToggle,
+  onReset,
+  onAutoSelect,
   maxSelection,
   color = '#FF7575',
 }: LottoPaperProps) {
@@ -231,9 +236,18 @@ function LottoPaper({
                 px: 0,
             }}
         >
-           {['초기화', '자동선택', '나의번호등록'].map((label) => (
+            {['초기화', '자동선택', '나의번호등록'].map((label) => (
              <Box 
                 key={label}
+                onClick={() => {
+                  if (label === '초기화') {
+                    onReset();
+                  } else if (label === '자동선택') {
+                    onAutoSelect();
+                  } else {
+                    toast.warning('지원하지 않는 기능입니다.');
+                  }
+                }}
                 sx={{ 
                     cursor: 'pointer',
                     display: 'flex',
@@ -337,18 +351,33 @@ export function OverviewDrawingView() {
       setGeneratedResults([]);
   }
 
+  const handleAutoSelect = useCallback((type: 'included' | 'excluded') => {
+    toast.info(`${type === 'included' ? '포함수' : '제외수'} 3개를 자동으로 선택합니다.`);
+    
+    const shuffledPool = [...LOTTO_NUMBERS]
+      .filter((n) => (type === 'included' ? !excludedNumbers.includes(n) : !includedNumbers.includes(n)))
+      .sort(() => 0.5 - Math.random());
+      
+    const selected = shuffledPool.slice(0, 3).sort((a, b) => a - b);
+    
+    if (type === 'included') {
+      setIncludedNumbers(selected);
+    } else {
+      setExcludedNumbers(selected);
+    }
+  }, [includedNumbers, excludedNumbers]);
+
 
 
   return (
     <DashboardContent maxWidth="xl">
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: { xs: 3, md: 5 } }}>
-        <Typography variant="h4">번호생성</Typography>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: { xs: 3, md: 5 } }}>        
         <Stack direction="row" spacing={1}>
              <Button variant="outlined" color="inherit" onClick={handleReset}>
                 초기화
              </Button>
             <Button variant="contained" color="primary" onClick={handleGenerate}>
-                번호 생성하기
+                번호 생성
             </Button>
         </Stack>
       </Stack>
@@ -393,6 +422,8 @@ export function OverviewDrawingView() {
               selectedNumbers={includedNumbers}
               disabledNumbers={excludedNumbers}
               onToggle={handleToggleIncluded}
+              onReset={() => setIncludedNumbers([])}
+              onAutoSelect={() => handleAutoSelect('included')}
               maxSelection={6}
               color="#FF7575"
             />
@@ -418,6 +449,8 @@ export function OverviewDrawingView() {
               selectedNumbers={excludedNumbers}
               disabledNumbers={includedNumbers}
               onToggle={handleToggleExcluded}
+              onReset={() => setExcludedNumbers([])}
+              onAutoSelect={() => handleAutoSelect('excluded')}
               maxSelection={39}
               color="#7E91FF"
             />
