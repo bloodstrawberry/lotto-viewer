@@ -371,16 +371,51 @@ export function OverviewDrawingView() {
 
   return (
     <DashboardContent maxWidth="xl">
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: { xs: 3, md: 5 } }}>        
-        <Stack direction="row" spacing={1}>
-             <Button variant="outlined" color="inherit" onClick={handleReset}>
-                초기화
-             </Button>
-            <Button variant="contained" color="primary" onClick={handleGenerate}>
-                번호 생성
-            </Button>
+      <Box
+        sx={{
+          position: 'sticky',
+          top: { xs: 80, md: 100 },
+          zIndex: 1100,
+          display: 'flex',
+          justifyContent: 'center',
+          mb: 2,
+        }}
+      >
+        <Stack
+          direction="row"
+          spacing={1.5}
+          sx={{
+            p: 1.5,
+            px: 2.5,
+            borderRadius: '24px',
+            bgcolor: 'background.paper',
+            boxShadow: (theme) => theme.customShadows.z24,
+            border: (theme) => `1px solid ${theme.palette.divider}`,
+            backdropFilter: 'blur(8px)',
+            backgroundColor: (theme) => `rgba(255, 255, 255, 0.8)`,
+          }}
+        >
+          <Button 
+            variant="outlined" 
+            color="inherit" 
+            onClick={handleReset}
+            sx={{ borderRadius: '12px' }}
+          >
+            초기화
+          </Button>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            onClick={handleGenerate}
+            sx={{ borderRadius: '12px', px: 3 }}
+          >
+            번호 생성
+          </Button>
         </Stack>
-      </Stack>
+      </Box>
+
+      {/* 상단 여백 보정 (버튼이 사라진 자리) */}
+      <Box sx={{ mb: { xs: 2, md: 4 } }} />
 
       <Box
         sx={{
@@ -524,7 +559,6 @@ export function OverviewDrawingView() {
               </Typography>
           </Box>
       )}
-
     </DashboardContent>
   );
 }
