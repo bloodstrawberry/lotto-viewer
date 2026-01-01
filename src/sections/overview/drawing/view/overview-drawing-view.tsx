@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { useLottoGenerator } from '../use-lotto-generator';
-import { DrawingLottoPaper } from '../drawing-lotto-paper';
+import { LottoPaper } from 'src/components/lotto/lotto-paper';
 import { DrawingGeneratedResults } from '../drawing-generated-results';
 
 // ----------------------------------------------------------------------
@@ -110,8 +110,8 @@ export function OverviewDrawingView() {
             >
               반드시 포함할 숫자
             </Typography>
-            <DrawingLottoPaper
-              title="포함수"
+            <LottoPaper
+              headerText="1,000원"
               selectedNumbers={includedNumbers}
               disabledNumbers={excludedNumbers}
               onToggle={handleToggleIncluded}
@@ -137,8 +137,8 @@ export function OverviewDrawingView() {
             >
               절대 나오면 안되는 숫자
             </Typography>
-            <DrawingLottoPaper
-              title="제외수"
+            <LottoPaper
+              headerText="1,000원"
               selectedNumbers={excludedNumbers}
               disabledNumbers={includedNumbers}
               onToggle={handleToggleExcluded}
