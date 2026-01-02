@@ -206,7 +206,7 @@ export function AnalyticsChemistry({ rounds, includeBonus }: Props) {
 
                 <Button variant="outlined" onClick={() => setOpenSearch(true)}>
                     {searchNumbers.length > 0
-                        ? `선택된 검색 번호: ${searchNumbers.join(', ')}`
+                        ? `선택된 검색 번호: ${[...searchNumbers].sort((a, b) => a - b).join(', ')}`
                         : '검색 번호 선택'}
                 </Button>
             </Stack>
@@ -319,6 +319,8 @@ export function AnalyticsChemistry({ rounds, includeBonus }: Props) {
                                                     fontWeight: 700,
                                                     fontSize: '0.8rem',
                                                     boxShadow: (theme) => `inset 0 0 8px rgba(255,255,255,0.3), ${theme.shadows[2]}`,
+                                                    border: searchNumbers.includes(num) ? '2px solid red' : 'none',
+                                                    boxSizing: 'border-box',
                                                 }}
                                             >
                                                 {num}
