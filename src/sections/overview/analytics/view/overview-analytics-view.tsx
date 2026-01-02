@@ -16,6 +16,7 @@ import { getAllLottoNumbers } from 'src/api/lottolibrary';
 
 import { AnalyticsAppearance } from '../analytics-appearance';
 import { AnalyticsCarryOver } from '../analytics-carry-over';
+import { AnalyticsChemistry } from '../analytics-chemistry';
 
 // ----------------------------------------------------------------------
 
@@ -96,6 +97,7 @@ export function OverviewAnalyticsView() {
       >
         <Tab label="출현 순위" />
         <Tab label="이월 순위" />
+        <Tab label="궁합수 순위" />
       </Tabs>
 
       {currentTab === 0 && (
@@ -109,6 +111,10 @@ export function OverviewAnalyticsView() {
           endRound={endRound}
           includeBonus={includeBonus}
         />
+      )}
+
+      {currentTab === 2 && (
+        <AnalyticsChemistry rounds={filteredRounds} includeBonus={includeBonus} />
       )}
     </DashboardContent>
   );
