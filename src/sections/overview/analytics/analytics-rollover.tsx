@@ -44,7 +44,7 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
     const PLUS_GAP = isMobile ? 20 : 40;
 
     // Gap settings
-    const GAP_SMALL = 0
+    const GAP_SMALL = 0;
     const GAP_LARGE = isMobile ? 30 : 50;
 
     // Sort rounds descending (latest first)
@@ -87,12 +87,10 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
             });
 
             // Advance Y
-            // If it's the last item, gap doesn't matter for next position, but matters for total height padding maybe?
-            // Usually total height ends after the last row content.
             if (index < sortedRounds.length - 1) {
                 currentY += ROW_CONTENT_HEIGHT + gap;
             } else {
-                currentY += ROW_CONTENT_HEIGHT; // Just finish the last row
+                currentY += ROW_CONTENT_HEIGHT;
             }
         });
 
@@ -103,13 +101,12 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
     const lines = useMemo(() => {
         const calculatedLines: LineCoords[] = [];
 
-        // We can iterate rowConfigs instead of sortedRounds directly to have easy access to Y
         rowConfigs.forEach((config, index) => {
             const nextIndex = index + 1;
             if (nextIndex >= rowConfigs.length) return;
 
             const currentRound = config.round;
-            const prevRound = rowConfigs[nextIndex].round; // Historically previous
+            const prevRound = rowConfigs[nextIndex].round;
 
             const getDisplayBalls = (r: any) => {
                 const nums = [...r.numbers].map((n, i) => ({ val: n, type: 'main', originalIdx: i }));
@@ -130,7 +127,7 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
                     const ballNum = currBall.val;
 
                     // Calculate Streak Length
-                    let streakCount = 1;
+                    let streakCount = 2; // Start with 2 (Current + Previous)
                     let k = nextIndex + 1;
                     while (k < rowConfigs.length) {
                         if (roundHasNumber(rowConfigs[k].round, ballNum)) {
@@ -213,12 +210,12 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
                                         fontSize={isMobile ? "12" : "14"}
                                         fontWeight="bold"
                                         textAnchor="middle"
-                                        dy={isMobile ? "-4" : "-6"}
+                                        dominantBaseline="central"
                                         style={{
                                             fill: '#000',
                                             paintOrder: 'stroke',
                                             stroke: '#fff',
-                                            strokeWidth: '3px',
+                                            strokeWidth: '4px',
                                         }}
                                     >
                                         {line.count}
@@ -237,7 +234,7 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
                                 alignItems="center"
                                 sx={{
                                     height: ROW_CONTENT_HEIGHT,
-                                    mb: i < rowConfigs.length - 1 ? `${config.gapToNext}px` : 0, // Apply Calculated Gap
+                                    mb: i < rowConfigs.length - 1 ? `${config.gapToNext}px` : 0,
                                     position: 'relative',
                                     zIndex: 2
                                 }}
