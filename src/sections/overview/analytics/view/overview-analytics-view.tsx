@@ -18,6 +18,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { getAllLottoNumbers } from 'src/api/lottolibrary';
 
 import { AnalyticsAppearance } from '../analytics-appearance';
+import { AnalyticsMissing } from '../analytics-missing';
 import { AnalyticsRollover } from '../analytics-rollover';
 import { AnalyticsCarryOver } from '../analytics-carry-over';
 import { AnalyticsChemistry } from '../analytics-chemistry';
@@ -203,6 +204,7 @@ export function OverviewAnalyticsView() {
         }}
       >
         <Tab label="출현 순위" />
+        <Tab label="미출현 번호" />
         <Tab label="이월수" />
         <Tab label="이월 순위" />
         <Tab label="궁합수 순위" />
@@ -213,10 +215,18 @@ export function OverviewAnalyticsView() {
       )}
 
       {currentTab === 1 && (
-        <AnalyticsRollover rounds={filteredRounds} includeBonus={includeBonus} />
+        <AnalyticsMissing
+          allLotto={allLotto}
+          endRound={endRound}
+          includeBonus={includeBonus}
+        />
       )}
 
       {currentTab === 2 && (
+        <AnalyticsRollover rounds={filteredRounds} includeBonus={includeBonus} />
+      )}
+
+      {currentTab === 3 && (
         <AnalyticsCarryOver
           allLotto={allLotto}
           startRound={startRound}
@@ -225,7 +235,7 @@ export function OverviewAnalyticsView() {
         />
       )}
 
-      {currentTab === 3 && (
+      {currentTab === 4 && (
         <AnalyticsChemistry rounds={filteredRounds} includeBonus={includeBonus} />
       )}
     </DashboardContent>
