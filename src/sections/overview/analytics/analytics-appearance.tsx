@@ -25,6 +25,14 @@ type Props = {
 
 type Order = 'asc' | 'desc';
 
+type AppearanceStat = {
+  number: number;
+  count: number;
+  probability: number;
+  latestRound: number;
+  latestDate: string;
+};
+
 export function AnalyticsAppearance({ rounds, includeBonus }: Props) {
   const [orderBy, setOrderBy] = useState<string>('count');
   const [order, setOrder] = useState<Order>('desc');
@@ -36,18 +44,36 @@ export function AnalyticsAppearance({ rounds, includeBonus }: Props) {
   };
 
   const appearanceStats = useMemo(() => {
-    const stats = Array.from({ length: 45 }, (_, i) => ({
+    const stats: AppearanceStat[] = Array.from({ length: 45 }, (_, i) => ({
       number: i + 1,
       count: 0,
       probability: 0,
+      latestRound: 0,
+      latestDate: '-',
     }));
 
-    rounds.forEach((r) => {
+    // rounds를 회차 내림차순으로 정렬 (최신 회차가 먼저 오도록)
+    const sortedRounds = [...rounds].sort((a, b) => b.drwNo - a.drwNo);
+
+    sortedRounds.forEach((r) => {
       r.numbers.forEach((n: number) => {
-        if (n >= 1 && n <= 45) stats[n - 1].count += 1;
+        if (n >= 1 && n <= 45) {
+          stats[n - 1].count += 1;
+          // 최신 출현 정보 업데이트 (첫 번째로 발견된 것이 가장 최신)
+          if (stats[n - 1].latestRound === 0) {
+            stats[n - 1].latestRound = r.drwNo;
+            stats[n - 1].latestDate = r.drwNoDate;
+          }
+        }
       });
       if (includeBonus) {
-        if (r.bonus >= 1 && r.bonus <= 45) stats[r.bonus - 1].count += 1;
+        if (r.bonus >= 1 && r.bonus <= 45) {
+          stats[r.bonus - 1].count += 1;
+          if (stats[r.bonus - 1].latestRound === 0) {
+            stats[r.bonus - 1].latestRound = r.drwNo;
+            stats[r.bonus - 1].latestDate = r.drwNoDate;
+          }
+        }
       }
     });
 
@@ -61,8 +87,14 @@ export function AnalyticsAppearance({ rounds, includeBonus }: Props) {
 
   const sortedData = useMemo(() => {
     return [...appearanceStats].sort((a, b) => {
-      const aValue = a[orderBy as keyof typeof a];
-      const bValue = b[orderBy as keyof typeof b];
+      let aValue: number | string = a[orderBy as keyof AppearanceStat];
+      let bValue: number | string = b[orderBy as keyof AppearanceStat];
+
+      // 날짜 정렬 처리
+      if (orderBy === 'latestDate') {
+        aValue = a.latestRound; // 날짜 대신 회차로 정렬 (더 정확함)
+        bValue = b.latestRound;
+      }
 
       if (aValue !== bValue) {
         if (order === 'asc') return aValue > bValue ? 1 : -1;
@@ -73,6 +105,13 @@ export function AnalyticsAppearance({ rounds, includeBonus }: Props) {
       return a.number - b.number;
     });
   }, [appearanceStats, orderBy, order]);
+
+  // 날짜 포맷팅 함수
+  const formatDate = (dateStr: string) => {
+    if (dateStr === '-') return '-';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  };
 
   return (
     <Card sx={{ borderRadius: 2, overflow: 'hidden' }}>
@@ -96,6 +135,24 @@ export function AnalyticsAppearance({ rounds, includeBonus }: Props) {
                   onClick={() => handleRequestSort('count')}
                 >
                   출현 빈도수
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 700, bgcolor: 'background.neutral' }}>
+                <TableSortLabel
+                  active={orderBy === 'latestRound'}
+                  direction={orderBy === 'latestRound' ? order : 'asc'}
+                  onClick={() => handleRequestSort('latestRound')}
+                >
+                  최근 회차
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 700, bgcolor: 'background.neutral' }}>
+                <TableSortLabel
+                  active={orderBy === 'latestDate'}
+                  direction={orderBy === 'latestDate' ? order : 'asc'}
+                  onClick={() => handleRequestSort('latestDate')}
+                >
+                  최근 출현 날짜
                 </TableSortLabel>
               </TableCell>
               <TableCell sx={{ fontWeight: 700, bgcolor: 'background.neutral' }}>
@@ -139,6 +196,16 @@ export function AnalyticsAppearance({ rounds, includeBonus }: Props) {
                 <TableCell>
                   <Typography variant="body2" sx={{ fontWeight: 700, color: 'primary.main' }}>
                     {row.count}회
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    {row.latestRound > 0 ? `${row.latestRound}회` : '-'}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.secondary' }}>
+                    {formatDate(row.latestDate)}
                   </Typography>
                 </TableCell>
                 <TableCell>

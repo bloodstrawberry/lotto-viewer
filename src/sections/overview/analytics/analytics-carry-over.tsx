@@ -27,6 +27,15 @@ type Props = {
 
 type Order = 'asc' | 'desc';
 
+type CarryOverStat = {
+  number: number;
+  count: number;
+  probability: number;
+  appearanceCount: number;
+  latestCarryRound: number;
+  latestCarryDate: string;
+};
+
 export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonus }: Props) {
   const [orderBy, setOrderBy] = useState<string>('count');
   const [order, setOrder] = useState<Order>('desc');
@@ -38,11 +47,13 @@ export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonu
   };
 
   const carryOverStats = useMemo(() => {
-    const stats = Array.from({ length: 45 }, (_, i) => ({
+    const stats: CarryOverStat[] = Array.from({ length: 45 }, (_, i) => ({
       number: i + 1,
       count: 0,
       probability: 0,
       appearanceCount: 0,
+      latestCarryRound: 0,
+      latestCarryDate: '-',
     }));
 
     // First calculate appearance counts for probability denominator
@@ -57,20 +68,29 @@ export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonu
       }
     });
 
-    // Calculate carry-over frequency
-    allLotto.forEach((r, index) => {
-      if (r.drwNo >= startRound && r.drwNo < endRound && index < allLotto.length - 1) {
-        const nextRound = allLotto[index + 1];
-        
+    // Calculate carry-over frequency (내림차순으로 처리하여 최신 이월 먼저 찾기)
+    const sortedLotto = [...allLotto].sort((a, b) => b.drwNo - a.drwNo);
+
+    sortedLotto.forEach((r, index) => {
+      if (r.drwNo >= startRound + 1 && r.drwNo <= endRound) {
+        // 이전 회차 찾기 (drwNo - 1)
+        const prevRound = allLotto.find((x) => x.drwNo === r.drwNo - 1);
+        if (!prevRound) return;
+
         const currentNumbers = [...r.numbers];
         if (includeBonus) currentNumbers.push(r.bonus);
-        
-        const nextNumbers = [...nextRound.numbers];
-        if (includeBonus) nextNumbers.push(nextRound.bonus);
+
+        const prevNumbers = [...prevRound.numbers];
+        if (includeBonus) prevNumbers.push(prevRound.bonus);
 
         currentNumbers.forEach(num => {
-          if (num >= 1 && num <= 45 && nextNumbers.includes(num)) {
+          if (num >= 1 && num <= 45 && prevNumbers.includes(num)) {
             stats[num - 1].count += 1;
+            // 최신 이월 정보 업데이트 (첫 번째로 발견된 것이 가장 최신)
+            if (stats[num - 1].latestCarryRound === 0) {
+              stats[num - 1].latestCarryRound = r.drwNo;
+              stats[num - 1].latestCarryDate = r.drwNoDate;
+            }
           }
         });
       }
@@ -85,8 +105,14 @@ export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonu
 
   const sortedData = useMemo(() => {
     return [...carryOverStats].sort((a, b) => {
-      const aValue = a[orderBy as keyof typeof a];
-      const bValue = b[orderBy as keyof typeof b];
+      let aValue: number | string = a[orderBy as keyof CarryOverStat];
+      let bValue: number | string = b[orderBy as keyof CarryOverStat];
+
+      // 날짜 정렬 처리
+      if (orderBy === 'latestCarryDate') {
+        aValue = a.latestCarryRound;
+        bValue = b.latestCarryRound;
+      }
 
       if (aValue !== bValue) {
         if (order === 'asc') return aValue > bValue ? 1 : -1;
@@ -97,6 +123,13 @@ export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonu
       return a.number - b.number;
     });
   }, [carryOverStats, orderBy, order]);
+
+  // 날짜 포맷팅 함수
+  const formatDate = (dateStr: string) => {
+    if (dateStr === '-') return '-';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  };
 
   return (
     <Card sx={{ borderRadius: 2, overflow: 'hidden' }}>
@@ -120,6 +153,24 @@ export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonu
                   onClick={() => handleRequestSort('count')}
                 >
                   이월 빈도수
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 700, bgcolor: 'background.neutral' }}>
+                <TableSortLabel
+                  active={orderBy === 'latestCarryRound'}
+                  direction={orderBy === 'latestCarryRound' ? order : 'asc'}
+                  onClick={() => handleRequestSort('latestCarryRound')}
+                >
+                  최근 이월 회차
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ fontWeight: 700, bgcolor: 'background.neutral' }}>
+                <TableSortLabel
+                  active={orderBy === 'latestCarryDate'}
+                  direction={orderBy === 'latestCarryDate' ? order : 'asc'}
+                  onClick={() => handleRequestSort('latestCarryDate')}
+                >
+                  최근 이월 날짜
                 </TableSortLabel>
               </TableCell>
               <TableCell sx={{ fontWeight: 700, bgcolor: 'background.neutral' }}>
@@ -166,6 +217,16 @@ export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonu
                   </Typography>
                 </TableCell>
                 <TableCell>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    {row.latestCarryRound > 0 ? `${row.latestCarryRound}회` : '-'}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.secondary' }}>
+                    {formatDate(row.latestCarryDate)}
+                  </Typography>
+                </TableCell>
+                <TableCell>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>
                       {row.probability.toFixed(2)}%
@@ -183,7 +244,7 @@ export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonu
                       <Box
                         sx={{
                           height: '100%',
-                          width: `${Math.min(row.probability * 3, 100)}%`, // Scale for better visualization
+                          width: `${Math.min(row.probability * 3, 100)}%`,
                           bgcolor: 'success.main',
                           opacity: 0.6,
                         }}
