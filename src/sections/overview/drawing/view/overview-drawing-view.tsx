@@ -10,6 +10,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { useLottoGenerator } from '../use-lotto-generator';
 import { LottoPaper } from 'src/components/lotto/lotto-paper';
 import { DrawingGeneratedResults } from '../drawing-generated-results';
+import * as LottoLibrary from 'src/api/lottolibrary';
 
 // ----------------------------------------------------------------------
 
@@ -28,8 +29,56 @@ export function OverviewDrawingView() {
     handleShare,
   } = useLottoGenerator();
 
+  const latestDraw = LottoLibrary.getLatestLottoNumber();
+
   return (
     <DashboardContent maxWidth="xl">
+      {latestDraw && (
+        <Stack spacing={3} sx={{ mb: 5, alignItems: 'center' }}>
+          <Stack spacing={1} sx={{ textAlign: 'center' }}>
+            <Typography variant="h4">{latestDraw.drwNo}회 당첨결과</Typography>
+            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+              ({latestDraw.drwNoDate} 추첨)
+            </Typography>
+          </Stack>
+
+          <Stack direction="row" spacing={{ xs: 1, md: 2 }} alignItems="center">
+            {latestDraw.numbers.map((num) => (
+              <LottoLibrary.Ball
+                key={num}
+                sx={{
+                  width: { xs: 30, md: 48, lg: 64 },
+                  height: { xs: 30, md: 48, lg: 64 },
+                  fontSize: { xs: '0.8rem', md: '1.2rem', lg: '1.6rem' },
+                  background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${LottoLibrary.getBallColor(
+                    num
+                  )}`,
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+                }}
+              >
+                {num}
+              </LottoLibrary.Ball>
+            ))}
+            <Typography variant="h5" sx={{ mx: { xs: 1, md: 2 }, color: 'text.disabled' }}>
+              +
+            </Typography>
+            <LottoLibrary.Ball
+              sx={{
+                width: { xs: 30, md: 48, lg: 64 },
+                height: { xs: 30, md: 48, lg: 64 },
+                fontSize: { xs: '0.8rem', md: '1.2rem', lg: '1.6rem' },
+                background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${LottoLibrary.getBallColor(
+                  latestDraw.bonus
+                )}`,
+                boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+              }}
+            >
+              {latestDraw.bonus}
+            </LottoLibrary.Ball>
+          </Stack>
+        </Stack>
+      )}
+
       <Box
         sx={{
           position: 'sticky',

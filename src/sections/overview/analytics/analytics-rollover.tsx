@@ -127,7 +127,7 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
                     const ballNum = currBall.val;
 
                     // Calculate Streak Length
-                    let streakCount = 2; // Start with 2 (Current + Previous)
+                    let streakCount = 1; // Start with 1 (Rollover count)
                     let k = nextIndex + 1;
                     while (k < rowConfigs.length) {
                         if (roundHasNumber(rowConfigs[k].round, ballNum)) {
