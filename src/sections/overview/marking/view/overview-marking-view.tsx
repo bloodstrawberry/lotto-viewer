@@ -8,6 +8,9 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import CardHeader from '@mui/material/CardHeader';
 import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { getAllLottoNumbers } from 'src/api/lottolibrary';
@@ -16,12 +19,13 @@ import { LottoPaper } from 'src/components/lotto/lotto-paper';
 
 import RoundSlider from '../round-slider';
 
-// ----------------------------------------------------------------------
+const OVERLAP_COLORS = ['#00d2ff', '#ff00ea', '#ffb700', '#00ff88', '#7d33ff'];
 
 export function OverviewMarkingView() {
   const [data, setData] = useState<any[]>([]);
   const [selectedRound, setSelectedRound] = useState<number | ''>('');
   const [showGrid, setShowGrid] = useState(false);
+  const [overlapCount, setOverlapCount] = useState(0); // 0 (off), 1, 2, 3, 4, 5
 
   useEffect(() => {
     const allData = getAllLottoNumbers();
@@ -45,6 +49,19 @@ export function OverviewMarkingView() {
     return data.slice(index, index + 10);
   }, [data, selectedRound]);
 
+  const extraLinesData = useMemo(() => {
+    if (overlapCount === 0 || !selectedRound || data.length === 0) return [];
+    const index = data.findIndex((d) => d.drwNo === selectedRound);
+    if (index === -1) return [];
+
+    // Get previous N rounds
+    const prevRounds = data.slice(index + 1, index + 1 + overlapCount);
+    return prevRounds.map((d, idx) => ({
+      numbers: d.numbers,
+      color: OVERLAP_COLORS[idx % OVERLAP_COLORS.length]
+    }));
+  }, [data, selectedRound, overlapCount]);
+
   const minRound = data.length > 0 ? data[data.length - 1].drwNo : 1;
   const maxRound = data.length > 0 ? data[0].drwNo : 1;
 
@@ -54,13 +71,51 @@ export function OverviewMarkingView() {
         <CardHeader
           title="마킹패턴"
           action={
-            <Tooltip title={showGrid ? '단일 보기' : '10개 모아보기'}>
-              <IconButton onClick={() => setShowGrid(!showGrid)}>
-                <Iconify icon={showGrid ? 'solar:list-bold' : 'solar:widget-5-bold'} />
-              </IconButton>
-            </Tooltip>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, height: 40 }}>
+              <Tooltip title="이전 회차 겹쳐보기 (1~5개)">
+                <ToggleButtonGroup
+                  size="small"
+                  value={overlapCount}
+                  exclusive
+                  onChange={(e, newCount) => setOverlapCount(newCount === null ? 0 : newCount)}
+                  aria-label="overlap count"
+                  sx={{
+                    '& .MuiToggleButton-root': {
+                      border: '1px solid',
+                      borderColor: 'divider',
+                    }
+                  }}
+                >
+                  {[1, 2, 3, 4, 5].map((num) => (
+                    <ToggleButton
+                      key={num}
+                      value={num}
+                      aria-label={`${num} rounds overlap`}
+                      sx={{
+                        width: { xs: 26, sm: 32 },
+                        height: { xs: 26, sm: 32 },
+                        fontSize: { xs: 10, sm: 12 },
+                        fontWeight: 'bold',
+                        px: 0,
+                      }}
+                    >
+                      {num}
+                    </ToggleButton>
+                  ))}
+                </ToggleButtonGroup>
+              </Tooltip>
+
+              <Tooltip title={showGrid ? '단일 보기' : '10개 모아보기'}>
+                <IconButton onClick={() => setShowGrid(!showGrid)} sx={{ width: 40, height: 40 }}>
+                  <Iconify icon={showGrid ? 'solar:list-bold' : 'solar:widget-5-bold'} width={24} />
+                </IconButton>
+              </Tooltip>
+            </Box>
           }
-          sx={{ mb: 0 }}
+          sx={{
+            py: 2,
+            '& .MuiCardHeader-action': { alignSelf: 'center', m: 0 }
+          }}
         />
 
         <Box
@@ -70,7 +125,7 @@ export function OverviewMarkingView() {
             alignItems: 'center',
             justifyContent: 'center',
             p: 0.5,
-            bgcolor: 'background.neutral',
+            bgcolor: '#ffffff',
             overflow: 'hidden',
           }}
         >
@@ -89,16 +144,28 @@ export function OverviewMarkingView() {
                 transformOrigin: 'center center',
               }}
             >
-              {gridData.map((d) => (
-                <LottoPaper
-                  key={d.drwNo}
-                  headerText={`${d.drwNo}회`}
-                  selectedNumbers={d.numbers}
-                  readOnly
-                  color="#FF0000"
-                  showLines
-                />
-              ))}
+              {gridData.map((d) => {
+                const itemIndex = data.findIndex((item) => item.drwNo === d.drwNo);
+                const itemExtraLines =
+                  overlapCount > 0 && itemIndex !== -1
+                    ? data.slice(itemIndex + 1, itemIndex + 1 + overlapCount).map((prev, idx) => ({
+                      numbers: prev.numbers,
+                      color: OVERLAP_COLORS[idx % OVERLAP_COLORS.length],
+                    }))
+                    : [];
+
+                return (
+                  <LottoPaper
+                    key={d.drwNo}
+                    headerText={`${d.drwNo}회`}
+                    selectedNumbers={d.numbers}
+                    readOnly
+                    color="#FF0000"
+                    showLines
+                    extraLines={itemExtraLines}
+                  />
+                );
+              })}
             </Box>
           ) : (
             currentData && (
@@ -108,6 +175,7 @@ export function OverviewMarkingView() {
                 readOnly
                 color="#FF0000"
                 showLines
+                extraLines={extraLinesData}
               />
             )
           )}
@@ -118,7 +186,7 @@ export function OverviewMarkingView() {
             sx={{
               px: { xs: 1.5, md: 5 },
               py: 0.5,
-              bgcolor: 'background.neutral',
+              bgcolor: '#ffffff',
               borderTop: '1px solid',
               borderColor: 'divider',
             }}

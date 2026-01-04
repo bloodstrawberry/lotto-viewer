@@ -22,6 +22,7 @@ type Props = {
     color?: string;
     showLines?: boolean;
     readOnly?: boolean;
+    extraLines?: { numbers: number[]; color: string }[];
 };
 
 export function LottoPaper({
@@ -36,6 +37,7 @@ export function LottoPaper({
     color = '#FF7575',
     showLines = false,
     readOnly = false,
+    extraLines = [],
 }: Props) {
     const mainColor = color;
     const selectedBgColor = color === '#FF7575' ? '#333' : color;
@@ -51,47 +53,56 @@ export function LottoPaper({
     const containerRef = useRef<HTMLDivElement>(null);
     const cellRefs = useRef<Record<number, HTMLDivElement | null>>({});
     const [linePoints, setLinePoints] = useState<string>('');
+    const [extraLinePoints, setExtraLinePoints] = useState<{ points: string; color: string }[]>([]);
+
+    const extraLinesKey = JSON.stringify(extraLines);
 
     useLayoutEffect(() => {
-        if (!showLines || selectedNumbers.length < 2 || !containerRef.current) {
-            setLinePoints('');
-            return;
-        }
-
         const calculatePath = () => {
             const container = containerRef.current;
             if (!container) return;
 
             const containerRect = container.getBoundingClientRect();
-
-            // Get actual vs visual width to determine scale factor
-            // containerRect.width is the visual (scaled) width
-            // container.offsetWidth is the layout (unscaled) width
             const scaleX = containerRect.width / container.offsetWidth || 1;
             const scaleY = containerRect.height / container.offsetHeight || 1;
 
-            const points = selectedNumbers.map(num => {
-                const cell = cellRefs.current[num];
-                if (!cell) return null;
-                const cellRect = cell.getBoundingClientRect();
+            const getPointsString = (numbers: number[]) => {
+                if (!numbers || numbers.length < 2) return '';
+                return numbers.map(num => {
+                    const cell = cellRefs.current[num];
+                    if (!cell) return null;
+                    const cellRect = cell.getBoundingClientRect();
+                    const x = (cellRect.left - containerRect.left + cellRect.width / 2) / scaleX;
+                    const y = (cellRect.top - containerRect.top + cellRect.height / 2) / scaleY;
+                    return `${x},${y}`;
+                }).filter(Boolean).join(' ');
+            };
 
-                // Calculate center relative to container and adjust for scale
-                const x = (cellRect.left - containerRect.left + cellRect.width / 2) / scaleX;
-                const y = (cellRect.top - containerRect.top + cellRect.height / 2) / scaleY;
-                return `${x},${y}`;
-            }).filter(Boolean);
+            const newLinePoints = showLines ? getPointsString(selectedNumbers) : '';
+            setLinePoints((prev) => (prev !== newLinePoints ? newLinePoints : prev));
 
-            setLinePoints(points.join(' '));
+            if (extraLines && extraLines.length > 0) {
+                const results = extraLines.map(line => ({
+                    points: getPointsString(line.numbers),
+                    color: line.color
+                })).filter(res => res.points);
+
+                const resultsKey = JSON.stringify(results);
+                setExtraLinePoints((prev) => (JSON.stringify(prev) !== resultsKey ? results : prev));
+            } else {
+                setExtraLinePoints((prev) => (prev.length > 0 ? [] : prev));
+            }
         };
 
         calculatePath();
 
-        // Optional: Recalculate on resize (though paper is fixed width usually)
         const observer = new ResizeObserver(calculatePath);
-        observer.observe(containerRef.current);
+        if (containerRef.current) {
+            observer.observe(containerRef.current);
+        }
 
         return () => observer.disconnect();
-    }, [selectedNumbers, showLines]);
+    }, [selectedNumbers, showLines, extraLinesKey]);
 
     return (
         <Box
@@ -108,7 +119,7 @@ export function LottoPaper({
             }}
         >
             {/* SVG Overlay for Lines */}
-            {showLines && linePoints && (
+            {(showLines || extraLinePoints.length > 0) && (
                 <Box
                     component="svg"
                     sx={{
@@ -118,18 +129,32 @@ export function LottoPaper({
                         width: '100%',
                         height: '100%',
                         pointerEvents: 'none',
-                        zIndex: 1, // Above background, below text? Or above text? Image shows on top.
+                        zIndex: 1,
                     }}
                 >
-                    <polyline
-                        points={linePoints}
-                        fill="none"
-                        stroke="#ADFF2F" // Greenish yellow like the image
-                        strokeWidth="4"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        style={{ opacity: 0.8 }}
-                    />
+                    {showLines && linePoints && (
+                        <polyline
+                            points={linePoints}
+                            fill="none"
+                            stroke="#ADFF2F"
+                            strokeWidth="4"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            style={{ opacity: 0.8 }}
+                        />
+                    )}
+                    {extraLinePoints.map((line, idx) => (
+                        <polyline
+                            key={idx}
+                            points={line.points}
+                            fill="none"
+                            stroke={line.color}
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            style={{ opacity: 0.6 }}
+                        />
+                    ))}
                 </Box>
             )}
 
