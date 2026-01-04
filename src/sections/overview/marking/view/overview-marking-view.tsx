@@ -4,15 +4,14 @@ import { useState, useEffect, useMemo } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Typography from '@mui/material/Typography';
 import CardHeader from '@mui/material/CardHeader';
-import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { getAllLottoNumbers } from 'src/api/lottolibrary';
 import { LottoPaper } from 'src/components/lotto/lotto-paper';
+
+import RoundSlider from '../round-slider';
 
 // ----------------------------------------------------------------------
 
@@ -30,63 +29,64 @@ export function OverviewMarkingView() {
     }
   }, []);
 
-  const handleChange = (event: SelectChangeEvent<number>) => {
-    setSelectedRound(Number(event.target.value));
-  };
-
   const currentData = useMemo(() => {
     if (!selectedRound) return null;
     return data.find((d) => d.drwNo === selectedRound);
   }, [data, selectedRound]);
+
+  const minRound = data.length > 0 ? data[data.length - 1].drwNo : 1;
+  const maxRound = data.length > 0 ? data[0].drwNo : 1;
 
   return (
     <DashboardContent maxWidth="xl">
       <Card sx={{ height: '75vh', display: 'flex', flexDirection: 'column' }}>
         <CardHeader
           title="마킹패턴"
-          action={
-            <FormControl size="small" sx={{ minWidth: 120 }}>
-              <InputLabel id="round-select-label">회차 선택</InputLabel>
-              <Select
-                labelId="round-select-label"
-                value={selectedRound}
-                label="회차 선택"
-                onChange={handleChange}
-                MenuProps={{ PaperProps: { sx: { maxHeight: 300 } } }}
-              >
-                {data.map((row) => (
-                  <MenuItem key={row.drwNo} value={row.drwNo}>
-                    {row.drwNo}회
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          }
-          sx={{
-            mb: 0,
-            '& .MuiCardHeader-content': { display: { xs: 'none', sm: 'block' } },
-            '& .MuiCardHeader-action': { m: 0, width: { xs: '100%', sm: 'auto' } },
-          }}
+          subheader="회차를 선택하여 해당 회차의 번호를 확인하세요."
+          sx={{ mb: 0 }}
         />
 
         <Box
           sx={{
             flexGrow: 1,
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             p: 3,
             bgcolor: 'background.neutral',
+            overflow: 'hidden',
           }}
         >
-          {currentData && (
-            <LottoPaper
-              headerText={`${currentData.drwNo}회`}
-              selectedNumbers={currentData.numbers}
-              readOnly
-              color="#FF0000"
-              showLines
-            />
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+            }}
+          >
+            {currentData && (
+              <LottoPaper
+                headerText={`${currentData.drwNo}회`}
+                selectedNumbers={currentData.numbers}
+                readOnly
+                color="#FF0000"
+                showLines
+              />
+            )}
+          </Box>
+
+          {data.length > 0 && selectedRound !== '' && (
+            <Box sx={{ width: '100%', maxWidth: 800, mt: 4 }}>
+              <RoundSlider
+                min={minRound}
+                max={maxRound}
+                value={Number(selectedRound)}
+                onChange={(val) => setSelectedRound(val)}
+              />
+            </Box>
           )}
         </Box>
       </Card>
