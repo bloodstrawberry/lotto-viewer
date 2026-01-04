@@ -60,20 +60,20 @@ function getRankText(rank: number | null): string {
 }
 
 // LottoCell 컴포넌트 (간소화 버전)
-const LottoCell = ({ 
-  num, 
-  bgColor, 
-  textColor, 
-  content, 
-  onClick, 
+const LottoCell = ({
+  num,
+  bgColor,
+  textColor,
+  content,
+  onClick,
   cursor = "default",
   borderColor,
-}: { 
-  num: number; 
-  bgColor: string; 
-  textColor: string; 
-  content: string | number; 
-  onClick?: () => void; 
+}: {
+  num: number;
+  bgColor: string;
+  textColor: string;
+  content: string | number;
+  onClick?: () => void;
   cursor?: string;
   borderColor?: string;
 }) => (
@@ -176,8 +176,13 @@ function ResultRow({
   showNumbers: boolean;
   theme: ThemeType;
 }) {
-  const { matchCount, rank, hasBonus } = calculatePrizeRank(selectedNumbers, round.numbers, round.bonus);
-  
+  let { matchCount, rank, hasBonus } = calculatePrizeRank(selectedNumbers, round.numbers, round.bonus);
+
+  // 번호를 선택하지 않은 경우(초기 상태)에는 해당 회차의 당첨 번호 그 자체이므로 1등으로 표시
+  if (selectedNumbers.length === 0) {
+    rank = 1;
+  }
+
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
       <Box
@@ -200,14 +205,14 @@ function ResultRow({
           const isSelected = selectedNumbers.includes(num);
           const isMatch = isSelected && isWinning;
           const isBonusMatch = isSelected && isBonus;
-          
+
           let bgColor = getCellColorByTheme(theme, num, isWinning, isBonus, false);
-          
+
           // 선택된 번호가 당첨 번호와 일치하면 강조
           if (isMatch || isBonusMatch) {
             bgColor = '#000000';
           }
-          
+
           const shouldShowNumber = showNumbers || isMatch || isBonusMatch;
 
           return (
@@ -248,14 +253,14 @@ function ResultRow({
           }}
         />
         {hasBonus && rank === 2 && (
-          <Iconify 
-            icon="mdi:star" 
-            width={14} 
-            sx={{ 
+          <Iconify
+            icon="mdi:star"
+            width={14}
+            sx={{
               color: '#FFD700',
               width: { xs: 10, sm: 14 },
               height: { xs: 10, sm: 14 }
-            }} 
+            }}
           />
         )}
       </Box>
@@ -292,7 +297,8 @@ export function OverviewHistoryView() {
 
   // 필터링된 결과 계산
   const filteredResults = useMemo(() => {
-    if (selectedNumbers.length < 2) return [];
+    if (selectedNumbers.length === 0) return data;
+    // 1개 이상 선택 시 필터링 진행
 
     if (selectedNumbers.length === 6) {
       // 6개 선택 시: 5등 이상 당첨된 회차만 (3개 이상 일치)
@@ -301,7 +307,7 @@ export function OverviewHistoryView() {
         return matchCount >= 3;
       });
     } else {
-      // 2-5개 선택 시: 선택한 번호가 모두 포함된 회차만
+      // 1-5개 선택 시: 선택한 번호가 모두 포함된 회차만
       return data.filter((round) => {
         return selectedNumbers.every(n => round.numbers.includes(n) || round.bonus === n);
       });
@@ -310,33 +316,33 @@ export function OverviewHistoryView() {
 
   const displayedResults = useMemo(() => {
     let results = [...filteredResults];
-    
+
     if (sortByRank && selectedNumbers.length === 6) {
       // 등수별 정렬 (등수가 낮을수록 좋음, 같은 등수면 회차가 큰 것이 우선)
       results.sort((a, b) => {
         const rankA = calculatePrizeRank(selectedNumbers, a.numbers, a.bonus);
         const rankB = calculatePrizeRank(selectedNumbers, b.numbers, b.bonus);
-        
+
         // rank가 null인 경우 (낙첨)는 가장 뒤로
         const rankValA = rankA.rank ?? 999;
         const rankValB = rankB.rank ?? 999;
-        
+
         if (rankValA !== rankValB) {
           return rankValA - rankValB; // 낮은 등수가 우선
         }
         return b.drwNo - a.drwNo; // 같은 등수면 회차가 큰 것이 우선
       });
     }
-    
+
     return results.slice(0, visibleCount);
   }, [filteredResults, visibleCount, sortByRank, selectedNumbers]);
 
   const selectionInfo = useMemo(() => {
-    if (selectedNumbers.length < 2) {
-      return `2개 이상 번호 선택 (현재: ${selectedNumbers.length}개)`;
+    if (selectedNumbers.length === 0) {
+      return `번호를 선택하여 당첨 내역을 확인하세요.`;
     }
     if (selectedNumbers.length === 6) {
-      return `당첨 회차: ${filteredResults.length}개`;
+      return `지금 뽑은 번호의 과거순위 (당첨 회차: ${filteredResults.length}개)`;
     }
     return `선택한 번호가 모두 포함된 회차: ${filteredResults.length}개`;
   }, [selectedNumbers, filteredResults]);
@@ -405,7 +411,7 @@ export function OverviewHistoryView() {
                 </Tooltip>
               </ToggleButtonGroup>
 
-              
+
             </Box>
           }
         />
@@ -422,18 +428,18 @@ export function OverviewHistoryView() {
               />
 
               {/* 선택 정보 표시 */}
-              <Box sx={{ 
-                py: { xs: 1, sm: 1.5 }, 
-                display: 'flex', 
+              <Box sx={{
+                py: { xs: 1, sm: 1.5 },
+                display: 'flex',
                 flexDirection: { xs: 'column', sm: 'row' },
-                alignItems: 'center', 
-                justifyContent: 'center', 
+                alignItems: 'center',
+                justifyContent: 'center',
                 gap: { xs: 1, sm: 1 },
               }}>
-                <Typography 
-                  variant="body2" 
+                <Typography
+                  variant="body2"
                   color="text.secondary"
-                  sx={{ 
+                  sx={{
                     fontSize: { xs: '11px', sm: '13px' },
                     textAlign: 'center',
                   }}
@@ -448,8 +454,8 @@ export function OverviewHistoryView() {
                         label={num}
                         size="small"
                         onDelete={() => handleNumberClick(num)}
-                        sx={{ 
-                          height: { xs: 20, sm: 22 }, 
+                        sx={{
+                          height: { xs: 20, sm: 22 },
                           fontSize: { xs: 10, sm: 11 },
                           '& .MuiChip-label': { px: { xs: 0.8, sm: 1 } },
                           '& .MuiChip-deleteIcon': { fontSize: { xs: 14, sm: 15 } }
@@ -461,7 +467,7 @@ export function OverviewHistoryView() {
               </Box>
 
               {/* 필터링된 결과 */}
-              {selectedNumbers.length >= 2 && displayedResults.map((round) => (
+              {displayedResults.map((round) => (
                 <ResultRow
                   key={round.drwNo}
                   round={round}
@@ -474,7 +480,7 @@ export function OverviewHistoryView() {
           </Box>
 
           {/* 더 보기 버튼 */}
-          {selectedNumbers.length >= 2 && visibleCount < filteredResults.length && (
+          {visibleCount < filteredResults.length && (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 3, mb: 1 }}>
               <Button
                 variant="soft"

@@ -24,7 +24,7 @@ import { useLottoMissing } from "./hooks/use-lotto-missing";
 
 export function OverviewPatternView() {
   const [data, setData] = useState<any[]>([]);
-  const [visibleCount, setVisibleCount] = useState(30);
+  const [visibleCount, setVisibleCount] = useState(50);
   const [showBonus, setShowBonus] = useState(false);
   const [isReversed, setIsReversed] = useState(false);
 
@@ -174,7 +174,7 @@ export function OverviewPatternView() {
     const allData = getAllLottoNumbers();
     const sortedDesc = [...allData].sort((a, b) => b.drwNo - a.drwNo);
     setData(sortedDesc);
-    setVisibleCount(30);
+    setVisibleCount(50);
   }, []);
 
   // Clear highlights when mode changes
@@ -419,7 +419,7 @@ export function OverviewPatternView() {
               <Button
                 variant="soft"
                 color="inherit"
-                onClick={() => setVisibleCount((prev) => Math.min(prev + 30, data.length))}
+                onClick={() => setVisibleCount((prev) => Math.min(prev + 50, data.length))}
                 disabled={visibleCount >= data.length}
                 sx={{ minWidth: 40 }}
               >
@@ -509,7 +509,7 @@ export function OverviewPatternView() {
               <Button
                 variant="soft"
                 color="inherit"
-                onClick={() => setVisibleCount((prev) => Math.min(prev + 30, data.length))}
+                onClick={() => setVisibleCount((prev) => Math.min(prev + 50, data.length))}
                 disabled={visibleCount >= data.length}
                 sx={{ minWidth: 40 }}
               >
