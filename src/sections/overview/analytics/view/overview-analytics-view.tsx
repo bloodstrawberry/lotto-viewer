@@ -99,12 +99,12 @@ export function OverviewAnalyticsView() {
         <Typography variant="h4">통계분석</Typography>
       </Stack>
 
-      <Typography variant="subtitle1" sx={{ mb: 2, color: 'text.secondary', fontWeight: 'bold' }}>
+      <Typography variant="subtitle1" sx={{ mb: 2, color: 'text.secondary', fontWeight: 'bold', textAlign: 'center' }}>
         분석 범위: {startRound}회 ~ {endRound}회 ({filteredRounds.length}회)
       </Typography>
 
       <Card sx={{ mb: 3, p: 3, borderRadius: 2 }}>
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="center">
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="center" justifyContent="center">
           <Stack direction="row" spacing={1} alignItems="center">
             <TextField
               label="시작 회차"
@@ -112,7 +112,7 @@ export function OverviewAnalyticsView() {
               size="small"
               value={startRound}
               onChange={(e) => handleStartRoundChange(Number(e.target.value))}
-              inputProps={{ min: 1, max: endRound }}
+              inputProps={{ min: 1, max: endRound, style: { textAlign: 'center' } }}
               sx={{ width: 110 }}
             />
             <Typography sx={{ color: 'text.disabled' }}>~</Typography>
@@ -122,7 +122,7 @@ export function OverviewAnalyticsView() {
               size="small"
               value={endRound}
               onChange={(e) => handleEndRoundChange(Number(e.target.value))}
-              inputProps={{ min: startRound, max: latestRound }}
+              inputProps={{ min: startRound, max: latestRound, style: { textAlign: 'center' } }}
               sx={{ width: 110 }}
             />
           </Stack>

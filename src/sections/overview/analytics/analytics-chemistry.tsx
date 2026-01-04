@@ -8,19 +8,17 @@ import Table from '@mui/material/Table';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import Switch from '@mui/material/Switch';
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
 import DialogTitle from '@mui/material/DialogTitle';
+import ToggleButton from '@mui/material/ToggleButton';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import TableContainer from '@mui/material/TableContainer';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import TableSortLabel from '@mui/material/TableSortLabel';
@@ -187,19 +185,25 @@ export function AnalyticsChemistry({ rounds, includeBonus }: Props) {
     return (
         <Card sx={{ borderRadius: 2, overflow: 'hidden' }}>
             <Stack direction="row" alignItems="center" sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-                <FormControl size="small" sx={{ width: 150 }}>
-                    <InputLabel>조합 번호 수</InputLabel>
-                    <Select
+                <Stack direction="row" spacing={1} alignItems="center">
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>조합 번호 수:</Typography>
+                    <ToggleButtonGroup
                         value={tupleSize}
-                        label="조합 번호 수"
-                        onChange={(e) => setTupleSize(Number(e.target.value))}
+                        exclusive
+                        onChange={(e, nextValue) => {
+                            if (nextValue !== null) {
+                                setTupleSize(nextValue);
+                            }
+                        }}
+                        size="small"
+                        color="primary"
                     >
-                        <MenuItem value={2}>2개 번호</MenuItem>
-                        <MenuItem value={3}>3개 번호</MenuItem>
-                        <MenuItem value={4}>4개 번호</MenuItem>
-                        <MenuItem value={5}>5개 번호</MenuItem>
-                    </Select>
-                </FormControl>
+                        <ToggleButton value={2} sx={{ fontWeight: 700 }}>2개</ToggleButton>
+                        <ToggleButton value={3} sx={{ fontWeight: 700 }}>3개</ToggleButton>
+                        <ToggleButton value={4} sx={{ fontWeight: 700 }}>4개</ToggleButton>
+                        <ToggleButton value={5} sx={{ fontWeight: 700 }}>5개</ToggleButton>
+                    </ToggleButtonGroup>
+                </Stack>
                 <Typography variant="body2" sx={{ ml: 2, color: 'text.secondary', flexGrow: 1 }}>
                     * 선택한 개수의 번호가 동시에 출현한 기록을 분석합니다.
                 </Typography>

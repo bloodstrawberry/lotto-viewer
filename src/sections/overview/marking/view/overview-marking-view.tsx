@@ -106,7 +106,14 @@ export function OverviewMarkingView() {
               </Tooltip>
 
               <Tooltip title={showGrid ? '단일 보기' : '10개 모아보기'}>
-                <IconButton onClick={() => setShowGrid(!showGrid)} sx={{ width: 40, height: 40 }}>
+                <IconButton
+                  onClick={() => setShowGrid(!showGrid)}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    display: { xs: 'none', md: 'inline-flex' }
+                  }}
+                >
                   <Iconify icon={showGrid ? 'solar:list-bold' : 'solar:widget-5-bold'} width={24} />
                 </IconButton>
               </Tooltip>
