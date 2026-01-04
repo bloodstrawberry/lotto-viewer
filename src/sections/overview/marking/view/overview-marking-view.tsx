@@ -4,11 +4,14 @@ import { useState, useEffect, useMemo } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import CardHeader from '@mui/material/CardHeader';
+import IconButton from '@mui/material/IconButton';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { getAllLottoNumbers } from 'src/api/lottolibrary';
+import { Iconify } from 'src/components/iconify';
 import { LottoPaper } from 'src/components/lotto/lotto-paper';
 
 import RoundSlider from '../round-slider';
@@ -18,6 +21,7 @@ import RoundSlider from '../round-slider';
 export function OverviewMarkingView() {
   const [data, setData] = useState<any[]>([]);
   const [selectedRound, setSelectedRound] = useState<number | ''>('');
+  const [showGrid, setShowGrid] = useState(false);
 
   useEffect(() => {
     const allData = getAllLottoNumbers();
@@ -34,15 +38,28 @@ export function OverviewMarkingView() {
     return data.find((d) => d.drwNo === selectedRound);
   }, [data, selectedRound]);
 
+  const gridData = useMemo(() => {
+    if (!selectedRound || data.length === 0) return [];
+    const index = data.findIndex((d) => d.drwNo === selectedRound);
+    if (index === -1) return [];
+    return data.slice(index, index + 10);
+  }, [data, selectedRound]);
+
   const minRound = data.length > 0 ? data[data.length - 1].drwNo : 1;
   const maxRound = data.length > 0 ? data[0].drwNo : 1;
 
   return (
     <DashboardContent maxWidth="xl">
-      <Card sx={{ height: '75vh', display: 'flex', flexDirection: 'column' }}>
+      <Card sx={{ height: '80vh', display: 'flex', flexDirection: 'column' }}>
         <CardHeader
           title="마킹패턴"
-          subheader="회차를 선택하여 해당 회차의 번호를 확인하세요."
+          action={
+            <Tooltip title={showGrid ? '단일 보기' : '10개 모아보기'}>
+              <IconButton onClick={() => setShowGrid(!showGrid)}>
+                <Iconify icon={showGrid ? 'solar:list-bold' : 'solar:widget-5-bold'} />
+              </IconButton>
+            </Tooltip>
+          }
           sx={{ mb: 0 }}
         />
 
@@ -50,24 +67,41 @@ export function OverviewMarkingView() {
           sx={{
             flexGrow: 1,
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            p: 3,
+            p: 0.5,
             bgcolor: 'background.neutral',
             overflow: 'hidden',
           }}
         >
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-            }}
-          >
-            {currentData && (
+          {showGrid ? (
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: 'repeat(1, 1fr)',
+                  sm: 'repeat(2, 1fr)',
+                  md: 'repeat(5, 1fr)',
+                },
+                gap: 1,
+                p: 0,
+                transform: { md: 'scale(0.75)', lg: 'scale(0.85)' },
+                transformOrigin: 'center center',
+              }}
+            >
+              {gridData.map((d) => (
+                <LottoPaper
+                  key={d.drwNo}
+                  headerText={`${d.drwNo}회`}
+                  selectedNumbers={d.numbers}
+                  readOnly
+                  color="#FF0000"
+                  showLines
+                />
+              ))}
+            </Box>
+          ) : (
+            currentData && (
               <LottoPaper
                 headerText={`${currentData.drwNo}회`}
                 selectedNumbers={currentData.numbers}
@@ -75,11 +109,21 @@ export function OverviewMarkingView() {
                 color="#FF0000"
                 showLines
               />
-            )}
-          </Box>
+            )
+          )}
+        </Box>
 
-          {data.length > 0 && selectedRound !== '' && (
-            <Box sx={{ width: '100%', maxWidth: 800, mt: 4 }}>
+        {data.length > 0 && selectedRound !== '' && (
+          <Box
+            sx={{
+              px: { xs: 1.5, md: 5 },
+              py: 0.5,
+              bgcolor: 'background.neutral',
+              borderTop: '1px solid',
+              borderColor: 'divider',
+            }}
+          >
+            <Box sx={{ maxWidth: 800, mx: 'auto' }}>
               <RoundSlider
                 min={minRound}
                 max={maxRound}
@@ -87,8 +131,8 @@ export function OverviewMarkingView() {
                 onChange={(val) => setSelectedRound(val)}
               />
             </Box>
-          )}
-        </Box>
+          </Box>
+        )}
       </Card>
     </DashboardContent>
   );

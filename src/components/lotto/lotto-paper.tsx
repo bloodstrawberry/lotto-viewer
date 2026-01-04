@@ -64,14 +64,20 @@ export function LottoPaper({
 
             const containerRect = container.getBoundingClientRect();
 
+            // Get actual vs visual width to determine scale factor
+            // containerRect.width is the visual (scaled) width
+            // container.offsetWidth is the layout (unscaled) width
+            const scaleX = containerRect.width / container.offsetWidth || 1;
+            const scaleY = containerRect.height / container.offsetHeight || 1;
+
             const points = selectedNumbers.map(num => {
                 const cell = cellRefs.current[num];
                 if (!cell) return null;
                 const cellRect = cell.getBoundingClientRect();
 
-                // Calculate center relative to container
-                const x = cellRect.left - containerRect.left + cellRect.width / 2;
-                const y = cellRect.top - containerRect.top + cellRect.height / 2;
+                // Calculate center relative to container and adjust for scale
+                const x = (cellRect.left - containerRect.left + cellRect.width / 2) / scaleX;
+                const y = (cellRect.top - containerRect.top + cellRect.height / 2) / scaleY;
                 return `${x},${y}`;
             }).filter(Boolean);
 
