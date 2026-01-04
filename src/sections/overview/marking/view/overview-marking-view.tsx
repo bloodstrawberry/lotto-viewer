@@ -26,6 +26,7 @@ export function OverviewMarkingView() {
   const [selectedRound, setSelectedRound] = useState<number | ''>('');
   const [showGrid, setShowGrid] = useState(false);
   const [overlapCount, setOverlapCount] = useState(0); // 0 (off), 1, 2, 3, 4, 5
+  const [markingMode, setMarkingMode] = useState<'off' | 'on1' | 'on2'>('on1');
 
   useEffect(() => {
     const allData = getAllLottoNumbers();
@@ -105,6 +106,36 @@ export function OverviewMarkingView() {
                 </ToggleButtonGroup>
               </Tooltip>
 
+              <ToggleButtonGroup
+                size="small"
+                value={markingMode}
+                exclusive
+                onChange={(e, newMode) => newMode !== null && setMarkingMode(newMode)}
+                aria-label="marking mode"
+                sx={{
+                  '& .MuiToggleButton-root': {
+                    border: '1px solid',
+                    borderColor: 'divider',
+                  }
+                }}
+              >
+                <Tooltip title="마킹 끔">
+                  <ToggleButton value="off" sx={{ width: 32, height: 32, px: 0 }}>
+                    <Iconify icon="mdi:circle-outline" width={20} />
+                  </ToggleButton>
+                </Tooltip>
+                <Tooltip title="당첨번호만 마킹">
+                  <ToggleButton value="on1" sx={{ width: 32, height: 32, px: 0 }}>
+                    <Iconify icon="mdi:circle" width={20} />
+                  </ToggleButton>
+                </Tooltip>
+                <Tooltip title="전체 레이어 마킹">
+                  <ToggleButton value="on2" sx={{ width: 32, height: 32, px: 0 }}>
+                    <Iconify icon="mdi:circle-multiple" width={20} />
+                  </ToggleButton>
+                </Tooltip>
+              </ToggleButtonGroup>
+
               <Tooltip title={showGrid ? '단일 보기' : '10개 모아보기'}>
                 <IconButton
                   onClick={() => setShowGrid(!showGrid)}
@@ -170,6 +201,7 @@ export function OverviewMarkingView() {
                     color="#FF0000"
                     showLines
                     extraLines={itemExtraLines}
+                    markingMode={markingMode}
                   />
                 );
               })}
@@ -183,6 +215,7 @@ export function OverviewMarkingView() {
                 color="#FF0000"
                 showLines
                 extraLines={extraLinesData}
+                markingMode={markingMode}
               />
             )
           )}

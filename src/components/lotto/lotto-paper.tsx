@@ -23,6 +23,7 @@ type Props = {
     showLines?: boolean;
     readOnly?: boolean;
     extraLines?: { numbers: number[]; color: string }[];
+    markingMode?: 'off' | 'on1' | 'on2';
 };
 
 export function LottoPaper({
@@ -38,6 +39,7 @@ export function LottoPaper({
     showLines = false,
     readOnly = false,
     extraLines = [],
+    markingMode = 'on1',
 }: Props) {
     const mainColor = color;
     const selectedBgColor = color === '#FF7575' ? '#333' : color;
@@ -203,6 +205,11 @@ export function LottoPaper({
                         const isSelected = selectedNumbers.includes(num);
                         const isDisabled = disabledNumbers.includes(num);
 
+                        // Find any extra lines that include this number
+                        const extraLineMatches = markingMode === 'on2'
+                            ? extraLines.filter(line => line.numbers.includes(num))
+                            : [];
+
                         return (
                             <Box
                                 key={num}
@@ -220,61 +227,70 @@ export function LottoPaper({
                                     transition: 'all 0.15s ease',
                                 }}
                             >
-                                {/* Bracket Style or Filled Style */}
-                                {isSelected ? (
-                                    <Box
-                                        sx={{
-                                            width: '100%',
-                                            height: '100%',
-                                            bgcolor: selectedBgColor, // Dark gray usually
-                                            borderRadius: '50%', // Circle shape for selected numbers like in image? 
-                                            // Image shows Oval/Rounded rect for selected. 
-                                            // Original DrawingLottoPaper was rect fill.
-                                            // Image provided shows Vertical Oval (Capsule).
-                                            // Let's stick closer to original rectangle fill unless user asked?
-                                            // User said: "Use drawing-lotto-paper.tsx as is".
-                                            // So I will stick to original Rectangle Fill logic.
-                                            // BUT the original code in drawing-lotto-paper.tsx lines 114-121 was a Box with bgcolor.
-                                            // I will keep it.
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        <Typography sx={{ fontWeight: 600, fontSize: FONT_SIZE, color: 'white' }}>
-                                            {num}
-                                        </Typography>
-                                    </Box>
-                                ) : (
-                                    <Box
-                                        sx={{
-                                            width: '100%',
-                                            height: '100%',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            position: 'relative',
-                                        }}
-                                    >
-                                        {/* Brackets [ ] */}
-                                        <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', bgcolor: mainColor }} />
-                                        <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '1px', bgcolor: mainColor }} />
-                                        <Box sx={{ position: 'absolute', top: 0, left: 0, width: '1px', height: CORNER_LINE, bgcolor: mainColor }} />
-                                        <Box sx={{ position: 'absolute', bottom: 0, left: 0, width: '1px', height: CORNER_LINE, bgcolor: mainColor }} />
-                                        <Box sx={{ position: 'absolute', top: 0, right: 0, width: '1px', height: CORNER_LINE, bgcolor: mainColor }} />
-                                        <Box sx={{ position: 'absolute', bottom: 0, right: 0, width: '1px', height: CORNER_LINE, bgcolor: mainColor }} />
+                                {/* Brackets Background (Always show if not solid filled or based on preference) */}
+                                <Box
+                                    sx={{
+                                        position: 'absolute',
+                                        inset: 0,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', bgcolor: mainColor }} />
+                                    <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '1px', bgcolor: mainColor }} />
+                                    <Box sx={{ position: 'absolute', top: 0, left: 0, width: '1px', height: CORNER_LINE, bgcolor: mainColor }} />
+                                    <Box sx={{ position: 'absolute', bottom: 0, left: 0, width: '1px', height: CORNER_LINE, bgcolor: mainColor }} />
+                                    <Box sx={{ position: 'absolute', top: 0, right: 0, width: '1px', height: CORNER_LINE, bgcolor: mainColor }} />
+                                    <Box sx={{ position: 'absolute', bottom: 0, right: 0, width: '1px', height: CORNER_LINE, bgcolor: mainColor }} />
+                                </Box>
 
-                                        <Typography
-                                            sx={{
-                                                color: mainColor,
-                                                fontWeight: 500,
-                                                fontSize: FONT_SIZE,
-                                            }}
-                                        >
-                                            {num}
-                                        </Typography>
-                                    </Box>
+                                {/* Marking Circles */}
+                                {markingMode !== 'off' && (
+                                    <>
+                                        {/* Main Selected Number Circle (on1, on2) */}
+                                        {isSelected && (
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    bgcolor: selectedBgColor,
+                                                    borderRadius: '50%',
+                                                    zIndex: 1,
+                                                }}
+                                            />
+                                        )}
+                                        {/* Extra Lines Circles (on2 only) */}
+                                        {markingMode === 'on2' && extraLineMatches.map((line, idx) => (
+                                            <Box
+                                                key={idx}
+                                                sx={{
+                                                    position: 'absolute',
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    bgcolor: line.color,
+                                                    borderRadius: '50%',
+                                                    opacity: 0.4,
+                                                    zIndex: isSelected ? 0 : 1, // Draw below selected circle if it exists
+                                                }}
+                                            />
+                                        ))}
+                                    </>
                                 )}
+
+                                {/* Number Text */}
+                                <Typography
+                                    sx={{
+                                        position: 'relative',
+                                        zIndex: 2,
+                                        fontWeight: isSelected && markingMode !== 'off' ? 600 : 500,
+                                        fontSize: FONT_SIZE,
+                                        color: isSelected && markingMode !== 'off' ? 'white' : mainColor,
+                                    }}
+                                >
+                                    {num}
+                                </Typography>
                             </Box>
                         );
                     })}
