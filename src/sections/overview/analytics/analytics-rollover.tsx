@@ -1,5 +1,5 @@
 
-import { useMemo } from 'react';
+import { useMemo, useRef, useState, useLayoutEffect, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -41,11 +41,15 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
     const ROW_CONTENT_HEIGHT = isMobile ? 44 : 80;
     const BALL_GAP = isMobile ? 6 : 20;
     const LEFT_PADDING = isMobile ? 70 : 100;
-    const PLUS_GAP = isMobile ? 20 : 40;
 
     // Gap settings
     const GAP_SMALL = 0;
     const GAP_LARGE = isMobile ? 30 : 50;
+
+    // Refs for DOM measurement
+    const containerRef = useRef<HTMLDivElement>(null);
+    const ballRefsMap = useRef<Map<string, HTMLDivElement>>(new Map());
+    const [lines, setLines] = useState<LineCoords[]>([]);
 
     // Sort rounds descending (latest first)
     const sortedRounds = useMemo(() => {
@@ -53,19 +57,19 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
     }, [rounds]);
 
     // Helper to check if a round contains a number
-    const roundHasNumber = (r: any, n: number) => {
+    const roundHasNumber = useCallback((r: any, n: number) => {
         if (r.numbers.includes(n)) return true;
         if (includeBonus && r.bonus === n) return true;
         return false;
-    };
+    }, [includeBonus]);
 
     // Helper to check rollover between two rounds
-    const checkRolloverBetween = (r1: any, r2: any) => {
+    const checkRolloverBetween = useCallback((r1: any, r2: any) => {
         if (!r1 || !r2) return false;
         const nums1 = [...r1.numbers, ...(includeBonus ? [r1.bonus] : [])];
         const nums2 = [...r2.numbers, ...(includeBonus ? [r2.bonus] : [])];
         return nums1.some(n => nums2.includes(n));
-    };
+    }, [includeBonus]);
 
     // Calculate Layout (Y positions and Gaps)
     const { rowConfigs, totalHeight } = useMemo(() => {
@@ -95,100 +99,131 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
         });
 
         return { rowConfigs: configs, totalHeight: currentY };
-    }, [sortedRounds, includeBonus, ROW_CONTENT_HEIGHT, GAP_SMALL, GAP_LARGE]);
+    }, [sortedRounds, checkRolloverBetween, ROW_CONTENT_HEIGHT, GAP_SMALL, GAP_LARGE]);
 
-    // Calculate lines
-    const lines = useMemo(() => {
-        const calculatedLines: LineCoords[] = [];
+    // Register ball ref
+    const registerBallRef = useCallback((drwNo: number, ballNum: number, element: HTMLDivElement | null) => {
+        const key = `${drwNo}-${ballNum}`;
+        if (element) {
+            ballRefsMap.current.set(key, element);
+        } else {
+            ballRefsMap.current.delete(key);
+        }
+    }, []);
 
-        rowConfigs.forEach((config, index) => {
-            const nextIndex = index + 1;
-            if (nextIndex >= rowConfigs.length) return;
+    // Calculate lines based on actual DOM positions
+    useLayoutEffect(() => {
+        const calculateLines = () => {
+            if (!containerRef.current) return;
 
-            const currentRound = config.round;
-            const prevRound = rowConfigs[nextIndex].round;
+            const containerRect = containerRef.current.getBoundingClientRect();
+            const calculatedLines: LineCoords[] = [];
 
-            const getDisplayBalls = (r: any) => {
-                const nums = [...r.numbers].map((n, i) => ({ val: n, type: 'main', originalIdx: i }));
-                if (includeBonus) {
-                    nums.push({ val: r.bonus, type: 'bonus', originalIdx: 6 });
-                }
-                return nums;
-            };
+            rowConfigs.forEach((config, index) => {
+                const nextIndex = index + 1;
+                if (nextIndex >= rowConfigs.length) return;
 
-            const currentBalls = getDisplayBalls(currentRound);
-            const prevBalls = getDisplayBalls(prevRound);
+                const currentRound = config.round;
+                const nextRound = rowConfigs[nextIndex].round;
 
-            currentBalls.forEach((currBall, currIdx) => {
-                // Find this number in the previous round
-                const prevBallIdx = prevBalls.findIndex(b => b.val === currBall.val);
+                const getDisplayBalls = (r: any) => {
+                    const nums = [...r.numbers].map((n: number, i: number) => ({ val: n, type: 'main', originalIdx: i }));
+                    if (includeBonus) {
+                        nums.push({ val: r.bonus, type: 'bonus', originalIdx: 6 });
+                    }
+                    return nums;
+                };
 
-                if (prevBallIdx !== -1) {
-                    const ballNum = currBall.val;
+                const currentBalls = getDisplayBalls(currentRound);
+                const nextBalls = getDisplayBalls(nextRound);
 
-                    // Calculate Streak Length
-                    let streakCount = 1; // Start with 1 (Rollover count)
-                    let k = nextIndex + 1;
-                    while (k < rowConfigs.length) {
-                        if (roundHasNumber(rowConfigs[k].round, ballNum)) {
-                            streakCount++;
-                            k++;
-                        } else {
-                            break;
+                currentBalls.forEach((currBall) => {
+                    // Find this number in the next round
+                    const nextBallMatch = nextBalls.find(b => b.val === currBall.val);
+
+                    if (nextBallMatch) {
+                        const ballNum = currBall.val;
+
+                        // Calculate Streak Length
+                        let streakCount = 1;
+                        let k = nextIndex + 1;
+                        while (k < rowConfigs.length) {
+                            if (roundHasNumber(rowConfigs[k].round, ballNum)) {
+                                streakCount++;
+                                k++;
+                            } else {
+                                break;
+                            }
+                        }
+
+                        // Determine if we should show the count
+                        let isLatest = true;
+                        if (index > 0) {
+                            if (roundHasNumber(rowConfigs[index - 1].round, ballNum)) {
+                                isLatest = false;
+                            }
+                        }
+
+                        const showCount = isLatest;
+
+                        // Get actual DOM positions
+                        const currentBallKey = `${currentRound.drwNo}-${ballNum}`;
+                        const nextBallKey = `${nextRound.drwNo}-${ballNum}`;
+
+                        const currentBallEl = ballRefsMap.current.get(currentBallKey);
+                        const nextBallEl = ballRefsMap.current.get(nextBallKey);
+
+                        if (currentBallEl && nextBallEl) {
+                            const currentRect = currentBallEl.getBoundingClientRect();
+                            const nextRect = nextBallEl.getBoundingClientRect();
+
+                            // Calculate center positions relative to container
+                            const x1 = currentRect.left - containerRect.left + currentRect.width / 2;
+                            const y1 = currentRect.top - containerRect.top + currentRect.height / 2;
+                            const x2 = nextRect.left - containerRect.left + nextRect.width / 2;
+                            const y2 = nextRect.top - containerRect.top + nextRect.height / 2;
+
+                            const color = getBallColor(ballNum);
+
+                            calculatedLines.push({
+                                x1,
+                                y1,
+                                x2,
+                                y2,
+                                color,
+                                count: streakCount,
+                                showCount
+                            });
                         }
                     }
-
-                    // Determine if we should show the count
-                    let isLatest = true;
-                    if (index > 0) {
-                        if (roundHasNumber(rowConfigs[index - 1].round, ballNum)) {
-                            isLatest = false;
-                        }
-                    }
-
-                    const showCount = isLatest;
-
-                    // X computation
-                    const getX = (idx: number, isBonus: boolean) => {
-                        let x = LEFT_PADDING + idx * (BALL_SIZE + BALL_GAP);
-                        if (idx >= 6) x += PLUS_GAP;
-                        return x + BALL_SIZE / 2;
-                    };
-
-                    const startX = getX(currIdx, currBall.type === 'bonus');
-                    const startY = config.centerY;
-
-                    const endX = getX(prevBallIdx, prevBalls[prevBallIdx].type === 'bonus');
-                    const endY = rowConfigs[nextIndex].centerY;
-
-                    const color = getBallColor(currBall.val);
-
-                    calculatedLines.push({
-                        x1: startX,
-                        y1: startY,
-                        x2: endX,
-                        y2: endY,
-                        color,
-                        count: streakCount,
-                        showCount
-                    });
-                }
+                });
             });
-        });
 
-        return calculatedLines;
-    }, [rowConfigs, includeBonus, BALL_SIZE, BALL_GAP, LEFT_PADDING, PLUS_GAP]);
+            setLines(calculatedLines);
+        };
+
+        // Calculate after DOM renders
+        calculateLines();
+
+        // Recalculate on resize
+        const handleResize = () => {
+            calculateLines();
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [rowConfigs, includeBonus, roundHasNumber]);
 
     return (
         <Card sx={{ p: 3, borderRadius: 2, minHeight: 500 }}>
             {/* Center Container */}
             <Box sx={{ display: 'flex', justifyContent: 'center', overflowX: 'auto', pb: 2 }}>
-                <Box sx={{ position: 'relative', width: 'fit-content' }}>
+                <Box ref={containerRef} sx={{ position: 'relative', width: 'fit-content' }}>
                     {/* SVG Overlay for Lines */}
                     <svg
                         width="100%"
                         height={totalHeight}
-                        style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', zIndex: 1 }}
+                        style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', zIndex: 1, overflow: 'visible' }}
                     >
                         {lines.map((line, i) => (
                             <g key={i}>
@@ -246,7 +281,8 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
                                         pl: isMobile ? 1 : 2,
                                         color: 'text.secondary',
                                         fontWeight: 600,
-                                        fontSize: isMobile ? '0.75rem' : '1rem'
+                                        fontSize: isMobile ? '0.75rem' : '1rem',
+                                        flexShrink: 0
                                     }}
                                 >
                                     {config.round.drwNo}회
@@ -254,13 +290,24 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
 
                                 <Stack direction="row" alignItems="center" spacing={`${BALL_GAP}px`}>
                                     {config.round.numbers.map((num: number) => (
-                                        <Ball key={num} num={num} size={BALL_SIZE} fontSize={isMobile ? '0.85rem' : '1.25rem'} />
+                                        <Ball
+                                            key={num}
+                                            num={num}
+                                            size={BALL_SIZE}
+                                            fontSize={isMobile ? '0.85rem' : '1.25rem'}
+                                            onRef={(el) => registerBallRef(config.round.drwNo, num, el)}
+                                        />
                                     ))}
 
                                     {includeBonus && (
                                         <>
                                             <Typography sx={{ mx: isMobile ? 0.5 : 1, color: 'text.disabled', fontSize: isMobile ? '1rem' : '1.5rem' }}>+</Typography>
-                                            <Ball num={config.round.bonus} size={BALL_SIZE} fontSize={isMobile ? '0.85rem' : '1.25rem'} />
+                                            <Ball
+                                                num={config.round.bonus}
+                                                size={BALL_SIZE}
+                                                fontSize={isMobile ? '0.85rem' : '1.25rem'}
+                                                onRef={(el) => registerBallRef(config.round.drwNo, config.round.bonus, el)}
+                                            />
                                         </>
                                     )}
                                 </Stack>
@@ -273,21 +320,37 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
     );
 }
 
-function Ball({ num, size, fontSize }: { num: number; size: number; fontSize: string }) {
+type BallProps = {
+    num: number;
+    size: number;
+    fontSize: string;
+    onRef?: (el: HTMLDivElement | null) => void;
+};
+
+function Ball({ num, size, fontSize, onRef }: BallProps) {
     return (
-        <LottoBall
+        <Box
+            ref={onRef}
             sx={{
-                width: size,
-                height: size,
-                fontSize: fontSize,
-                background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${getBallColor(
-                    num
-                )}`,
-                zIndex: 2,
-                boxShadow: (theme) => theme.shadows[4],
+                display: 'inline-flex',
+                flexShrink: 0,
             }}
         >
-            {num}
-        </LottoBall>
+            <LottoBall
+                sx={{
+                    width: size,
+                    height: size,
+                    fontSize: fontSize,
+                    flexShrink: 0,
+                    background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${getBallColor(
+                        num
+                    )}`,
+                    zIndex: 2,
+                    boxShadow: (theme) => theme.shadows[4],
+                }}
+            >
+                {num}
+            </LottoBall>
+        </Box>
     );
 }
