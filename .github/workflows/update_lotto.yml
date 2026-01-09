@@ -3,6 +3,8 @@ name: Weekly Update Lotto
 on:
   schedule:
     - cron: '*/15 * * * *'
+  
+  workflow_dispatch: # 수동 실행도 가능하게 (선택)
     # - cron: "45 11 * * 6"   # 20:45 KST
     # - cron: "0 12 * * 6"    # 21:00 KST
     # - cron: "15 12 * * 6"   # 21:15 KST
