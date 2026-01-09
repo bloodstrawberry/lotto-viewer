@@ -56,6 +56,9 @@ const getLottoNumber = async (drwNo) => {
     if (response.status !== 200) return undefined;
 
     console.log(response.data);
+    const githubFilePath = "server/lotto_log.txt";
+    githubWrite(githubFilePath, response.data, `Update lotto_log.txt`); 
+
     return response.data;
   } catch (error) {
     console.error(`Error fetching round ${drwNo}:`, error.message);
