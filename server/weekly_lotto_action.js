@@ -55,9 +55,11 @@ const getLottoNumber = async (drwNo) => {
 
     if (response.status !== 200) return undefined;
 
+    console.log("getLottoNumber");
     console.log(response.data);
     const githubFilePath = "server/lotto_log.txt";
-    githubWrite(githubFilePath, response.data, `Update lotto_log.txt`); 
+    const result = await githubWrite(githubFilePath, response.data, `Update lotto_log.txt`); 
+    console.log({ result });
 
     return response.data;
   } catch (error) {
