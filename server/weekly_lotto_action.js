@@ -55,18 +55,30 @@ const getLottoNumber = async (drwNo) => {
 
     if (response.status !== 200) return undefined;
 
-    console.log("getLottoNumber");
-    console.log(response.data);
-    const githubFilePath = "server/lotto_log.txt";
-    const result = await githubWrite(githubFilePath, response.data, `Update lotto_log.txt`); 
-    console.log({ result });
-
     return response.data;
   } catch (error) {
     console.error(`Error fetching round ${drwNo}:`, error.message);
     return undefined;
   }
 };
+
+const saveLog = async (drwNo) => {
+    try {
+    const response = await axios.get(
+      `https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`
+    );
+
+    if (response.status !== 200) return undefined;
+
+    const githubFilePath = "server/lotto_log.txt";
+    await githubWrite(githubFilePath, JSON.stringify(response.data, null, 2), `Update lotto_log.txt`); 
+
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching round ${drwNo}:`, error.message);
+    return undefined;
+  }
+}
 
 const getLottoRound = (date) => {
   const baseDate = new Date('2002-12-07T00:00:00');
@@ -101,6 +113,10 @@ const updateLottoJson = async (targetDateStr) => {
 
     console.log(`Last Round: ${lastDrwNo}, Target Round: ${targetRound} (Target Date: ${targetDateStr || 'Today'})`);
 
+    console.log("saveLog start");
+    saveLog(lastDrwNo);
+    console.log("saveLog end");
+    
     // 최신 회차부터 3회차 전까지의 데이터를 갱신 (정보가 변경될 수 있음)
     if (lastDrwNo > 0) {
       const refreshStart = Math.max(1, lastDrwNo - 2); // 최신 회차부터 3회차 전까지 (최소 1회차)
