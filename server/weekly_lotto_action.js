@@ -71,7 +71,7 @@ const saveLog = async (drwNo) => {
     if (response.status !== 200) return undefined;
 
     const githubFilePath = "server/lotto_log.txt";
-    await githubWrite(githubFilePath, JSON.stringify(response.data, null, 2), `Update lotto_log.txt`); 
+    await githubWrite(githubFilePath, response.data, `Update lotto_log.txt`); 
 
     return response.data;
   } catch (error) {
