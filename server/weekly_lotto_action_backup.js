@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
 const fetch = require("node-fetch");
-const { parseLottoLog } = require("./lotto_html_parser");
 
 const { Octokit } = require("@octokit/core");
 
@@ -66,8 +65,7 @@ const getLottoNumber = async (drwNo) => {
 const saveLog = async (drwNo) => {
     try {
     const response = await axios.get(
-      `https://dhlottery.co.kr/gameResult.do?method=byWin&drwNo=${drwNo}`,
-      { responseType: 'text' }
+      `https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`
     );
 
     if (response.status !== 200) return undefined;
@@ -116,19 +114,29 @@ const updateLottoJson = async (targetDateStr) => {
     console.log(`Last Round: ${lastDrwNo}, Target Round: ${targetRound} (Target Date: ${targetDateStr || 'Today'})`);
 
     console.log("saveLog start");
-    const htmlContent = await saveLog(lastDrwNo);
+    saveLog(lastDrwNo);
     console.log("saveLog end");
-
-    if (htmlContent) {
-        const parsedData = parseLottoLog(htmlContent);
-        // drwNo1이 0이 아닌 경우에만 업데이트
-        if (parsedData && parsedData.returnValue === 'success' && parsedData.drwtNo1 !== 0) {
-             const existingIndex = lottoJson.findIndex(item => item.drwNo === lastDrwNo);
-             if (existingIndex !== -1) {
-                lottoJson[existingIndex] = parsedData;
-                console.log(`Updated round ${lastDrwNo} from HTML Parser`);
-             }
+    
+    // 최신 회차부터 3회차 전까지의 데이터를 갱신 (정보가 변경될 수 있음)
+    if (lastDrwNo > 0) {
+      const refreshStart = Math.max(1, lastDrwNo - 2); // 최신 회차부터 3회차 전까지 (최소 1회차)
+      console.log(`Refreshing rounds ${refreshStart} to ${lastDrwNo}...`);
+      
+      for (let i = refreshStart; i <= lastDrwNo; i++) {
+        console.log(`Refreshing round ${i}...`);
+        const lottoData = await getLottoNumber(i);
+        
+        if (lottoData && lottoData.returnValue === 'success') {
+          // 기존 데이터를 찾아서 업데이트
+          const existingIndex = lottoJson.findIndex(item => item.drwNo === i);
+          if (existingIndex !== -1) {
+            lottoJson[existingIndex] = lottoData;
+            console.log(`Updated round ${i}`);
+          }
+        } else {
+          console.log(`Failed to refresh round ${i}`);
         }
+      }
     }
 
     if (targetRound <= lastDrwNo) {
