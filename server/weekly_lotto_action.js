@@ -108,7 +108,6 @@ const updateLottoJson = async (targetDateStr) => {
     const data = fs.readFileSync(filePath, "utf-8");
     const lottoJson = JSON.parse(data);
     const lastEntry = lottoJson[lottoJson.length - 1];
-    const lastDrwNo = lastEntry ? lastEntry.drwNo : 0;
     
     const targetDate = targetDateStr ? new Date(targetDateStr) : new Date();
     const targetRound = getLottoRound(targetDate);
@@ -121,12 +120,20 @@ const updateLottoJson = async (targetDateStr) => {
 
     if (htmlContent) {
         const parsedData = parseLottoLog(htmlContent);
-        // drwNo1이 0이 아닌 경우에만 업데이트
+        // drwNo1이 0이 아닌 경우에만 처리
         if (parsedData && parsedData.returnValue === 'success' && parsedData.drwtNo1 !== 0) {
-             const existingIndex = lottoJson.findIndex(item => item.drwNo === lastDrwNo);
-             if (existingIndex !== -1) {
-                lottoJson[existingIndex] = parsedData;
-                console.log(`Updated round ${lastDrwNo} from HTML Parser`);
+             if (parsedData.drwNo > lastDrwNo) {
+                 console.log(`New round ${parsedData.drwNo} found from HTML Parser. Appending.`);
+                 lottoJson.push(parsedData);
+                 // If we added a new round, we should update lastDrwNo for the loop logic below
+                 // However, lastDrwNo is a const. We can just rely on the fact that existing logic targets 'lastDrwNo' variable.
+                 // Ideally if we pushed, we reduced the gap.
+             } else {
+                 const existingIndex = lottoJson.findIndex(item => item.drwNo === parsedData.drwNo);
+                 if (existingIndex !== -1) {
+                    lottoJson[existingIndex] = parsedData;
+                    console.log(`Updated round ${parsedData.drwNo} from HTML Parser`);
+                 }
              }
         }
     }
