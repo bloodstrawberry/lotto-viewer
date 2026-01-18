@@ -121,8 +121,9 @@ const updateLottoJson = async (targetDateStr) => {
     const htmlContent = await saveLog(lastDrwNo);
     console.log("saveLog end");
 
-    if (htmlContent) {
+    if (htmlContent) {      
         const parsedData = parseLottoLog(htmlContent);
+        console.log({ parsedData });
         // drwNo1이 0이 아닌 경우에만 처리
         if (parsedData && parsedData.returnValue === 'success' && parsedData.drwtNo1 !== 0) {
              if (parsedData.drwNo > lastDrwNo) {
