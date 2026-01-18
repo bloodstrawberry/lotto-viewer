@@ -45,7 +45,7 @@ const githubWrite = async (path, contents, commitMessage) => {
     }
   );
 
-  console.log("githubWrite", response.status);
+  console.log("githubWrite", path, response.status);
   return response.status;
 };
 
