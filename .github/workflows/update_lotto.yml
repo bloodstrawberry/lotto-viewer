@@ -38,17 +38,21 @@ jobs:
         npm install node-fetch@2 --legacy-peer-deps
 
     - name: Run Node.js Script
+      id: run_script
       run: node server/weekly_lotto_action.js
 
     - name: Update version.md with current date
+      if: steps.run_script.outputs.status == 'success'
       run: |
         TODAY=$(TZ=Asia/Seoul date +"%Y-%m-%d %H:%M:%S KST")
         echo "Last Update: $TODAY" > version.md
 
     - name: Sleep before commit & push
+      if: steps.run_script.outputs.status == 'success'
       run: sleep 100
 
     - name: Commit and Push changes
+      if: steps.run_script.outputs.status == 'success'
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"

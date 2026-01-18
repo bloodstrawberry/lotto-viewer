@@ -45,7 +45,8 @@ const githubWrite = async (path, contents, commitMessage) => {
     }
   );
 
-  console.log(response.status);
+  console.log("githubWrite", response.status);
+  return response.status;
 };
 
 const getLottoNumber = async (drwNo) => {
@@ -171,7 +172,13 @@ const updateLottoJson = async (targetDateStr) => {
     const githubFilePath = "json/lottoNumber.json";
 
     console.log("githubFilePath :", githubFilePath);
-    githubWrite(githubFilePath, updatedJson, `${formatted} Update lottoNumber.json`); 
+    const status = await githubWrite(githubFilePath, updatedJson, `${formatted} Update lottoNumber.json`); 
+    
+    if (status === 200 || status === 201) {
+        if (process.env.GITHUB_OUTPUT) {
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, "status=success\n");
+        }
+    } 
 
     console.log("Update complete.");
   } catch (error) {
