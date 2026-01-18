@@ -108,6 +108,7 @@ const updateLottoJson = async (targetDateStr) => {
     const data = fs.readFileSync(filePath, "utf-8");
     const lottoJson = JSON.parse(data);
     const lastEntry = lottoJson[lottoJson.length - 1];
+    const lastDrwNo = lastEntry ? lastEntry.drwNo : 0;
     
     const targetDate = targetDateStr ? new Date(targetDateStr) : new Date();
     const targetRound = getLottoRound(targetDate);
