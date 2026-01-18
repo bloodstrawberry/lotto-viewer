@@ -110,6 +110,7 @@ const updateLottoJson = async (targetDateStr) => {
     const lottoJson = JSON.parse(data);
     const lastEntry = lottoJson[lottoJson.length - 1];
     const lastDrwNo = lastEntry ? lastEntry.drwNo : 0;
+    let isNewRoundAdded = false;
     
     const targetDate = targetDateStr ? new Date(targetDateStr) : new Date();
     const targetRound = getLottoRound(targetDate);
@@ -127,6 +128,7 @@ const updateLottoJson = async (targetDateStr) => {
              if (parsedData.drwNo > lastDrwNo) {
                  console.log(`New round ${parsedData.drwNo} found from HTML Parser. Appending.`);
                  lottoJson.push(parsedData);
+                 isNewRoundAdded = true;
                  // If we added a new round, we should update lastDrwNo for the loop logic below
                  // However, lastDrwNo is a const. We can just rely on the fact that existing logic targets 'lastDrwNo' variable.
                  // Ideally if we pushed, we reduced the gap.
@@ -138,28 +140,6 @@ const updateLottoJson = async (targetDateStr) => {
                  }
              }
         }
-    }
-
-    if (targetRound <= lastDrwNo) {
-      console.log("Already up to date.");
-      // 갱신만 했으므로 계속 진행하여 저장
-    } else {
-      // 새로운 회차 추가
-      for (let i = lastDrwNo + 1; i <= targetRound; i++) {
-        console.log(`Fetching round ${i}...`);
-        const lottoData = await getLottoNumber(i);
-        
-        if (lottoData && lottoData.returnValue === 'success') {
-          lottoJson.push(lottoData);
-        } else {
-          console.log(`Failed to fetch round ${i} or data not available yet.`);
-          // If we fail to fetch, we might want to stop to avoid gaps, or continue?
-          // Usually if one fails, subsequent might fail too if it's future.
-          // But if it's a network error, we might want to retry.
-          // For now, break is safer to avoid gaps.
-          break; 
-        }
-      }
     }
 
     // fs.writeFileSync(filePath, JSON.stringify(lottoJson, null, 4));
@@ -174,7 +154,7 @@ const updateLottoJson = async (targetDateStr) => {
     console.log("githubFilePath :", githubFilePath);
     const status = await githubWrite(githubFilePath, updatedJson, `${formatted} Update lottoNumber.json`); 
     
-    if (status === 200 || status === 201) {
+    if ((status === 200 || status === 201) && isNewRoundAdded) {
         if (process.env.GITHUB_OUTPUT) {
             fs.appendFileSync(process.env.GITHUB_OUTPUT, "status=success\n");
         }
