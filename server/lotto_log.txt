@@ -12,7 +12,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
 
 <script type="text/javascript">
-	var rsaModulus = '91e403481b2844da03e03841fc226dccb6a7e67ba16191a75c20a5edbd428361f749b85665cdb53b619a173690029211642f37362373b6441b8d839b4eaee568edfd61f58c1f0f82d6c1004ef4acd952cb9ed304075e360358dc288780eb1e15285194e8ff5524fc2dc81fcf5011545942263598df70739be3aaeccf2c7954511c86bc68834e822c90f2c91ea284e7f41784502392beeed0c7095d9c2dd2d96577a66e90c62780dc746398e09b2c99bafe3111b37a054b36be5db7f55385ce6b02c2ea850706bff1890ed3c8a5cb9e0ca01fc527f12528755a175c5901bbbe03ddb1bd740aba35c0fd946e4c88be6f9e0eb2aba5ab4fcc1944fc804b22675db5';
+	var rsaModulus = '92e0dc9b3ebda20215ba2fd8614a4f5f638f8fc63f1aeb48cea7060f6e7c1d80a3336a7dfab428ae9b7fe7c8cde9c4928a2a57dd2f63efa62bb3d6b846e4200e42bc28d3ab3ae79f68e5294493c4b5151fd1850f964b7225a9372130e69eb39fbde0fc250be1e100832e3ed3ac1567b26d80c93985f462aca95c23657bb2ade20af2bc8b287debb0f5987bc8c77203183bb14fd16df521a353e9a7468a1961430c7f2cdad5bc3d7e896fd520a6861ee73efc7e5bafc7f14e70190ec480b64f5a354530b71448b752edb6824a95729cc595988cc5455d2cccfb946c1a8790488a13b33340b3965c0ff6fa39e230a8d75891b7eafc3aaa4bd660402b6de64ffa69';
 	var publicExponent = '10001';
 	
 	const layoutsL = {
@@ -38,9 +38,9 @@
 	
 	<!-- css + font + scss -->
     <link rel="stylesheet" href="/resources/swiper/swiper-bundle.css">
-	<link rel="stylesheet" href="/resources/css/common.css?v=20260116">
-    <link rel="stylesheet" href="/resources/css/layout.css?v=20251205">
-    <link rel="stylesheet" href="/resources/css/main-layout.css?v=20260115">
+	<link rel="stylesheet" href="/resources/css/common.css?v=20260122">
+    <link rel="stylesheet" href="/resources/css/layout.css?v=20260122">
+    <link rel="stylesheet" href="/resources/css/main-layout.css?v=20260122">
     
 	<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
 	
@@ -90,9 +90,30 @@
 		  const linkTexts = Array.from(links).slice(1).map(a => a.textContent.trim());
 
 		  const siteName = "동행복권";
-		  document.title = linkTexts.join(">") + " | " + siteName;
-		});
 	
+		  const updateTitle = () => {
+			  const links = breadCrumb.querySelectorAll(".nav-li > .nav-a");
+			  const linkTexts = Array.from(links)
+			                         .slice(1)
+			                         .map(a => a.textContent.trim())
+			                         .filter(t => t !== ""); // 빈 값 제외
+			        
+			  if (linkTexts.length > 0) {
+				document.title = linkTexts.join(" > ") + " | " + siteName;
+			  }
+		  };
+	
+		  // #midNav 있으면, 내용 바뀔 때 타이틀 생성하도록 분기
+		  const targetNode = document.getElementById('midNav');
+		  if (targetNode) {
+		      const observer = new MutationObserver(() => {
+		          updateTitle();
+		      });
+		      observer.observe(targetNode, { childList: true, characterData: true, subtree: true });
+		  } else {
+			  updateTitle();
+		  }
+		});
 	</script>
 	
 	
@@ -704,7 +725,7 @@ const topL = {
 												</button> -->
 											</div>
 											<ul class="depth2-detail">
-												<li class="depth2-li mt-8">
+												<li class="depth2-li">
 													<a href="/st/st20Intro">
 														<span>스피또2000 소개</span>
 													</a>
@@ -729,7 +750,7 @@ const topL = {
 												</div>
 											</div>
 											<ul class="depth2-detail">
-												<li class="depth2-li mt-8">
+												<li class="depth2-li">
 													<a href="/st/st10Intro">
 														<span>스피또1000 소개</span>
 													</a>
@@ -754,7 +775,7 @@ const topL = {
 												</div>
 											</div>
 											<ul class="depth2-detail">
-												<li class="depth2-li mt-8">
+												<li class="depth2-li">
 													<a href="/st/st5Intro">
 														<span>스피또500 소개</span>
 													</a>
