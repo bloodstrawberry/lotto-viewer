@@ -52,7 +52,8 @@ const githubWrite = async (path, contents, commitMessage) => {
 const getLottoNumber = async (drwNo) => {
   try {
     const response = await axios.get(
-      `https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`
+      `https://www.dhlottery.co.kr/smarPage`
+      // `https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`
     );
 
     if (response.status !== 200) return undefined;
