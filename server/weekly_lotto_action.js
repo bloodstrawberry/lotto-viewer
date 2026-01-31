@@ -68,7 +68,7 @@ const getLottoNumber = async (drwNo) => {
 const saveLog = async (drwNo) => {
     try {
     const response = await axios.get(
-      `https://dhlottery.co.kr/gameResult.do?method=byWin&drwNo=${drwNo}`,
+      `https://www.dhlottery.co.kr/smarPage`,
       { responseType: 'text' }
     );
 

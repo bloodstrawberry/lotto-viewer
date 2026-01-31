@@ -36,24 +36,25 @@ function parseLottoLog(filePathOrContent) {
     
     // Extract Data
     
-    // Extract the main result section to avoid matching other parts of the page
-    const thisWeekMatch = htmlContent.match(/<div class="this-week">([\s\S]*?)<\/div>\s*<\/div>/);
-    const thisWeekContent = thisWeekMatch ? thisWeekMatch[1] : htmlContent;
+    // Extract sections to avoid matching other parts of the page (like sidebar or "Recent Results")
+    const getSafeSection = (marker, length = 1000) => {
+        const startIdx = htmlContent.indexOf(marker);
+        if (startIdx === -1) return htmlContent;
+        return htmlContent.substring(startIdx, startIdx + length);
+    };
+
+    const thisWeekContent = getSafeSection('class="this-week"');
+    const ballBoxContent = getSafeSection('class="result-ballBox"', 2000);
 
     // 1. Draw Number
-    // <div class="round-num">\n 1207 \n <span
     const drwNo = getIntVal(/class="round-num"[^>]*>\s*([0-9]+)/, thisWeekContent);
 
     // 2. Date
-    // <div class="today-date">\n 2026년 01월 17일 \n
     const dateArr = thisWeekContent.match(/class="today-date"[^>]*>\s*([0-9]{4})년\s*([0-9]{2})월\s*([0-9]{2})일/);
     const drwNoDate = dateArr ? `${dateArr[1]}-${dateArr[2]}-${dateArr[3]}` : "";
 
     // 3. Balls (Winning Numbers + Bonus)
-    // Looks for: <div class="result-ball num-0n">\n 10 \n </div>
-    // We only look inside the result-ballBox if available
-    const ballBoxMatch = htmlContent.match(/<div class="result-ballBox">([\s\S]*?)<\/div>\s*<\/div>/);
-    const ballBoxContent = ballBoxMatch ? ballBoxMatch[1] : htmlContent;
+    // We look for balls within the ballBoxContent
     const ballRegex = /class="result-ball[^"]*">\s*([0-9]+)\s*<\/div>/g;
     const balls = [];
     let bMatch;
@@ -62,13 +63,8 @@ function parseLottoLog(filePathOrContent) {
     }
     
     // 4. Winning Amounts & Counts
-    // Matches patterns like: rnk1SumWnAmt">29,464,450,133
-    // We look for the class name followed by optional characters, closing brace, and the value.
+    // The ranking table is usually later in the file, we search globally for these unique class names.
     const getRnkVal = (key) => {
-        // Regex logic:
-        // 1. match the key (e.g. rnk1SumWnAmt)
-        // 2. until the closing tag char '>'
-        // 3. capture the number inside the tag
         const re = new RegExp(`${key}[^>]*>\\s*([0-9,]+)`, 'i'); 
         return getIntVal(re, htmlContent);
     };
