@@ -36,21 +36,28 @@ function parseLottoLog(filePathOrContent) {
     
     // Extract Data
     
+    // Extract the main result section to avoid matching other parts of the page
+    const thisWeekMatch = htmlContent.match(/<div class="this-week">([\s\S]*?)<\/div>\s*<\/div>/);
+    const thisWeekContent = thisWeekMatch ? thisWeekMatch[1] : htmlContent;
+
     // 1. Draw Number
     // <div class="round-num">\n 1207 \n <span
-    const drwNo = getIntVal(/<div class="round-num">\s*([0-9]+)/, htmlContent);
+    const drwNo = getIntVal(/class="round-num"[^>]*>\s*([0-9]+)/, thisWeekContent);
 
     // 2. Date
     // <div class="today-date">\n 2026년 01월 17일 \n
-    const dateArr = htmlContent.match(/<div class="today-date">\s*([0-9]{4})년 ([0-9]{2})월 ([0-9]{2})일/);
+    const dateArr = thisWeekContent.match(/class="today-date"[^>]*>\s*([0-9]{4})년\s*([0-9]{2})월\s*([0-9]{2})일/);
     const drwNoDate = dateArr ? `${dateArr[1]}-${dateArr[2]}-${dateArr[3]}` : "";
 
     // 3. Balls (Winning Numbers + Bonus)
     // Looks for: <div class="result-ball num-0n">\n 10 \n </div>
-    const ballRegex = /<div class="result-ball[^"]*">\s*([0-9]+)\s*<\/div>/g;
+    // We only look inside the result-ballBox if available
+    const ballBoxMatch = htmlContent.match(/<div class="result-ballBox">([\s\S]*?)<\/div>\s*<\/div>/);
+    const ballBoxContent = ballBoxMatch ? ballBoxMatch[1] : htmlContent;
+    const ballRegex = /class="result-ball[^"]*">\s*([0-9]+)\s*<\/div>/g;
     const balls = [];
     let bMatch;
-    while ((bMatch = ballRegex.exec(htmlContent)) !== null) {
+    while ((bMatch = ballRegex.exec(ballBoxContent)) !== null) {
         balls.push(parseInt(bMatch[1], 10));
     }
     
@@ -82,7 +89,7 @@ function parseLottoLog(filePathOrContent) {
 
     const result = {
         totSellamnt,
-        returnValue: "success",
+        returnValue: balls.length >= 7 ? "success" : "fail",
         drwNoDate,
         firstWinamnt,
         drwtNo6: balls[5] || 0,
