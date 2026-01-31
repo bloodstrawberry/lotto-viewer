@@ -12,7 +12,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
 
 <script type="text/javascript">
-	var rsaModulus = '87a8335c78afe5c2c9e7ce20ce09bf3d1d4c30cd75bfbd9c2eae2f5d999c9560c8d385f02f23dd97cc13c948861cfb181692a7bcb0693c3d7beae098fd43703d481edf1f7d0b5f27b22c8bf81a8b075d18553ceae1942d3fb842ba77f48a22980865d3b182be08bcea85f90df5c05316ce0d7ac211c046827c6dfd123dff6c201331d080fc41b72a0fd78bad4d766abf949f88339eb42db930991abf64dd49979782947b7ce7224ab43e66dda06c812dadebb127961a8e75056854e05e48cc19da8da94f45a99cfb4e0df50f76ca9f1fc42ab572a10a59fc4e8d65cdf883b3fdeceb973fdd273b7c02928d5fd6b7855c5857b9e674c827533ffed07dda2fbe97';
+	var rsaModulus = '88ddca42bf9db7013ee94ba6deee91efa3ecfb09609d6f64f3092aae687b4b4006ff28473dd7c52f2f700c4d4c76ea876d2f8676c652d058effd7f2b9de93a96c1dd6fb925b53935ec3faa374ff817c55d8c46f96645c5706e08c6a46d2331fb9249adc1d372df6f112df13641a3f9a7f42ce043ae023ff7ba4eef73f3d688acb0c9e668730461b0b4825efdf67a2081c25dd4627c78219da4ac0ce8327195913cfe8170efa6cf379b4fc3994a492779c1c9379ba7b11d55b2d7d4c4a921cb388e1c092ab5044d8f6297d09ab12fa92036c325ff38f88659cfa0ebe6db71e4cfff14134352fc553fecdd8608b5de5120518e7ebdbccce890ad4347faad417c75';
 	var publicExponent = '10001';
 	
 	const layoutsL = {
@@ -38,7 +38,7 @@
 	
 	<!-- css + font + scss -->
     <link rel="stylesheet" href="/resources/swiper/swiper-bundle.css">
-	<link rel="stylesheet" href="/resources/css/common.css?v=20260122">
+	<link rel="stylesheet" href="/resources/css/common.css?v=20260129">
     <link rel="stylesheet" href="/resources/css/layout.css?v=20260122">
     <link rel="stylesheet" href="/resources/css/main-layout.css?v=20260122">
     
@@ -52,11 +52,10 @@
     <script type="text/javascript" src="/resources/jquery/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="/resources/jquery/jquery-ui.min.js"></script>
     <script type="text/javascript" src="/resources/swiper/swiper-bundle.js"></script>
-    <script type="text/javascript" src="/resources/js/common.js"></script>
-	
+    <script type="text/javascript" src="/resources/js/common.js?v=20260127"></script>
 	<!-- common js -->
     <script type="text/javascript" src="/common/cmmUtil.js?v=20251215" ></script>
-	<script type="text/javascript" src="/common/gmUtil.js?v=20251230" ></script>
+	<script type="text/javascript" src="/common/gmUtil.js?v=20260127" ></script>
 	<!-- alert,confirm js -->
 	<script type="text/javascript" src="/common/msgUtil.js?v=20251205" ></script>
 	<!-- attache Files -->
@@ -737,7 +736,7 @@ const topL = {
 												</li>
 												<li class="depth2-li">
 													<a href="/st/wnrStry?stGmTypeCd=st2000">
-														<span>당첨자이야기</span>
+														<span>당첨자 이야기</span>
 													</a>
 												</li>
 											</ul>
@@ -762,7 +761,7 @@ const topL = {
 												</li>
 												<li class="depth2-li">
 													<a href="/st/wnrStry?stGmTypeCd=st1000">
-														<span>당첨자이야기</span>
+														<span>당첨자 이야기</span>
 													</a>
 												</li>
 											</ul>
@@ -787,7 +786,7 @@ const topL = {
 												</li>
 												<li class="depth2-li">
 													<a href="/st/wnrStry?stGmTypeCd=st500">
-														<span>당첨자이야기</span>
+														<span>당첨자 이야기</span>
 													</a>
 												</li>
 											</ul>
@@ -817,11 +816,11 @@ const topL = {
 												</div>
 											</div>
 										</li>
-										<!-- 당첨 판매점 검색 -->
+										<!-- 당첨 판매점 조회 -->
 										<li class="depth2-detail-box">
 											<div class="lottery-tit-box">
 												<div class="lottery-tit">
-													<a href="/wnprchsplcsrch/home">당첨 판매점 검색</a>
+													<a href="/wnprchsplcsrch/home">당첨 판매점 조회</a>
 												</div>
 											</div>
 										</li>
@@ -851,7 +850,7 @@ const topL = {
 												</div>
 											</div>
 											<ul class="depth2-detail">
-												<li class="depth2-li mt-8">
+												<li class="depth2-li">
 													<a href="/hpns/counselView">
 														<span>복권바로알기</span>
 													</a>
@@ -878,7 +877,7 @@ const topL = {
 												</li>
 												<li class="depth2-li">
 													<a href="/hpns/ovmPrvnDscsnInfoView">
-														<span>중독예방 및 상담안내</span>
+														<span>중독예방 및 상담 안내</span>
 													</a>
 												</li>
 											</ul>
@@ -891,7 +890,7 @@ const topL = {
 												</div>
 											</div>
 											<ul class="depth2-detail">
-												<li class="depth2-li mt-8">
+												<li class="depth2-li">
 													<a href="/hpns/ltFdFdView">
 														<span>복권기금 소개</span>
 													</a>
@@ -919,7 +918,7 @@ const topL = {
 												</div>
 											</div>
 											<ul class="depth2-detail">
-												<li class="depth2-li mt-8">
+												<li class="depth2-li">
 													<a href="/hpns/fundListView">
 														<span>광고</span>
 													</a>
@@ -994,7 +993,7 @@ const topL = {
 										<li class="depth2-detail-box inst">
 											<div class="lottery-tit-box">
 												<div class="lottery-tit">
-													<a href="/nrcvmtwngs/home">미수령당첨금</a>
+													<a href="/nrcvmtwngs/home">미수령 당첨금</a>
 												</div>
 											</div>
 										</li>
@@ -1014,7 +1013,7 @@ const topL = {
 												</div>
 											</div>
 										<!-- 	<ul class="depth2-detail">
-												<li class="depth2-li mt-8">
+												<li class="depth2-li">
 													<a href="/guide/wnrGuide">
 														<span>당첨자 가이드</span>
 													</a>
@@ -1069,6 +1068,11 @@ const topL = {
 
 				<div class="h-right-area">
 					<ul class="h-right-link">
+<!-- 						<li class="h-right-li">
+							<a href="" class="h-right-a" >
+								이용안내
+							</a>
+						</li> -->
 						<li class="h-right-li">
 						
 						
@@ -1124,7 +1128,7 @@ const topL = {
 											</li>
 											<li class="depth2-li">
 												<a href="#">
-													<span>당첨자이야기</span>
+													<span>당첨자 이야기</span>
 												</a>
 											</li>
 											<li class="depth2-li">
@@ -1200,7 +1204,7 @@ const topL = {
 											</li>
 											<li class="depth2-li">
 												<a href="/srfllt/PbWnrImpr">
-													<span>당첨자이야기</span>
+													<span>당첨자 이야기</span>
 												</a>
 											</li>
 										</ul>
@@ -1233,7 +1237,7 @@ const topL = {
 											</li>
 											<li class="depth2-li">
 												<a href="/srfllt/SkWnrImpr">
-													<span>당첨자이야기</span>
+													<span>당첨자 이야기</span>
 												</a>
 											</li>
 										</ul>
@@ -1266,7 +1270,7 @@ const topL = {
 											</li>
 											<li class="depth2-li">
 												<a href="/srfllt/MbWnrImpr">
-													<span>당첨자이야기</span>
+													<span>당첨자 이야기</span>
 												</a>
 											</li>
 										</ul>
@@ -1301,7 +1305,7 @@ const topL = {
 											</li>
 											<li class="depth2-li">
 												<a href="/inslt/isnt/TlWnNoInq">
-													<span>당첨자이야기</span>
+													<span>당첨자 이야기</span>
 												</a>
 											</li>
 										</ul>
@@ -1329,7 +1333,7 @@ const topL = {
 											</li>
 											<li class="depth2-li">
 												<a href="/inslt/isnt/ThWnNoInq">
-													<span>당첨자이야기</span>
+													<span>당첨자 이야기</span>
 												</a>
 											</li>
 										</ul>
@@ -1357,7 +1361,7 @@ const topL = {
 											</li>
 											<li class="depth2-li">
 												<a href="/inslt/isnt/DjWnNoInq">
-													<span>당첨자이야기</span>
+													<span>당첨자 이야기</span>
 												</a>
 											</li>
 										</ul>
@@ -1385,7 +1389,7 @@ const topL = {
 											</li>
 											<li class="depth2-li">
 												<a href="/inslt/isnt/CmWnNoInq">
-													<span>당첨자이야기</span>
+													<span>당첨자 이야기</span>
 												</a>
 											</li>
 										</ul>
@@ -1401,7 +1405,7 @@ const topL = {
 											</button> -->
 										</div>
 										<ul class="depth2-detail">
-											<li class="depth2-li mt-8">
+											<li class="depth2-li">
 												<a href="#">
 													<span>스피또2000 소개</span>
 												</a>
@@ -1413,7 +1417,7 @@ const topL = {
 											</li>
 											<li class="depth2-li">
 												<a href="#">
-													<span>당첨자이야기</span>
+													<span>당첨자 이야기</span>
 												</a>
 											</li>
 										</ul>
@@ -1429,7 +1433,7 @@ const topL = {
 											</button> -->
 										</div>
 										<ul class="depth2-detail">
-											<li class="depth2-li mt-8">
+											<li class="depth2-li">
 												<a href="#">
 													<span>스피또1000 소개</span>
 												</a>
@@ -1441,7 +1445,7 @@ const topL = {
 											</li>
 											<li class="depth2-li">
 												<a href="#">
-													<span>당첨자이야기</span>
+													<span>당첨자 이야기</span>
 												</a>
 											</li>
 										</ul>
@@ -1457,7 +1461,7 @@ const topL = {
 											</button> -->
 										</div>
 										<ul class="depth2-detail">
-											<li class="depth2-li mt-8">
+											<li class="depth2-li">
 												<a href="#">
 													<span>스피또500 소개</span>
 												</a>
@@ -1469,7 +1473,7 @@ const topL = {
 											</li>
 											<li class="depth2-li">
 												<a href="#">
-													<span>당첨자이야기</span>
+													<span>당첨자 이야기</span>
 												</a>
 											</li>
 										</ul>
@@ -1490,11 +1494,11 @@ const topL = {
 											</div>
 										</div>
 									</li>
-									<!-- 당첨 판매점 검색 -->
+									<!-- 당첨 판매점 조회 -->
 									<li class="depth2-detail-box">
 										<div class="lottery-tit-box">
 											<div class="lottery-tit">
-												당첨 판매점 검색
+												당첨 판매점 조회
 											</div>
 										</div>
 									</li>
@@ -1513,7 +1517,7 @@ const topL = {
 											</div>
 										</div>
 										<ul class="depth2-detail">
-											<li class="depth2-li mt-8">
+											<li class="depth2-li">
 												<a href="#">
 													<span>복권바로알기</span>
 												</a>
@@ -1540,7 +1544,7 @@ const topL = {
 											</li>
 											<li class="depth2-li">
 												<a href="/hpns/ovmPrvnDscsnInfoView">
-													<span>중독예방 및 상담안내</span>
+													<span>중독예방 및 상담 안내</span>
 												</a>
 											</li>
 										</ul>
@@ -1553,7 +1557,7 @@ const topL = {
 											</div>
 										</div>
 										<ul class="depth2-detail">
-											<li class="depth2-li mt-8">
+											<li class="depth2-li">
 												<a href="#">
 													<span>복권기금 소개</span>
 												</a>
@@ -1610,6 +1614,10 @@ const topL = {
 			</h1>
 			<div class="h-btn-wrap">
 			    <button type="button" class="btn-rec01" style="display: none;">통합포탈 이동</button>
+<!-- 			    <button class="btn-member" type="button" id="mypageBtn">
+					<img class="btn-logIn" src="/resources/img/main_icon/icon-mo-guide.svg" alt="">
+					<p>이용안내</p>
+				</button> -->
 			    
 				
 				<button class="btn-member" type="button" id="loginBtn">
@@ -1742,7 +1750,7 @@ const topL = {
 				<!-- //===== company-info ===== -->
 				<!-- ===== copyright ===== -->
 				<div class="f-copyright">
-					<p class="f-copy-p">본 홈페이지는 게시된 이메일 주소가 자동 수집되는 것을 거부하며, <span class="mo-br"></span>이를 위반시 정보통신망법에 의해 처벌됨을 유념하여 주시길 바랍니다.</p>
+					<p class="f-copy-p">본 홈페이지는 게시된 이메일 주소가 자동 수집되는 것을 거부하며, <span class="mo-br"></span>이를 위반 시 정보통신망법에 의해 처벌됨을 유념하여 주시길 바랍니다.</p>
 					<p class="f-copy-p">19세 미만일 경우 「복권 및 복권기금법」에 따라 복권을 구매할 수 없습니다.</p>
 					<p class="f-copy-p">Copyright (c) 2026 복권위원회&동행복권. All rights reserved</p>
 				</div>
@@ -1936,7 +1944,7 @@ const navL = {
 	</div>
 	<div class="quick-pack">
         <button class="btn-quick-pack btn-quick-toggle" type="button" style="display: none;">
-            <span class="hidden">퀵버튼토글</span>
+        	<span class="hidden">퀵버튼토글</span>
         </button>
 		<button class="btn-quick-pack btn-goUp" type="button">
 			<span class="hidden">맨 처음으로 이동하기</span>
@@ -2027,17 +2035,17 @@ const navL = {
 								<ul class="ham-depth3-ul">
 									<li class="ham-depth3-li">
 										<a class="ham-depth3-a" href="/mypage/camPainTestView">
-											셀프진단 평가
+											셀프 진단평가
 										</a>
 									</li>
 									<li class="ham-depth3-li">
 										<a class="ham-depth3-a" href="/mypage/camPainBuyLimitView">
-											셀프구매 계획
+											셀프 구매계획
 										</a>
 									</li>
 									<li class="ham-depth3-li">
 										<a class="ham-depth3-a" href="/mypage/camPainRccsView">
-											셀프휴식 계획
+											셀프 휴식계획
 										</a>
 									</li>
 								</ul>								 
@@ -2440,7 +2448,7 @@ const navL = {
 									</li>
 									<li class="ham-depth3-li">
 										<a class="ham-depth3-a" href="/hpns/fdFdBlzActvView">
-											기금사업활동
+											기금사업 활동
 										</a>
 									</li>
 								</ul>							
@@ -2490,8 +2498,8 @@ const navL = {
 							<li class="ham-depth2-li">
 								<a class="ham-depth2-a ham-depth2-move" href="/customer/myDiscussionView">1:1 상담</a>
 							</li>
-							<li class="ham-depth2-li">
-								<a class="ham-depth2-a ham-depth2-move" href="/nrcvmtwngs/home">미수령당첨금</a>
+							<li class="ham-depth2-li"> 
+								<a class="ham-depth2-a ham-depth2-move" href="/nrcvmtwngs/home">미수령 당첨금</a>
 							</li>
 							<li class="ham-depth2-li">
 								<a class="ham-depth2-a ham-depth2-move" href="/trms/home">이용약관</a>
