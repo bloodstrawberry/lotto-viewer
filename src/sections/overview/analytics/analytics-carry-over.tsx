@@ -14,6 +14,9 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TableSortLabel from '@mui/material/TableSortLabel';
 
+import { Label } from 'src/components/label';
+
+
 import { getBallColor } from 'src/api/lottolibrary';
 
 // ----------------------------------------------------------------------
@@ -102,6 +105,14 @@ export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonu
 
     return stats;
   }, [allLotto, startRound, endRound, includeBonus]);
+
+  const latestRoundNumbers = useMemo(() => {
+    const latest = allLotto.find((r) => r.drwNo === endRound);
+    if (!latest) return [];
+    const nums = [...latest.numbers];
+    if (includeBonus) nums.push(latest.bonus);
+    return nums;
+  }, [allLotto, endRound, includeBonus]);
 
   const sortedData = useMemo(() => {
     return [...carryOverStats].sort((a, b) => {
@@ -209,6 +220,11 @@ export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonu
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>
                       {row.number}번
                     </Typography>
+                    {latestRoundNumbers.includes(row.number) && (
+                      <Label color="info" variant="soft" sx={{ ml: 0.5 }}>
+                        최신회차
+                      </Label>
+                    )}
                   </Stack>
                 </TableCell>
                 <TableCell>
