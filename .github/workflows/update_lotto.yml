@@ -8,9 +8,9 @@ on:
     - cron: "30 12 * * 6"   # 21:30 KST
     - cron: "45 12 * * 6"   # 21:45 KST
     - cron: "0 13 * * 6"    # 22:00 KST
-    # - cron: "45 14 * * 6"   # 23:45 KST
-    # - cron: "50 14 * * 6"   # 23:50 KST
-    # - cron: "55 14 * * 6"   # 23:55 KST
+    - cron: "30 13 * * 6"    # 22:30 KST
+    - cron: "45 13 * * 6"    # 22:45 KST
+    - cron: "5 14 * * 6"    # 23:05 KST
   workflow_dispatch: # 수동 실행도 가능하게 (선택)
 
 jobs:
