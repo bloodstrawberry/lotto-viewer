@@ -12,7 +12,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
 
 <script type="text/javascript">
-	var rsaModulus = 'a2b1d13921639134d7b1adb3372bb165018d2116a5e04dfdbaa9fef975e0a2ff0d03531ff24f9132a4b87d73d51306d507493d7095f2a340d3aecaf7db4eaf36844cb8adbb8aab017b6c0b4090643c9f714615db518b0d80b8e46163efab0600c548a8e940a7be3bc3adc9d800d6d8950787090d4fd55e8835346a76b46cd0501c0efd9026c21bc352ff69dcf06b1b85b0c2945f40fe025830c2fd28206cf75317a9df7986167db87da30e187ae49b271d63eb1cd1cbee87a184db5e9c563bf3126c50835e04c2a43e3be97e32dad1ca999cf2a966f384b7ffab9167161fcc4feff07a5053d6433bd2d18778dff9bfff7a85768f01e6fbbb629701183e2dfd6f';
+	var rsaModulus = 'b197fb3f0d886b522bfe5b1593f944b3234a332e9203b0ca4a0aa7eae8c83369f46b9ac1f3cb2ab37b64550f04860175c60183659176dfa122528bc8d5b4806ed2baad528bb9213834b87ed6b85c2658091f83a849bd9a85eaf81f7c4faaf805db083c5593f4da1f26cb01f1b0a24d1f1ead3e71248c1be22ede5659da4ddc0d8a89d890acb170763cae90345eee717064180fc7eb0a15d56dc1e2b8c0aa6f2250f6764cc060604123d56cf267907cc9c99e43d81cd4dfedbd3bbf8b6f7471d9d93f8acdc9cd7c28263f3aca31cb9b6c50a8a1419d9b4845e12543fcdf769c0939a05aa9072a32cedc2f083bcb2e4d708ccca22abf8375921d024abe935bd113';
 	var publicExponent = '10001';
 	
 	const layoutsL = {
@@ -115,8 +115,8 @@
 			var host="www.dhlottery.co.kr";
 			var port="443";
 			var pageUrl = window.location.pathname.substr(1);	// 현재 페이지 정보
-			var ip = '104.209.11.209';							// 클라이언트 IP
-			var loginId = '104.209.11.209';						// 클라이언트 IP 또는 로그인 ID
+			var ip = '64.236.177.122';							// 클라이언트 IP
+			var loginId = '64.236.177.122';						// 클라이언트 IP 또는 로그인 ID
 			
 			if(pageUrl === undefined || pageUrl == null || pageUrl == "") {
 				pageUrl = 'main';
@@ -129,8 +129,8 @@
 			var host="www.dhlottery.co.kr";
 			var port="443";
 			var pageUrl=window.location.pathname.substr(1);	// 현재 페이지 정보
-			var ip = '104.209.11.209';        				// 클라이언트 IP
-			var loginId = '104.209.11.209';   				// 클라이언트 IP 또는 로그인 ID
+			var ip = '64.236.177.122';        				// 클라이언트 IP
+			var loginId = '64.236.177.122';   				// 클라이언트 IP 또는 로그인 ID
 			
 			if(pageUrl === undefined || pageUrl == null || pageUrl == "") {
 				pageUrl = 'main';
@@ -2297,8 +2297,10 @@ const topL = {
         <div class="center-wrap">
         
 	        
-            <!-- 당첨번호 발표 전 -->
-            <div class="simplify-box">
+            
+            
+            <!-- 당첨번호 발표 후 -->
+            <div class="simplify-box no-bg smar-table2" >
                 <div class="this-week">
                     <div class="this-week-round">
                         <div class="round-num">
@@ -2310,21 +2312,42 @@ const topL = {
                         2026년 03월 07일
                     </div>
                 </div>
-                <div class="time-box">
-                    <div class="time-txt">
-                        잠시 후
-                    </div>
-                    <div class="real-time">
-                        22:30
-                    </div>
-                    <div class="time-txt">분 경</div>
-                    <div class="time-info">
-                        <span class="boardcast">MBC</span>에서 추첨 방송 시작 예정 입니다.
+                <div class="result-ballWrapper">
+                    
+                    <div class="result-ballBox">
+                        <div class="result-ball num-0n">
+                            10
+                        </div>
+                        <span class="sr-only">
+                            당첨번호
+                        </span>
+                        <div class="result-ball num-1n">
+                            15
+                        </div>
+                        <div class="result-ball num-1n">
+                            19
+                        </div>
+                        <div class="result-ball num-2n">
+                            27
+                        </div>
+                        <div class="result-ball num-2n">
+                            30
+                        </div>
+                        <div class="result-ball num-3n">
+                            33
+                        </div>
+                        <figure>
+                            <img src="/resources/img/icon/icon-result-plus.svg" alt="+">
+                        </figure>
+                        <span class="sr-only">
+                            보너스번호
+                        </span>
+                        <div class="result-ball num-1n">
+                            14
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            
             
             
             
