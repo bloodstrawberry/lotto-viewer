@@ -6,7 +6,7 @@ const fetch = require("node-fetch");
 const { Octokit } = require("@octokit/core");
 
 const userName = "bloodstrawberry";
-const userEmail = "bloodstrawberry.library@gmail.com";
+const userEmail = "vvv3334@hanmail.net";
 const repo = "lotto-viewer";
 const token = process.env.GH_TOKEN;
 
