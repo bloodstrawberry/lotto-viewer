@@ -7,7 +7,7 @@ const { parseLottoLog } = require("./lotto_html_parser");
 const { Octokit } = require("@octokit/core");
 
 const userName = "bloodstrawberry";
-const userEmail = "bloodstrawberry.library@gmail.com";
+const userEmail = "vvv3334@hanmail.net";
 const repo = "lotto-viewer";
 const token = process.env.GH_TOKEN;
 
