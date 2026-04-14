@@ -16,8 +16,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Gemini Code Review
-        uses: google-gemini/gemini-github-action@v1 # 예시 액션명
-        with:
-          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          # 상세 설정 (모델명, 리뷰 스타일 등)
-          model: 'gemini-1.5-flash'
+        uses: anc95/ChatGPT-CodeReview@main
+        env:
+          # GitHub 토큰은 따로 설정 안 해도 자동으로 들어갑니다.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # 구글 AI 스튜디오에서 받은 API 키
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # 모델 설정 (Gemini를 쓰겠다고 명시)
+          MODEL: gemini-pro
+          # 언어 설정
+          LANGUAGE: Korean
