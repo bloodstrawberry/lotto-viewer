@@ -9,9 +9,13 @@ import { defaultSettings, SETTINGS_STORAGE_KEY } from './settings-config';
 export async function detectSettings(
   storageKey: string = SETTINGS_STORAGE_KEY
 ): Promise<SettingsState> {
-  const cookieStore = await cookies();
+  try {
+    const cookieStore = await cookies();
 
-  const settingsStore = cookieStore.get(storageKey);
+    const settingsStore = cookieStore.get(storageKey);
 
-  return settingsStore ? JSON.parse(settingsStore?.value) : defaultSettings;
+    return settingsStore ? JSON.parse(settingsStore?.value) : defaultSettings;
+  } catch (error) {
+    return defaultSettings;
+  }
 }

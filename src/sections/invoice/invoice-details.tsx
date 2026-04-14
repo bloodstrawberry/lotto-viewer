@@ -24,6 +24,8 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { InvoiceToolbar } from './invoice-toolbar';
 import { InvoiceTotalSummary } from './invoice-total-summary';
 
+import { CONFIG } from 'src/global-config';
+
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -124,7 +126,7 @@ export function InvoiceDetails({ invoice }: Props) {
           <Box
             component="img"
             alt="Invoice logo"
-            src="/logo/logo-single.svg"
+            src={`${CONFIG.assetsDir}/logo/logo-single.svg`}
             sx={{ width: 48, height: 48 }}
           />
 

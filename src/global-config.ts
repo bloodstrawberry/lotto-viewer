@@ -36,7 +36,7 @@ export const CONFIG: ConfigValue = {
   appName: 'Minimal UI',
   appVersion: packageJson.version,
   serverUrl: process.env.NEXT_PUBLIC_SERVER_URL ?? '',
-  assetsDir: process.env.NEXT_PUBLIC_ASSETS_DIR ?? '',
+  assetsDir: process.env.NEXT_PUBLIC_ASSETS_DIR ?? process.env.NEXT_PUBLIC_BASE_PATH ?? '',
   isStaticExport: JSON.parse(process.env.BUILD_STATIC_EXPORT ?? 'false'),
   /**
    * Auth

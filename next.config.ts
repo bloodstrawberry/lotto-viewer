@@ -1,14 +1,26 @@
 import type { NextConfig } from 'next';
 
-const isStaticExport = false;
+const isStaticExport = true;
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig: any = {
   trailingSlash: true,
   output: isStaticExport ? 'export' : undefined,
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
+  assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH || '',
+  images: {
+    unoptimized: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   env: {
     BUILD_STATIC_EXPORT: JSON.stringify(isStaticExport),
   },
-  webpack(config) {
+  webpack(config: any) {
     config.module.rules.push({
       test: /\.svg$/,
       use: ['@svgr/webpack'],

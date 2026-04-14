@@ -38,22 +38,26 @@ import {
 acceptLanguage.languages([...supportedLngs]);
 
 export async function detectLanguage() {
-  const cookieStore = await cookies();
-  const headerStore = await headers();
+  try {
+    const cookieStore = await cookies();
+    const headerStore = await headers();
 
-  // 1. Try cookie
-  const cookieLang = cookieStore.get(storageConfig.cookie.key)?.value;
-  const fromCookie = cookieLang && acceptLanguage.get(cookieLang);
+    // 1. Try cookie
+    const cookieLang = cookieStore.get(storageConfig.cookie.key)?.value;
+    const fromCookie = cookieLang && acceptLanguage.get(cookieLang);
 
-  // 2. Try Accept-Language header
-  const headerLang = headerStore.get('accept-language') ?? undefined;
-  const fromHeader =
-    headerLang && storageConfig.cookie.autoDetection && acceptLanguage.get(headerLang);
+    // 2. Try Accept-Language header
+    const headerLang = headerStore.get('accept-language') ?? undefined;
+    const fromHeader =
+      headerLang && storageConfig.cookie.autoDetection && acceptLanguage.get(headerLang);
 
-  // 3. Fallback
-  const lang = fromCookie || fromHeader || fallbackLng;
+    // 3. Fallback
+    const lang = fromCookie || fromHeader || fallbackLng;
 
-  return lang as LangCode;
+    return lang as LangCode;
+  } catch (error) {
+    return fallbackLng as LangCode;
+  }
 }
 
 // ----------------------------------------------------------------------
