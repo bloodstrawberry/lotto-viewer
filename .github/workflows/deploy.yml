@@ -51,7 +51,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
       - name: Setup Pages
         id: pages
@@ -61,6 +61,7 @@ jobs:
           # it via Next.js's environment variables. This step can also be used to
           # detect the basePath from your next.config.js file.
           static_site_generator: next
+          enablement: true
       - name: Restore cache
         uses: actions/cache@v4
         with:
