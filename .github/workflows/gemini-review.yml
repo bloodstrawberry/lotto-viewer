@@ -1,28 +1,40 @@
-name: Gemini Code Review
+name: Gemini AI Code Reviewer
 
 on:
-  pull_request:
-    types: [opened, synchronize]
+  issue_comment:
+    types: [created]
+
+permissions: write-all
 
 jobs:
-  review:
+  gemini-code-review:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-
+    if: |
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '/gemini-review')
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: PR Info
+        run: |
+          echo "Comment: ${{ github.event.comment.body }}"
+          echo "Issue Number: ${{ github.event.issue.number }}"
+          echo "Repository: ${{ github.repository }}"
 
-      - name: Gemini Code Review
-        uses: anc95/ChatGPT-CodeReview@main
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get PR Details
+        id: pr
+        run: |
+          PR_JSON=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }})
+          echo "head_sha=$(echo $PR_JSON | jq -r .head.sha)" >> $GITHUB_OUTPUT
+          echo "base_sha=$(echo $PR_JSON | jq -r .base.sha)" >> $GITHUB_OUTPUT
         env:
-          # GitHub 토큰은 따로 설정 안 해도 자동으로 들어갑니다.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # 구글 AI 스튜디오에서 받은 API 키
+
+      - uses: truongnh1992/gemini-ai-code-reviewer@main
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          # 모델 설정 (Gemini를 쓰겠다고 명시)
-          MODEL: gemini-pro
-          # 언어 설정
-          LANGUAGE: Korean
+          GEMINI_MODEL: gemini-2.5-flash # Optional, default is `gemini-2.5-flash`          
