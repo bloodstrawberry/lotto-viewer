@@ -177,7 +177,7 @@ export function HomeLottoDisplay() {
                   {new Intl.NumberFormat('ko-KR').format(firstWinamnt)}원
                 </Typography>
                 <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, whiteSpace: 'nowrap' }}>
-                  총 {firstPrzwnerCo}게임 당첨
+                  총 {firstPrzwnerCo}게임 당첨 😍
                 </Typography>
               </Stack>
             </Stack>
@@ -236,7 +236,7 @@ export function HomeLottoDisplay() {
           </LottoLibrary.Ball>
         </m.div>
       </Stack>
-      
+
       <m.div variants={varFade('inUp')}>
         <Button
           size="large"
