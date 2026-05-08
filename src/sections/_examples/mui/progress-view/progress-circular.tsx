@@ -1,6 +1,6 @@
 import CircularProgress from '@mui/material/CircularProgress';
 
-import { colorKeys } from 'src/theme/core';
+import { colorKeys } from 'src/theme/theme-config';
 
 import { ComponentBox } from '../../layout';
 

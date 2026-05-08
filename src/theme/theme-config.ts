@@ -1,6 +1,27 @@
 import type { Theme, Direction, CommonColors, ThemeProviderProps } from '@mui/material/styles';
 import type { ThemeCssVariables } from './types';
-import type { PaletteColorKey, PaletteColorNoChannels } from './core/palette';
+
+// ----------------------------------------------------------------------
+
+export type PaletteColorKey = 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
+export type CommonColorsKeys = 'black' | 'white';
+
+export const colorKeys: {
+  palette: PaletteColorKey[];
+  common: CommonColorsKeys[];
+} = {
+  palette: ['primary', 'secondary', 'info', 'success', 'warning', 'error'],
+  common: ['black', 'white'],
+};
+
+export type PaletteColorNoChannels = {
+  lighter: string;
+  light: string;
+  main: string;
+  dark: string;
+  darker: string;
+  contrastText: string;
+};
 
 // ----------------------------------------------------------------------
 

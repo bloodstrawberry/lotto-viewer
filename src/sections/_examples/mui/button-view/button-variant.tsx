@@ -3,7 +3,7 @@ import { upperFirst } from 'es-toolkit';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
-import { colorKeys } from 'src/theme/core';
+import { colorKeys } from 'src/theme/theme-config';
 
 import { Iconify } from 'src/components/iconify';
 

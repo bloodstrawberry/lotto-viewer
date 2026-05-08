@@ -1,6 +1,6 @@
 import LinearProgress from '@mui/material/LinearProgress';
 
-import { colorKeys } from 'src/theme/core';
+import { colorKeys } from 'src/theme/theme-config';
 
 import { ComponentBox } from '../../layout';
 

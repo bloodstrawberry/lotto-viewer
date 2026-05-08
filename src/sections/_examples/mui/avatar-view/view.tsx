@@ -6,7 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
 
 import { _mock } from 'src/_mock';
-import { colorKeys } from 'src/theme/core';
+import { colorKeys } from 'src/theme/theme-config';
 
 import { Iconify } from 'src/components/iconify';
 

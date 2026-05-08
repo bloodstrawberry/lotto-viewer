@@ -9,7 +9,8 @@ import { CONFIG } from 'src/global-config';
 import { LocalizationProvider } from 'src/locales';
 import { detectLanguage } from 'src/locales/server';
 import { I18nProvider } from 'src/locales/i18n-provider';
-import { themeConfig, ThemeProvider, primary as primaryColor } from 'src/theme';
+import { ThemeProvider } from 'src/theme';
+import { themeConfig } from 'src/theme/theme-config';
 
 import { Snackbar } from 'src/components/snackbar';
 import { ProgressBar } from 'src/components/progress-bar';
@@ -37,7 +38,7 @@ const AuthProvider =
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: primaryColor.main,
+  themeColor: themeConfig.palette.primary.main,
 };
 
 export const metadata: Metadata = {

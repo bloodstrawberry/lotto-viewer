@@ -3,7 +3,7 @@ import type { ButtonGroupProps } from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
-import { colorKeys } from 'src/theme/core';
+import { colorKeys } from 'src/theme/theme-config';
 
 import { ComponentBox } from '../../layout';
 

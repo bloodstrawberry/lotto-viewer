@@ -1,5 +1,5 @@
 import type { Theme, SxProps } from '@mui/material/styles';
-import type { PaletteColorKey, CommonColorsKeys } from 'src/theme/core';
+import type { PaletteColorKey, CommonColorsKeys } from 'src/theme/theme-config';
 
 // ----------------------------------------------------------------------
 

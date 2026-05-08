@@ -27,13 +27,10 @@ import type {
   ButtonExtendVariant,
 } from './core/components/button';
 import type {
-  GreyExtend,
-  PaletteExtend,
-  TypeTextExtend,
-  CommonColorsExtend,
-  PaletteColorExtend,
-  TypeBackgroundExtend,
-} from './core/palette';
+  PaletteColorKey,
+  CommonColorsKeys,
+  PaletteColorNoChannels,
+} from './theme-config';
 
 // ----------------------------------------------------------------------
 
@@ -43,21 +40,57 @@ import type {
 declare module '@mui/material/styles' {
   /**
    * ➤➤ Palette (https://mui.com/customization/palette/)
-   * @from {@link file://./core/palette.ts}
    */
   // primary, secondary, info, success, warning, error
-  interface PaletteColor extends PaletteColorExtend {}
-  interface SimplePaletteColorOptions extends Partial<PaletteColorExtend> {}
+  interface PaletteColor {
+    lighter: string;
+    darker: string;
+    lighterChannel: string;
+    darkerChannel: string;
+  }
+  interface SimplePaletteColorOptions {
+    lighter?: string;
+    darker?: string;
+    lighterChannel?: string;
+    darkerChannel?: string;
+  }
 
   // text, background, common, grey
-  interface Color extends GreyExtend {}
-  interface TypeText extends TypeTextExtend {}
-  interface CommonColors extends CommonColorsExtend {}
-  interface TypeBackground extends TypeBackgroundExtend {}
+  interface Color {
+    '50Channel': string;
+    '100Channel': string;
+    '200Channel': string;
+    '300Channel': string;
+    '400Channel': string;
+    '500Channel': string;
+    '600Channel': string;
+    '700Channel': string;
+    '800Channel': string;
+    '900Channel': string;
+  }
+  interface TypeText {
+    disabledChannel: string;
+  }
+  interface CommonColors {
+    whiteChannel: string;
+    blackChannel: string;
+  }
+  interface TypeBackground {
+    neutral: string;
+    neutralChannel: string;
+  }
 
   // extend palette
-  interface Palette extends PaletteExtend {}
-  interface PaletteOptions extends DeepPartial<PaletteExtend> {}
+  interface Palette {
+    shared: {
+      inputOutlined: string;
+      inputUnderline: string;
+      paperOutlined: string;
+      paperNeutral: string;
+      buttonOutlined: string;
+    };
+  }
+  interface PaletteOptions extends DeepPartial<Palette> {}
 
   /**
    * ➤➤ Typography (https://mui.com/customization/typography/)

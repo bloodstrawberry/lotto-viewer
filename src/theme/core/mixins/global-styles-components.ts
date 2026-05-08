@@ -1,5 +1,5 @@
 import type { Theme, CSSObject } from '@mui/material/styles';
-import type { PaletteColorKey, CommonColorsKeys } from '../palette';
+import type { PaletteColorKey, CommonColorsKeys } from '../../theme-config';
 
 import { varAlpha } from 'minimal-shared/utils';
 

@@ -4,7 +4,7 @@ import { varAlpha } from 'minimal-shared/utils';
 
 import { paginationItemClasses } from '@mui/material/PaginationItem';
 
-import { colorKeys } from '../palette';
+import { colorKeys } from '../../theme-config';
 
 // ----------------------------------------------------------------------
 

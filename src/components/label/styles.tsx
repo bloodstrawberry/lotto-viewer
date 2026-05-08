@@ -6,7 +6,7 @@ import { varAlpha } from 'minimal-shared/utils';
 
 import { styled } from '@mui/material/styles';
 
-import { colorKeys } from 'src/theme/core';
+import { colorKeys } from 'src/theme/theme-config';
 
 // ----------------------------------------------------------------------
 

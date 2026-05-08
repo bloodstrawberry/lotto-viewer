@@ -4,7 +4,7 @@ import type { LabelProps } from 'src/components/label';
 
 import Tooltip from '@mui/material/Tooltip';
 
-import { colorKeys } from 'src/theme/core';
+import { colorKeys } from 'src/theme/theme-config';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';

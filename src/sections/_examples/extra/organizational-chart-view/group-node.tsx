@@ -1,6 +1,6 @@
 import type { Theme } from '@mui/material/styles';
 import type { NodeProps } from './data';
-import type { PaletteColorKey } from 'src/theme/core';
+import type { PaletteColorKey } from 'src/theme/theme-config';
 
 import { varAlpha } from 'minimal-shared/utils';
 import { usePopover } from 'minimal-shared/hooks';

@@ -4,7 +4,7 @@ import { varAlpha } from 'minimal-shared/utils';
 
 import { buttonClasses } from '@mui/material/Button';
 
-import { colorKeys } from '../palette';
+import { colorKeys } from '../../theme-config';
 
 // ----------------------------------------------------------------------
 

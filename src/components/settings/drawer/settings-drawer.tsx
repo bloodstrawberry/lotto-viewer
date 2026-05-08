@@ -15,7 +15,6 @@ import Typography from '@mui/material/Typography';
 import { useColorScheme } from '@mui/material/styles';
 
 import { themeConfig } from 'src/theme/theme-config';
-import { primaryColorPresets } from 'src/theme/with-settings';
 
 import { settingIcons } from './icons';
 import { Iconify } from '../../iconify';
@@ -36,7 +35,6 @@ export function SettingsDrawer({ sx, defaultSettings }: SettingsDrawerProps) {
   const visibility = {
     fontSize: hasKeys(defaultSettings, ['fontSize']),    
     fontFamily: hasKeys(defaultSettings, ['fontFamily']),
-    primaryColor: hasKeys(defaultSettings, ['primaryColor']),    
   };
 
   useEffect(() => {
@@ -82,29 +80,6 @@ export function SettingsDrawer({ sx, defaultSettings }: SettingsDrawerProps) {
     </Box>
   );
 
-  const renderPresets = () => (
-    <LargeBlock
-      title="Presets"
-      canReset={settings.state.primaryColor !== defaultSettings.primaryColor}
-      onReset={() => {
-        settings.setState({ primaryColor: defaultSettings.primaryColor });
-      }}
-    >
-      <PresetsOptions
-        icon={<SvgIcon sx={{ width: 28, height: 28 }}>{settingIcons.siderbarDuotone}</SvgIcon>}
-        options={(Object.keys(primaryColorPresets) as SettingsState['primaryColor'][]).map(
-          (key) => ({
-            name: key,
-            value: primaryColorPresets[key].main,
-          })
-        )}
-        value={settings.state.primaryColor}
-        onChangeOption={(newOption) => {
-          settings.setState({ primaryColor: newOption });
-        }}
-      />
-    </LargeBlock>
-  );
 
   const renderFont = () => (
     <LargeBlock title="Font" sx={{ gap: 2.5 }}>
@@ -185,7 +160,6 @@ export function SettingsDrawer({ sx, defaultSettings }: SettingsDrawerProps) {
           }}
         >
           <Box sx={{ mt: -2 }} />
-          {visibility.primaryColor && renderPresets()}
           {(visibility.fontFamily || visibility.fontSize) && renderFont()}
         </Box>
       </Scrollbar>

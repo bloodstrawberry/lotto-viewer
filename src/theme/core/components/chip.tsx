@@ -4,7 +4,7 @@ import type { Theme, CSSObject, Components, ComponentsVariants } from '@mui/mate
 import SvgIcon from '@mui/material/SvgIcon';
 import { chipClasses } from '@mui/material/Chip';
 
-import { colorKeys } from '../palette';
+import { colorKeys } from '../../theme-config';
 
 // ----------------------------------------------------------------------
 

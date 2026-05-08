@@ -2,13 +2,14 @@
 
 import type { PaperProps } from '@mui/material/Paper';
 import type { Theme, SxProps } from '@mui/material/styles';
-import type { CustomShadows, PaletteColorKey } from 'src/theme/core';
+import type { CustomShadows } from 'src/theme/core';
+import type { PaletteColorKey } from 'src/theme/theme-config';
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import { useTheme } from '@mui/material/styles';
 
-import { colorKeys } from 'src/theme/core';
+import { colorKeys } from 'src/theme/theme-config';
 
 import { ComponentLayout } from '../../layout';
 

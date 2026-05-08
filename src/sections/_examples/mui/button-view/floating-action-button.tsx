@@ -7,7 +7,7 @@ import Fab from '@mui/material/Fab';
 import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 
-import { colorKeys } from 'src/theme/core';
+import { colorKeys } from 'src/theme/theme-config';
 
 import { Iconify } from 'src/components/iconify';
 import { varTap, transitionTap } from 'src/components/animate';

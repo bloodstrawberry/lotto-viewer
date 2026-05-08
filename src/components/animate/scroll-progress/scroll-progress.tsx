@@ -1,7 +1,7 @@
 import type { BoxProps } from '@mui/material/Box';
 import type { Theme, SxProps } from '@mui/material/styles';
 import type { MotionValue, MotionProps } from 'framer-motion';
-import type { PaletteColorKey } from 'src/theme/core';
+import type { PaletteColorKey } from 'src/theme/theme-config';
 
 import { Fragment } from 'react';
 import { mergeClasses } from 'minimal-shared/utils';

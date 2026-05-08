@@ -5,31 +5,111 @@ import type { ThemeOptions } from './types';
 import type { SettingsState } from 'src/components/settings';
 
 import { createTheme as createMuiTheme } from '@mui/material/styles';
+import { hexToRgbChannel, createPaletteChannel } from 'minimal-shared/utils';
 
 import { mixins } from './core/mixins';
 import { opacity } from './core/opacity';
-import { shadows } from './core/shadows';
-import { palette } from './core/palette';
+import { createShadows } from './core/shadows';
 import { themeConfig } from './theme-config';
 import { components } from './core/components';
 import { typography } from './core/typography';
-import { customShadows } from './core/custom-shadows';
+import { createCustomShadows } from './core/custom-shadows';
 import { applySettingsToTheme, applySettingsToComponents } from './with-settings';
 
 // ----------------------------------------------------------------------
 
+const { grey, common } = themeConfig.palette;
+
+const lightPalette = {
+  primary: createPaletteChannel(themeConfig.palette.primary),
+  secondary: createPaletteChannel(themeConfig.palette.secondary),
+  info: createPaletteChannel(themeConfig.palette.info),
+  success: createPaletteChannel(themeConfig.palette.success),
+  warning: createPaletteChannel(themeConfig.palette.warning),
+  error: createPaletteChannel(themeConfig.palette.error),
+  common: createPaletteChannel(themeConfig.palette.common),
+  grey: createPaletteChannel(themeConfig.palette.grey),
+  divider: `rgba(${hexToRgbChannel(grey[500])} / 0.2)`,
+  text: {
+    primary: grey[800],
+    secondary: grey[600],
+    disabled: grey[500],
+    primaryChannel: hexToRgbChannel(grey[800]),
+    secondaryChannel: hexToRgbChannel(grey[600]),
+    disabledChannel: hexToRgbChannel(grey[500]),
+  },
+  background: {
+    paper: '#FFFFFF',
+    default: '#FFFFFF',
+    neutral: grey[200],
+    paperChannel: hexToRgbChannel('#FFFFFF'),
+    defaultChannel: hexToRgbChannel('#FFFFFF'),
+    neutralChannel: hexToRgbChannel(grey[200]),
+  },
+  action: {
+    hover: `rgba(${hexToRgbChannel(grey[500])} / 0.08)`,
+    selected: `rgba(${hexToRgbChannel(grey[500])} / 0.16)`,
+    focus: `rgba(${hexToRgbChannel(grey[500])} / 0.24)`,
+    disabled: `rgba(${hexToRgbChannel(grey[500])} / 0.8)`,
+    disabledBackground: `rgba(${hexToRgbChannel(grey[500])} / 0.24)`,
+    hoverOpacity: 0.08,
+    selectedOpacity: 0.08,
+    focusOpacity: 0.12,
+    activatedOpacity: 0.12,
+    disabledOpacity: 0.48,
+  },
+  shared: {
+    inputOutlined: `rgba(${hexToRgbChannel(grey[500])} / 0.32)`,
+    inputUnderline: `rgba(${hexToRgbChannel(grey[500])} / 0.08)`,
+    paperOutlined: `rgba(${hexToRgbChannel(grey[500])} / 0.16)`,
+    paperNeutral: grey[200],
+    buttonOutlined: `rgba(${hexToRgbChannel(grey[500])} / 0.24)`,
+  },
+};
+
+const darkPalette = {
+  ...lightPalette,
+  text: {
+    primary: '#FFFFFF',
+    secondary: grey[500],
+    disabled: grey[600],
+    primaryChannel: hexToRgbChannel('#FFFFFF'),
+    secondaryChannel: hexToRgbChannel(grey[500]),
+    disabledChannel: hexToRgbChannel(grey[600]),
+  },
+  background: {
+    paper: grey[800],
+    default: grey[900],
+    neutral: '#28323D',
+    paperChannel: hexToRgbChannel(grey[800]),
+    defaultChannel: hexToRgbChannel(grey[900]),
+    neutralChannel: hexToRgbChannel('#28323D'),
+  },
+  action: {
+    ...lightPalette.action,
+    active: grey[500],
+  },
+  shared: {
+    inputOutlined: `rgba(${hexToRgbChannel(grey[500])} / 0.32)`,
+    inputUnderline: `rgba(${hexToRgbChannel(grey[500])} / 0.08)`,
+    paperOutlined: `rgba(${hexToRgbChannel(grey[500])} / 0.16)`,
+    paperNeutral: '#28323D',
+    buttonOutlined: `rgba(${hexToRgbChannel(grey[500])} / 0.24)`,
+  },
+};
+
 export const baseTheme: ThemeOptions = {
   colorSchemes: {
     light: {
-      palette: palette.light,
-      shadows: shadows.light,
-      customShadows: customShadows.light,
+      palette: lightPalette,
+      shadows: createShadows(hexToRgbChannel(themeConfig.palette.grey[500])),
+      customShadows: createCustomShadows(themeConfig.palette),
       opacity,
     },
     dark: {
-      palette: palette.dark,
-      shadows: shadows.dark,
-      customShadows: customShadows.dark,
+      palette: darkPalette,
+      shadows: createShadows(hexToRgbChannel(themeConfig.palette.common.black)),
+      customShadows: createCustomShadows(themeConfig.palette),
       opacity,
     },
   },

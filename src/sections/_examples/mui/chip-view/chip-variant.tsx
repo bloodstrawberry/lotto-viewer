@@ -5,7 +5,7 @@ import Chip from '@mui/material/Chip';
 import Avatar from '@mui/material/Avatar';
 
 import { _mock } from 'src/_mock';
-import { colorKeys } from 'src/theme/core';
+import { colorKeys } from 'src/theme/theme-config';
 
 import { Iconify } from 'src/components/iconify';
 

@@ -1,6 +1,6 @@
 import type { Theme, Components, ComponentsVariants } from '@mui/material/styles';
 
-import { colorKeys } from '../palette';
+import { colorKeys } from '../../theme-config';
 
 // ----------------------------------------------------------------------
 

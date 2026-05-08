@@ -4,7 +4,7 @@ import { pxToRem, varAlpha } from 'minimal-shared/utils';
 
 import { fabClasses } from '@mui/material/Fab';
 
-import { colorKeys } from '../palette';
+import { colorKeys } from '../../theme-config';
 
 // ----------------------------------------------------------------------
 

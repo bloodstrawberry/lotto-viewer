@@ -1,6 +1,5 @@
 import type { Theme, SxProps } from '@mui/material/styles';
 import type { ThemeConfig } from 'src/theme/theme-config';
-import type { ThemeColorPreset } from 'src/theme/with-settings';
 
 // ----------------------------------------------------------------------
 
@@ -10,7 +9,6 @@ export type SettingsState = {
   fontFamily: string;
   compactLayout: boolean;
   contrast: 'default' | 'hight';
-  primaryColor: ThemeColorPreset;
   mode: ThemeConfig['defaultMode'];
   navColor: 'integrate' | 'apparent';
   direction: ThemeConfig['direction'];

@@ -1,14 +1,16 @@
-import { info, error, primary, success, warning, secondary } from 'src/theme/core';
+import { themeConfig } from 'src/theme/theme-config';
 
 // ----------------------------------------------------------------------
 
+const { palette } = themeConfig;
+
 export const CALENDAR_COLOR_OPTIONS = [
-  primary.main,
-  secondary.main,
-  info.main,
-  info.darker,
-  success.main,
-  warning.main,
-  error.main,
-  error.darker,
+  palette.primary.main,
+  palette.secondary.main,
+  palette.info.main,
+  palette.info.darker,
+  palette.success.main,
+  palette.warning.main,
+  palette.error.main,
+  palette.error.darker,
 ];

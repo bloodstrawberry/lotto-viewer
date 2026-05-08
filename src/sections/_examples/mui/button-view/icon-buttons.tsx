@@ -3,7 +3,7 @@ import { m } from 'framer-motion';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 
-import { colorKeys } from 'src/theme/core';
+import { colorKeys } from 'src/theme/theme-config';
 
 import { Iconify } from 'src/components/iconify';
 import { varTap, varHover, transitionTap } from 'src/components/animate';
