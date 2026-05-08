@@ -20,7 +20,6 @@ import { settingIcons } from './icons';
 import { Iconify } from '../../iconify';
 import { Scrollbar } from '../../scrollbar';
 import { SmallBlock, LargeBlock } from './styles';
-import { PresetsOptions } from './presets-options';
 import { FullScreenButton } from './fullscreen-button';
 import { FontSizeOptions, FontFamilyOptions } from './font-options';
 import { useSettingsContext } from '../context/use-settings-context';
