@@ -34,6 +34,7 @@ export function OverviewPatternView() {
   // ⭐ 테마 선택
   const [theme, setTheme] = useState<ThemeType>('default');
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
+  const [excludedNumbers, setExcludedNumbers] = useState<number[]>([]);
   const [showMissing, setShowMissing] = useState(true);
 
   // ⭐ 연속 보기 토글 (0=OFF, 99=ALL, 1-5=Diff)
@@ -190,10 +191,24 @@ export function OverviewPatternView() {
   const handleNumberClick = useCallback((num: number) => {
     if (selectedNumbers.includes(num)) {
       setSelectedNumbers((prev) => prev.filter((n) => n !== num));
-    } else if (selectedNumbers.length < 6) {
-      setSelectedNumbers((prev) => [...prev, num].sort((a, b) => a - b));
+    } else {
+      if (excludedNumbers.includes(num)) {
+        setExcludedNumbers((prev) => prev.filter((n) => n !== num));
+      }
+      if (selectedNumbers.length < 6) {
+        setSelectedNumbers((prev) => [...prev, num].sort((a, b) => a - b));
+      }
     }
-  }, [selectedNumbers]);
+  }, [selectedNumbers, excludedNumbers]);
+
+  const handleNumberRightClick = useCallback((num: number) => {
+    if (excludedNumbers.includes(num)) {
+      setExcludedNumbers((prev) => prev.filter((n) => n !== num));
+    } else {
+      setSelectedNumbers((prev) => prev.filter((n) => n !== num));
+      setExcludedNumbers((prev) => [...prev, num].sort((a, b) => a - b));
+    }
+  }, [excludedNumbers]);
 
   const handlePatternClick = useCallback((drwNo: number, num: number) => {
     const isConsecutive = consecutiveOption > 0;
@@ -433,7 +448,9 @@ export function OverviewPatternView() {
               {!isReversed && (
                 <PredictRow
                   selectedNumbers={selectedNumbers}
+                  excludedNumbers={excludedNumbers}
                   handleNumberClick={handleNumberClick}
+                  handleNumberRightClick={handleNumberRightClick}
                   showNumbers={showNumbers}
                   theme={theme}
                   showConsecutive={consecutiveOption > 0 || jumpInterval > 0}
@@ -494,7 +511,9 @@ export function OverviewPatternView() {
               {isReversed && (
                 <PredictRow
                   selectedNumbers={selectedNumbers}
+                  excludedNumbers={excludedNumbers}
                   handleNumberClick={handleNumberClick}
+                  handleNumberRightClick={handleNumberRightClick}
                   showNumbers={showNumbers}
                   theme={theme}
                   showConsecutive={consecutiveOption > 0 || jumpInterval > 0}

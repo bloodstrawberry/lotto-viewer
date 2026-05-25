@@ -8,7 +8,9 @@ const LOTTO_NUMBERS = Array.from({ length: 45 }, (_, i) => i + 1);
 
 type PredictRowProps = {
   selectedNumbers: number[];
+  excludedNumbers: number[];
   handleNumberClick: (num: number) => void;
+  handleNumberRightClick?: (num: number) => void;
   showNumbers: boolean;
   theme: ThemeType;
   showConsecutive: boolean;
@@ -17,7 +19,9 @@ type PredictRowProps = {
 
 export const PredictRow = memo(function PredictRow({
   selectedNumbers,
+  excludedNumbers,
   handleNumberClick,
+  handleNumberRightClick,
   showNumbers,
   theme,
   showConsecutive,
@@ -44,7 +48,8 @@ export const PredictRow = memo(function PredictRow({
       <div style={{ flex:1, display:"flex", gap:"1px" }}>
         {LOTTO_NUMBERS.map((num)=>{
           const isSelected = selectedNumbers.includes(num);
-          const shouldShowNumber = showNumbers || isSelected; // Simplified logic
+          const isExcluded = excludedNumbers?.includes(num) || false;
+          const shouldShowNumber = showNumbers || isSelected || isExcluded; // Simplified logic
           const bgColor = getPredictCellColor(theme, num, isSelected);
           const textColor = (isSelected || theme !== 'default') ? '#fff' : '#555';
           
@@ -61,6 +66,13 @@ export const PredictRow = memo(function PredictRow({
               textColor={shouldShowNumber ? textColor : "transparent"}
               content={shouldShowNumber ? num : ""}
               onClick={() => handleNumberClick(num)}
+              onContextMenu={(e) => {
+                if (handleNumberRightClick) {
+                  e.preventDefault();
+                  handleNumberRightClick(num);
+                }
+              }}
+              isExcluded={isExcluded}
               cursor="pointer"
               consecutiveColors={consecutiveColors}
             />

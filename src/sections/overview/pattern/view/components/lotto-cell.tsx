@@ -7,8 +7,10 @@ export type LottoCellProps = {
   overlayColor?: string;
   content: string | number;
   onClick?: () => void;
+  onContextMenu?: (e: React.MouseEvent<HTMLDivElement>) => void;
   cursor?: string;
   consecutiveColors?: string[];
+  isExcluded?: boolean;
 };
 
 export const LottoCell = memo(({ 
@@ -18,12 +20,15 @@ export const LottoCell = memo(({
   overlayColor, 
   content, 
   onClick, 
+  onContextMenu,
+  isExcluded,
   cursor = "default",
   ...restProps 
 }: LottoCellProps) => (
   <React.Fragment key={num}>
     <div
       onClick={onClick}
+      onContextMenu={onContextMenu}
       style={{
         flex: 1,
         minWidth: 0,
@@ -64,11 +69,31 @@ export const LottoCell = memo(({
           left: 0, 
           right: 0, 
           bottom: 0,
-          backgroundColor: overlayColor || 'transparent',
+          backgroundColor: isExcluded ? 'rgba(0, 0, 0, 0.12)' : (overlayColor || 'transparent'),
           pointerEvents: 'none',
           transition: 'background-color 0.5s ease',
       }} />
-      <span style={{ position: 'relative', zIndex: 1 }}>
+      {isExcluded && (
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          pointerEvents: 'none',
+          zIndex: 2,
+          padding: '2px',
+        }}>
+          <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="#ff3d3d" strokeWidth="3" strokeLinecap="round">
+            <line x1="4" y1="4" x2="20" y2="20" />
+            <line x1="20" y1="4" x2="4" y2="20" />
+          </svg>
+        </div>
+      )}
+      <span style={{ position: 'relative', zIndex: 1, opacity: isExcluded ? 0.35 : 1 }}>
         {content}
       </span>
     </div>
