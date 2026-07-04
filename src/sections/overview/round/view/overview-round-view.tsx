@@ -4,23 +4,30 @@ import { varAlpha } from 'minimal-shared/utils';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
 import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
+import Tabs from '@mui/material/Tabs';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Switch from '@mui/material/Switch';
+import Divider from '@mui/material/Divider';
+import Tooltip from '@mui/material/Tooltip';
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 import DialogTitle from '@mui/material/DialogTitle';
 import ToggleButton from '@mui/material/ToggleButton';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import LinearProgress from '@mui/material/LinearProgress';
 import TableContainer from '@mui/material/TableContainer';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -87,6 +94,28 @@ function getCombinations(arr: number[], k: number): number[][] {
   return result;
 }
 
+// Section title helper
+function SectionLabel({ icon, label }: { icon: string; label: string }) {
+  return (
+    <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+      <Iconify icon={icon} width={18} sx={{ color: 'text.secondary' }} />
+      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+        {label}
+      </Typography>
+    </Stack>
+  );
+}
+
+// Table header cell helper
+const headerCellSx = {
+  fontWeight: 'bold',
+  bgcolor: (theme: any) => varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
+  borderBottom: '2px solid',
+  borderBottomColor: 'divider',
+  py: 1.5,
+  fontSize: '0.8125rem',
+};
+
 export function OverviewRoundView() {
   const allLotto = useMemo(() => getAllLottoNumbers(), []);
   const latestRound = useMemo(
@@ -111,12 +140,16 @@ export function OverviewRoundView() {
   const [highlightNumbers, setHighlightNumbers] = useState<number[]>([]);
   const [modalSortOrder, setModalSortOrder] = useState<'desc' | 'asc'>('desc');
 
-  const sortedModalRounds = useMemo(() => [...modalRounds].sort((a, b) => {
-      if (modalSortOrder === 'desc') {
-        return b.drwNo - a.drwNo;
-      }
-      return a.drwNo - b.drwNo;
-    }), [modalRounds, modalSortOrder]);
+  const sortedModalRounds = useMemo(
+    () =>
+      [...modalRounds].sort((a, b) => {
+        if (modalSortOrder === 'desc') {
+          return b.drwNo - a.drwNo;
+        }
+        return a.drwNo - b.drwNo;
+      }),
+    [modalRounds, modalSortOrder]
+  );
 
   // Initialize values when component mounts and data is loaded
   useEffect(() => {
@@ -303,6 +336,16 @@ export function OverviewRoundView() {
 
   const totalRounds = B - A + 1;
 
+  // Max count for progress bar scaling
+  const maxComboCount = useMemo(
+    () => Math.max(1, ...combinationStats.map((s) => s.count)),
+    [combinationStats]
+  );
+  const maxSingleCount = useMemo(
+    () => Math.max(1, ...singleNumberStats.map((s) => s.count)),
+    [singleNumberStats]
+  );
+
   const handleOpenMatchModal = (k: number) => {
     const rounds = matchCountStats[k as 2 | 3 | 4 | 5] || [];
     setModalTitle(`${k}개 번호 일치 회차 목록 (총 ${rounds.length}회)`);
@@ -350,8 +393,11 @@ export function OverviewRoundView() {
 
   return (
     <DashboardContent maxWidth="xl">
-      <Typography variant="h4">회차분석</Typography>
-      <Typography sx={{ mt: 1, mb: 4, color: 'text.secondary' }}>
+      <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 1 }}>
+        <Iconify icon="solar:chart-2-bold-duotone" width={32} sx={{ color: 'primary.main' }} />
+        <Typography variant="h4">회차분석</Typography>
+      </Stack>
+      <Typography sx={{ mb: 4, color: 'text.secondary' }}>
         분석할 당첨 번호(특정 회차 혹은 사용자 직접 선택)가 지정한 분석 범위(A ~ B회차) 내에서 동반
         출현한 통계를 분석합니다.
       </Typography>
@@ -362,9 +408,7 @@ export function OverviewRoundView() {
           <Stack spacing={3}>
             {/* Settings Card */}
             <Card sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                분석 설정
-              </Typography>
+              <SectionLabel icon="solar:settings-bold-duotone" label="분석 모드" />
 
               <ToggleButtonGroup
                 value={analysisMode}
@@ -372,30 +416,38 @@ export function OverviewRoundView() {
                 onChange={(e, val) => val !== null && handleModeChange(val)}
                 fullWidth
                 color="primary"
-                sx={{ mb: 2.5 }}
+                sx={{ mb: 3 }}
                 size="small"
               >
                 <ToggleButton value="round" sx={{ fontWeight: 'bold' }}>
+                  <Iconify icon="solar:calendar-date-bold" width={18} sx={{ mr: 0.5 }} />
                   회차별 당첨번호
                 </ToggleButton>
                 <ToggleButton value="custom" sx={{ fontWeight: 'bold' }}>
+                  <Iconify icon="solar:hand-stars-bold" width={18} sx={{ mr: 0.5 }} />
                   사용자 직접선택
                 </ToggleButton>
               </ToggleButtonGroup>
 
+              <Divider sx={{ mb: 2.5 }} />
+
               <Stack spacing={2.5}>
                 {analysisMode === 'round' && (
-                  <TextField
-                    label="대상 회차 (X)"
-                    type="number"
-                    value={X || ''}
-                    onChange={(e) => handleXChange(Number(e.target.value))}
-                    inputProps={{ min: 2, max: latestRound }}
-                    fullWidth
-                    size="small"
-                  />
+                  <>
+                    <SectionLabel icon="solar:target-bold-duotone" label="대상 회차" />
+                    <TextField
+                      label="대상 회차 (X)"
+                      type="number"
+                      value={X || ''}
+                      onChange={(e) => handleXChange(Number(e.target.value))}
+                      inputProps={{ min: 2, max: latestRound }}
+                      fullWidth
+                      size="small"
+                    />
+                  </>
                 )}
 
+                <SectionLabel icon="solar:sort-horizontal-bold-duotone" label="분석 범위" />
                 <Stack direction="row" spacing={2}>
                   <TextField
                     label="시작 회차 (A)"
@@ -418,25 +470,31 @@ export function OverviewRoundView() {
                 </Stack>
 
                 {/* Preset Ranges */}
-                <Stack spacing={1}>
-                  <Typography variant="caption" color="text.secondary">
-                    범위 간편 설정
-                  </Typography>
-                  <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                    <Button variant="outlined" size="small" onClick={() => applyPreset('all')}>
-                      전체
-                    </Button>
-                    <Button variant="outlined" size="small" onClick={() => applyPreset('100')}>
-                      최근 100회
-                    </Button>
-                    <Button variant="outlined" size="small" onClick={() => applyPreset('200')}>
-                      최근 200회
-                    </Button>
-                    <Button variant="outlined" size="small" onClick={() => applyPreset('500')}>
-                      최근 500회
-                    </Button>
-                  </Stack>
+                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                  {[
+                    { key: 'all' as const, label: '전체' },
+                    { key: '100' as const, label: '최근 100회' },
+                    { key: '200' as const, label: '최근 200회' },
+                    { key: '500' as const, label: '최근 500회' },
+                  ].map((preset) => (
+                    <Chip
+                      key={preset.key}
+                      label={preset.label}
+                      size="small"
+                      variant="outlined"
+                      onClick={() => applyPreset(preset.key)}
+                      sx={{
+                        cursor: 'pointer',
+                        '&:hover': {
+                          bgcolor: (theme) =>
+                            varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
+                        },
+                      }}
+                    />
+                  ))}
                 </Stack>
+
+                <Divider />
 
                 <FormControlLabel
                   control={
@@ -445,17 +503,38 @@ export function OverviewRoundView() {
                       onChange={(e) => setIncludeBonus(e.target.checked)}
                     />
                   }
-                  label="과거 회차 보너스 번호 포함"
+                  label={<Typography variant="body2">과거 회차 보너스 번호 포함</Typography>}
                 />
               </Stack>
+
+              {/* Summary info */}
+              {isAnalysisReady && (
+                <>
+                  <Divider sx={{ my: 2 }} />
+                  <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                    <Chip
+                      icon={<Iconify icon="solar:database-bold" width={16} />}
+                      label={`분석 대상: ${totalRounds.toLocaleString()}회`}
+                      size="small"
+                      color="primary"
+                      variant="soft"
+                    />
+                    <Chip
+                      icon={<Iconify icon="solar:calendar-date-bold" width={16} />}
+                      label={`${A}회 ~ ${B}회`}
+                      size="small"
+                      color="info"
+                      variant="soft"
+                    />
+                  </Stack>
+                </>
+              )}
             </Card>
 
             {/* Target Display/Selector Card */}
             {analysisMode === 'round' ? (
               <Card sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  {X}회차 당첨 정보
-                </Typography>
+                <SectionLabel icon="solar:ticket-bold-duotone" label={`${X}회차 당첨 정보`} />
                 {targetDraw ? (
                   <>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -485,9 +564,7 @@ export function OverviewRoundView() {
               </Card>
             ) : (
               <Card sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  직접 번호 선택
-                </Typography>
+                <SectionLabel icon="solar:hand-stars-bold-duotone" label="직접 번호 선택" />
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                   분석에 사용할 번호 6개를 아래 숫자 판에서 선택하세요.
                 </Typography>
@@ -500,11 +577,12 @@ export function OverviewRoundView() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     border: '1px dashed',
-                    borderColor: 'divider',
+                    borderColor: customNumbers.length === 6 ? 'primary.main' : 'divider',
                     borderRadius: 1,
                     mb: 2,
                     p: 1,
                     bgcolor: 'background.neutral',
+                    transition: 'border-color 0.2s ease',
                   }}
                 >
                   {customNumbers.length === 0 ? (
@@ -581,6 +659,7 @@ export function OverviewRoundView() {
                     size="small"
                     onClick={handleClearCustom}
                     sx={{ flex: 1 }}
+                    startIcon={<Iconify icon="solar:restart-bold" width={16} />}
                   >
                     초기화
                   </Button>
@@ -589,6 +668,7 @@ export function OverviewRoundView() {
                     size="small"
                     onClick={handleRandomSelect}
                     sx={{ flex: 1 }}
+                    startIcon={<Iconify icon="solar:shuffle-bold" width={16} />}
                   >
                     무작위
                   </Button>
@@ -597,6 +677,7 @@ export function OverviewRoundView() {
                     size="small"
                     onClick={handleFillLatest}
                     sx={{ flex: 1 }}
+                    startIcon={<Iconify icon="solar:star-bold" width={16} />}
                   >
                     최근당첨
                   </Button>
@@ -635,33 +716,42 @@ export function OverviewRoundView() {
               </Typography>
             </Card>
           ) : (
-            <Card sx={{ height: 1 }}>
-              {/* Tab Headers */}
+            <Card>
+              {/* Tab Headers - Using MUI Tabs for cleaner look */}
               <Box
                 sx={{
                   borderBottom: 1,
                   borderColor: 'divider',
-                  px: 2,
-                  bgcolor: 'background.neutral',
+                  bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                 }}
               >
-                <ToggleButtonGroup
+                <Tabs
                   value={currentTab}
-                  exclusive
-                  onChange={(e, val) => val !== null && setCurrentTab(val)}
-                  sx={{ py: 1.5 }}
-                  size="small"
+                  onChange={(e, val) => setCurrentTab(val)}
+                  sx={{
+                    px: 2,
+                    '& .MuiTab-root': { fontWeight: 'bold', minHeight: 48 },
+                  }}
                 >
-                  <ToggleButton value={0} sx={{ px: 2, fontWeight: 'bold' }}>
-                    번호 조합별 분석
-                  </ToggleButton>
-                  <ToggleButton value={1} sx={{ px: 2, fontWeight: 'bold' }}>
-                    일치 개수별 통계
-                  </ToggleButton>
-                  <ToggleButton value={2} sx={{ px: 2, fontWeight: 'bold' }}>
-                    개별 번호 통계
-                  </ToggleButton>
-                </ToggleButtonGroup>
+                  <Tab
+                    value={0}
+                    label="번호 조합별 분석"
+                    icon={<Iconify icon="solar:layers-bold" width={20} />}
+                    iconPosition="start"
+                  />
+                  <Tab
+                    value={1}
+                    label="일치 개수별 통계"
+                    icon={<Iconify icon="solar:chart-2-bold" width={20} />}
+                    iconPosition="start"
+                  />
+                  <Tab
+                    value={2}
+                    label="개별 번호 통계"
+                    icon={<Iconify icon="solar:hashtag-bold" width={20} />}
+                    iconPosition="start"
+                  />
+                </Tabs>
               </Box>
 
               {/* Tab 0: Combinations Analysis */}
@@ -673,16 +763,22 @@ export function OverviewRoundView() {
                     justifyContent="space-between"
                     sx={{ mb: 3 }}
                   >
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ maxWidth: '55%' }}>
                       {analysisMode === 'round' ? (
                         <>
-                          {X}회차의 6개 번호 중에서 선택한 개수만큼 조합을 생성해 {A} ~ {B}회차 내
-                          동반 출현 횟수를 분석합니다.
+                          <strong>{X}회차</strong>의 6개 번호 중 {comboSize}개씩 조합하여{' '}
+                          <strong>
+                            {A} ~ {B}회차
+                          </strong>
+                          에서의 동반 출현 횟수입니다.
                         </>
                       ) : (
                         <>
-                          선택한 6개 번호 중에서 선택한 개수만큼 조합을 생성해 {A} ~ {B}회차 내 동반
-                          출현 횟수를 분석합니다.
+                          선택한 6개 번호 중 {comboSize}개씩 조합하여{' '}
+                          <strong>
+                            {A} ~ {B}회차
+                          </strong>
+                          에서의 동반 출현 횟수입니다.
                         </>
                       )}
                     </Typography>
@@ -695,36 +791,25 @@ export function OverviewRoundView() {
                       color="primary"
                     >
                       {[2, 3, 4, 5].map((size) => (
-                        <ToggleButton key={size} value={size}>
-                          {size}개 조합
+                        <ToggleButton key={size} value={size} sx={{ px: 1.5 }}>
+                          {size}개
                         </ToggleButton>
                       ))}
                     </ToggleButtonGroup>
                   </Stack>
 
                   <TableContainer>
-                    <Table stickyHeader>
+                    <Table size="small">
                       <TableHead>
                         <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold', bgcolor: 'background.neutral' }}>
-                            조합 번호
-                          </TableCell>
-                          <TableCell
-                            align="center"
-                            sx={{ fontWeight: 'bold', bgcolor: 'background.neutral' }}
-                          >
+                          <TableCell sx={headerCellSx}>조합 번호</TableCell>
+                          <TableCell align="center" sx={headerCellSx}>
                             출현 횟수
                           </TableCell>
-                          <TableCell
-                            align="center"
-                            sx={{ fontWeight: 'bold', bgcolor: 'background.neutral' }}
-                          >
+                          <TableCell align="center" sx={{ ...headerCellSx, minWidth: 160 }}>
                             출현 비율
                           </TableCell>
-                          <TableCell
-                            align="center"
-                            sx={{ fontWeight: 'bold', bgcolor: 'background.neutral' }}
-                          >
+                          <TableCell align="center" sx={headerCellSx}>
                             조회
                           </TableCell>
                         </TableRow>
@@ -735,8 +820,18 @@ export function OverviewRoundView() {
                             totalRounds > 0
                               ? ((stat.count / totalRounds) * 100).toFixed(2)
                               : '0.00';
+                          const progressValue = (stat.count / maxComboCount) * 100;
                           return (
-                            <TableRow key={idx} hover>
+                            <TableRow
+                              key={idx}
+                              hover
+                              sx={{
+                                '&:nth-of-type(even)': {
+                                  bgcolor: (theme) =>
+                                    varAlpha(theme.vars.palette.grey['500Channel'], 0.03),
+                                },
+                              }}
+                            >
                               <TableCell>
                                 <Stack direction="row" spacing={0.8}>
                                   {stat.combo.map((num) => (
@@ -744,25 +839,51 @@ export function OverviewRoundView() {
                                   ))}
                                 </Stack>
                               </TableCell>
-                              <TableCell
-                                align="center"
-                                sx={{ fontWeight: 'bold', color: 'primary.main' }}
-                              >
-                                {stat.count}회
-                              </TableCell>
-                              <TableCell align="center">{percentage}%</TableCell>
                               <TableCell align="center">
-                                <Button
-                                  size="small"
-                                  variant="soft"
-                                  onClick={() =>
-                                    handleOpenComboModal(stat.combo, stat.count, stat.matchedRounds)
-                                  }
-                                  disabled={stat.count === 0}
-                                  startIcon={<Iconify icon="solar:eye-bold" />}
+                                <Typography
+                                  variant="body2"
+                                  sx={{ fontWeight: 'bold', color: 'primary.main' }}
                                 >
-                                  회차 보기
-                                </Button>
+                                  {stat.count}회
+                                </Typography>
+                              </TableCell>
+                              <TableCell align="center">
+                                <Stack spacing={0.5} alignItems="center">
+                                  <Typography variant="caption">{percentage}%</Typography>
+                                  <LinearProgress
+                                    variant="determinate"
+                                    value={progressValue}
+                                    sx={{
+                                      width: '100%',
+                                      height: 6,
+                                      borderRadius: 3,
+                                      bgcolor: (theme) =>
+                                        varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
+                                      '& .MuiLinearProgress-bar': { borderRadius: 3 },
+                                    }}
+                                  />
+                                </Stack>
+                              </TableCell>
+                              <TableCell align="center">
+                                <Tooltip title="출현 회차 목록 보기">
+                                  <span>
+                                    <Button
+                                      size="small"
+                                      variant="soft"
+                                      onClick={() =>
+                                        handleOpenComboModal(
+                                          stat.combo,
+                                          stat.count,
+                                          stat.matchedRounds
+                                        )
+                                      }
+                                      disabled={stat.count === 0}
+                                      startIcon={<Iconify icon="solar:eye-bold" />}
+                                    >
+                                      보기
+                                    </Button>
+                                  </span>
+                                </Tooltip>
                               </TableCell>
                             </TableRow>
                           );
@@ -776,10 +897,10 @@ export function OverviewRoundView() {
               {/* Tab 1: Match Count Summary */}
               {currentTab === 1 && (
                 <Box sx={{ p: 3 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                     {analysisMode === 'round' ? (
                       <>
-                        {X}회차 당첨 번호 6개와{' '}
+                        <strong>{X}회차</strong> 당첨 번호 6개와{' '}
                         <strong>
                           {A} ~ {B}회차
                         </strong>
@@ -797,17 +918,17 @@ export function OverviewRoundView() {
                   </Typography>
 
                   <TableContainer>
-                    <Table>
+                    <Table size="small">
                       <TableHead>
                         <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold' }}>구분</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                          <TableCell sx={headerCellSx}>구분</TableCell>
+                          <TableCell align="center" sx={headerCellSx}>
                             출현 횟수
                           </TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                          <TableCell align="center" sx={{ ...headerCellSx, minWidth: 160 }}>
                             출현 비율
                           </TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                          <TableCell align="center" sx={headerCellSx}>
                             조회
                           </TableCell>
                         </TableRow>
@@ -817,26 +938,78 @@ export function OverviewRoundView() {
                           const count = matchCountStats[k as 2 | 3 | 4 | 5]?.length || 0;
                           const percentage =
                             totalRounds > 0 ? ((count / totalRounds) * 100).toFixed(2) : '0.00';
+                          const maxMatchCount = Math.max(
+                            1,
+                            ...[2, 3, 4, 5].map(
+                              (kk) => matchCountStats[kk as 2 | 3 | 4 | 5]?.length || 0
+                            )
+                          );
+                          const progressValue = (count / maxMatchCount) * 100;
                           return (
-                            <TableRow key={k} hover>
-                              <TableCell sx={{ fontWeight: 600 }}>{k}개 번호 일치</TableCell>
-                              <TableCell
-                                align="center"
-                                sx={{ fontWeight: 'bold', color: 'primary.main' }}
-                              >
-                                {count}회
+                            <TableRow
+                              key={k}
+                              hover
+                              sx={{
+                                '&:nth-of-type(even)': {
+                                  bgcolor: (theme) =>
+                                    varAlpha(theme.vars.palette.grey['500Channel'], 0.03),
+                                },
+                              }}
+                            >
+                              <TableCell>
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                  <Chip
+                                    label={`${k}개`}
+                                    size="small"
+                                    color={k >= 4 ? 'warning' : 'default'}
+                                    variant={k >= 4 ? 'filled' : 'outlined'}
+                                    sx={{ fontWeight: 'bold', minWidth: 48 }}
+                                  />
+                                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                    번호 일치
+                                  </Typography>
+                                </Stack>
                               </TableCell>
-                              <TableCell align="center">{percentage}%</TableCell>
                               <TableCell align="center">
-                                <Button
-                                  size="small"
-                                  variant="soft"
-                                  onClick={() => handleOpenMatchModal(k)}
-                                  disabled={count === 0}
-                                  startIcon={<Iconify icon="solar:eye-bold" />}
+                                <Typography
+                                  variant="body2"
+                                  sx={{ fontWeight: 'bold', color: 'primary.main' }}
                                 >
-                                  회차 보기
-                                </Button>
+                                  {count}회
+                                </Typography>
+                              </TableCell>
+                              <TableCell align="center">
+                                <Stack spacing={0.5} alignItems="center">
+                                  <Typography variant="caption">{percentage}%</Typography>
+                                  <LinearProgress
+                                    variant="determinate"
+                                    value={progressValue}
+                                    color={k >= 4 ? 'warning' : 'primary'}
+                                    sx={{
+                                      width: '100%',
+                                      height: 6,
+                                      borderRadius: 3,
+                                      bgcolor: (theme) =>
+                                        varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
+                                      '& .MuiLinearProgress-bar': { borderRadius: 3 },
+                                    }}
+                                  />
+                                </Stack>
+                              </TableCell>
+                              <TableCell align="center">
+                                <Tooltip title="일치 회차 목록 보기">
+                                  <span>
+                                    <Button
+                                      size="small"
+                                      variant="soft"
+                                      onClick={() => handleOpenMatchModal(k)}
+                                      disabled={count === 0}
+                                      startIcon={<Iconify icon="solar:eye-bold" />}
+                                    >
+                                      보기
+                                    </Button>
+                                  </span>
+                                </Tooltip>
                               </TableCell>
                             </TableRow>
                           );
@@ -850,7 +1023,7 @@ export function OverviewRoundView() {
               {/* Tab 2: Individual Number Stats */}
               {currentTab === 2 && (
                 <Box sx={{ p: 3 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                     선택한 6개 번호가 각각{' '}
                     <strong>
                       {A} ~ {B}회차
@@ -859,28 +1032,17 @@ export function OverviewRoundView() {
                   </Typography>
 
                   <TableContainer>
-                    <Table>
+                    <Table size="small">
                       <TableHead>
                         <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold', bgcolor: 'background.neutral' }}>
-                            번호
-                          </TableCell>
-                          <TableCell
-                            align="center"
-                            sx={{ fontWeight: 'bold', bgcolor: 'background.neutral' }}
-                          >
+                          <TableCell sx={headerCellSx}>번호</TableCell>
+                          <TableCell align="center" sx={headerCellSx}>
                             출현 횟수
                           </TableCell>
-                          <TableCell
-                            align="center"
-                            sx={{ fontWeight: 'bold', bgcolor: 'background.neutral' }}
-                          >
+                          <TableCell align="center" sx={{ ...headerCellSx, minWidth: 160 }}>
                             출현 비율
                           </TableCell>
-                          <TableCell
-                            align="center"
-                            sx={{ fontWeight: 'bold', bgcolor: 'background.neutral' }}
-                          >
+                          <TableCell align="center" sx={headerCellSx}>
                             조회
                           </TableCell>
                         </TableRow>
@@ -891,34 +1053,66 @@ export function OverviewRoundView() {
                             totalRounds > 0
                               ? ((stat.count / totalRounds) * 100).toFixed(2)
                               : '0.00';
+                          const progressValue = (stat.count / maxSingleCount) * 100;
                           return (
-                            <TableRow key={idx} hover>
+                            <TableRow
+                              key={idx}
+                              hover
+                              sx={{
+                                '&:nth-of-type(even)': {
+                                  bgcolor: (theme) =>
+                                    varAlpha(theme.vars.palette.grey['500Channel'], 0.03),
+                                },
+                              }}
+                            >
                               <TableCell>
                                 <LottoBall number={stat.number} size={32} />
                               </TableCell>
-                              <TableCell
-                                align="center"
-                                sx={{ fontWeight: 'bold', color: 'primary.main' }}
-                              >
-                                {stat.count}회
-                              </TableCell>
-                              <TableCell align="center">{percentage}%</TableCell>
                               <TableCell align="center">
-                                <Button
-                                  size="small"
-                                  variant="soft"
-                                  onClick={() =>
-                                    handleOpenComboModal(
-                                      [stat.number],
-                                      stat.count,
-                                      stat.matchedRounds
-                                    )
-                                  }
-                                  disabled={stat.count === 0}
-                                  startIcon={<Iconify icon="solar:eye-bold" />}
+                                <Typography
+                                  variant="body2"
+                                  sx={{ fontWeight: 'bold', color: 'primary.main' }}
                                 >
-                                  회차 보기
-                                </Button>
+                                  {stat.count}회
+                                </Typography>
+                              </TableCell>
+                              <TableCell align="center">
+                                <Stack spacing={0.5} alignItems="center">
+                                  <Typography variant="caption">{percentage}%</Typography>
+                                  <LinearProgress
+                                    variant="determinate"
+                                    value={progressValue}
+                                    sx={{
+                                      width: '100%',
+                                      height: 6,
+                                      borderRadius: 3,
+                                      bgcolor: (theme) =>
+                                        varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
+                                      '& .MuiLinearProgress-bar': { borderRadius: 3 },
+                                    }}
+                                  />
+                                </Stack>
+                              </TableCell>
+                              <TableCell align="center">
+                                <Tooltip title="출현 회차 목록 보기">
+                                  <span>
+                                    <Button
+                                      size="small"
+                                      variant="soft"
+                                      onClick={() =>
+                                        handleOpenComboModal(
+                                          [stat.number],
+                                          stat.count,
+                                          stat.matchedRounds
+                                        )
+                                      }
+                                      disabled={stat.count === 0}
+                                      startIcon={<Iconify icon="solar:eye-bold" />}
+                                    >
+                                      보기
+                                    </Button>
+                                  </span>
+                                </Tooltip>
                               </TableCell>
                             </TableRow>
                           );
@@ -936,21 +1130,21 @@ export function OverviewRoundView() {
       {/* Modal Dialog for displaying matched rounds */}
       <Dialog open={modalOpen} onClose={() => setModalOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle
-          sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            pb: 1,
+          }}
         >
           <Typography variant="h6">{modalTitle}</Typography>
-          <Typography variant="caption" color="text.secondary">
-            회차 클릭 시 해당 회차 번호 정보를 가져옵니다.
-          </Typography>
+          <IconButton onClick={() => setModalOpen(false)} size="small">
+            <Iconify icon="mingcute:close-line" width={20} />
+          </IconButton>
         </DialogTitle>
         <DialogContent dividers sx={{ p: 2 }}>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            sx={{ mb: 2, px: 1 }}
-          >
-            <Typography variant="body2" color="text.secondary">
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+            <Typography variant="caption" color="text.secondary">
               회차를 클릭하면 해당 회차 정보를 가져옵니다.
             </Typography>
             <ToggleButtonGroup
@@ -960,17 +1154,19 @@ export function OverviewRoundView() {
               size="small"
               color="primary"
             >
-              <ToggleButton value="desc" sx={{ px: 2, py: 0.5, fontWeight: 'bold' }}>
-                최신순 (내림차순)
+              <ToggleButton value="desc" sx={{ px: 1.5, py: 0.3, fontSize: '0.75rem' }}>
+                <Iconify icon="solar:sort-from-top-to-bottom-bold" width={16} sx={{ mr: 0.5 }} />
+                최신순
               </ToggleButton>
-              <ToggleButton value="asc" sx={{ px: 2, py: 0.5, fontWeight: 'bold' }}>
-                과거순 (오름차순)
+              <ToggleButton value="asc" sx={{ px: 1.5, py: 0.3, fontSize: '0.75rem' }}>
+                <Iconify icon="solar:sort-from-bottom-to-top-bold" width={16} sx={{ mr: 0.5 }} />
+                과거순
               </ToggleButton>
             </ToggleButtonGroup>
           </Stack>
 
-          <Box sx={{ maxHeight: 420, overflowY: 'auto' }}>
-            <Grid container spacing={2}>
+          <Box sx={{ maxHeight: 480, overflowY: 'auto' }}>
+            <Grid container spacing={1.5}>
               {sortedModalRounds.map((r, idx) => {
                 const gapInfo = getRoundGapInfo(r.drwNo, highlightNumbers);
                 return (
@@ -978,9 +1174,10 @@ export function OverviewRoundView() {
                     <Card
                       onClick={() => handleSelectRoundFromModal(r.drwNo)}
                       sx={{
-                        p: 2,
+                        p: 1.5,
                         cursor: 'pointer',
-                        border: '1px solid transparent',
+                        border: '1px solid',
+                        borderColor: 'divider',
                         transition: 'all 0.2s ease',
                         '&:hover': {
                           borderColor: 'primary.main',
@@ -991,70 +1188,46 @@ export function OverviewRoundView() {
                         },
                       }}
                     >
-                      <Stack spacing={1.5}>
+                      <Stack spacing={1}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
-                          <Stack direction="row" spacing={1} alignItems="center">
+                          <Stack direction="row" spacing={0.8} alignItems="center">
                             <Typography
                               variant="subtitle2"
                               sx={{ fontWeight: 'bold', color: 'text.primary' }}
                             >
-                              {r.drwNo}회차
+                              {r.drwNo}회
                             </Typography>
-                            {gapInfo.isFirst ? (
-                              <Box
-                                sx={{
-                                  px: 0.8,
-                                  py: 0.1,
-                                  borderRadius: 0.5,
-                                  fontSize: '0.675rem',
-                                  fontWeight: 'bold',
-                                  bgcolor: (theme) =>
-                                    varAlpha(theme.vars.palette.info.mainChannel, 0.1),
-                                  color: 'info.main',
-                                }}
-                              >
-                                첫 출현
-                              </Box>
-                            ) : (
-                              <Box
-                                sx={{
-                                  px: 0.8,
-                                  py: 0.1,
-                                  borderRadius: 0.5,
-                                  fontSize: '0.675rem',
-                                  fontWeight: 'bold',
-                                  bgcolor: (theme) =>
-                                    varAlpha(theme.vars.palette.success.mainChannel, 0.1),
-                                  color: 'success.main',
-                                }}
-                              >
-                                +{gapInfo.gap}회차 만에
-                              </Box>
-                            )}
+                            <Chip
+                              label={gapInfo.isFirst ? '첫 출현' : `+${gapInfo.gap}회 만에`}
+                              size="small"
+                              color={gapInfo.isFirst ? 'info' : 'success'}
+                              variant="soft"
+                              sx={{ height: 20, fontSize: '0.675rem', fontWeight: 'bold' }}
+                            />
                           </Stack>
-                          <Typography variant="caption" color="text.secondary">
+                          <Typography variant="caption" color="text.disabled">
                             {r.drwNoDate}
                           </Typography>
                         </Stack>
 
-                        <Stack direction="row" spacing={0.8} alignItems="center">
+                        <Stack direction="row" spacing={0.6} alignItems="center">
                           {r.numbers.map((num: number) => {
                             const isHighlighted = highlightNumbers.includes(num);
                             return (
                               <LottoBall
                                 key={num}
                                 number={num}
-                                size={28}
+                                size={26}
                                 highlighted={isHighlighted}
                               />
                             );
                           })}
-                          <Typography variant="body2" sx={{ mx: 0.2, color: 'text.secondary' }}>
+                          <Typography variant="caption" sx={{ mx: 0.2, color: 'text.secondary' }}>
                             +
                           </Typography>
                           <LottoBall
                             number={r.bonus}
-                            size={28}
+                            size={26}
                             highlighted={includeBonus && highlightNumbers.includes(r.bonus)}
                           />
                         </Stack>
