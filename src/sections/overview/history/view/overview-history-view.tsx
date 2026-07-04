@@ -1,28 +1,38 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import Typography from "@mui/material/Typography";
-import Chip from "@mui/material/Chip";
-import Button from "@mui/material/Button";
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
+import Button from '@mui/material/Button';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
 
 import { Iconify } from 'src/components/iconify';
-import { DashboardContent } from "src/layouts/dashboard";
-import { getAllLottoNumbers, ThemeType, THEME_NAMES, getCellColorByTheme, getPredictCellColor } from "src/api/lottolibrary";
+import { DashboardContent } from 'src/layouts/dashboard';
+import {
+  getAllLottoNumbers,
+  ThemeType,
+  THEME_NAMES,
+  getCellColorByTheme,
+  getPredictCellColor,
+} from 'src/api/lottolibrary';
 
 // ----------------------------------------------------------------------
 
 const LOTTO_NUMBERS = Array.from({ length: 45 }, (_, i) => i + 1);
 
 // 당첨 등수 계산 (보너스 번호 포함)
-function calculatePrizeRank(selectedNumbers: number[], winningNumbers: number[], bonusNumber: number): { matchCount: number; rank: number | null; hasBonus: boolean } {
-  const matchCount = selectedNumbers.filter(n => winningNumbers.includes(n)).length;
+function calculatePrizeRank(
+  selectedNumbers: number[],
+  winningNumbers: number[],
+  bonusNumber: number
+): { matchCount: number; rank: number | null; hasBonus: boolean } {
+  const matchCount = selectedNumbers.filter((n) => winningNumbers.includes(n)).length;
   const hasBonus = selectedNumbers.includes(bonusNumber);
 
   let rank: number | null = null;
@@ -44,12 +54,18 @@ function calculatePrizeRank(selectedNumbers: number[], winningNumbers: number[],
 // 등수별 색상
 function getRankColor(rank: number | null): string {
   switch (rank) {
-    case 1: return '#FFD700'; // Gold
-    case 2: return '#C0C0C0'; // Silver
-    case 3: return '#CD7F32'; // Bronze
-    case 4: return '#4CAF50'; // Green
-    case 5: return '#2196F3'; // Blue
-    default: return '#9E9E9E';
+    case 1:
+      return '#FFD700'; // Gold
+    case 2:
+      return '#C0C0C0'; // Silver
+    case 3:
+      return '#CD7F32'; // Bronze
+    case 4:
+      return '#4CAF50'; // Green
+    case 5:
+      return '#2196F3'; // Blue
+    default:
+      return '#9E9E9E';
   }
 }
 
@@ -66,7 +82,7 @@ const LottoCell = ({
   textColor,
   content,
   onClick,
-  cursor = "default",
+  cursor = 'default',
   borderColor,
 }: {
   num: number;
@@ -82,24 +98,22 @@ const LottoCell = ({
     style={{
       flex: 1,
       minWidth: 0,
-      aspectRatio: "1/1",
+      aspectRatio: '1/1',
       backgroundColor: bgColor,
-      borderRadius: "20%",
+      borderRadius: '20%',
       cursor,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontWeight: "bold",
-      fontSize: "clamp(0.1px, 1.8vw, 12px)",
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontWeight: 'bold',
+      fontSize: 'clamp(0.1px, 1.8vw, 12px)',
       color: textColor,
-      position: "relative",
-      overflow: "hidden",
-      boxShadow: borderColor ? `inset 0 0 0 3px ${borderColor}` : "none",
+      position: 'relative',
+      overflow: 'hidden',
+      boxShadow: borderColor ? `inset 0 0 0 3px ${borderColor}` : 'none',
     }}
   >
-    <span style={{ position: 'relative', zIndex: 1 }}>
-      {content}
-    </span>
+    <span style={{ position: 'relative', zIndex: 1 }}>{content}</span>
   </div>
 );
 
@@ -116,35 +130,35 @@ function PredictRow({
   theme: ThemeType;
 }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", marginBottom: "2px" }}>
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2px' }}>
       <Box
         sx={{
-          width: "40px",
+          width: '40px',
           flexShrink: 0,
-          fontSize: "10px",
-          textAlign: "right",
-          marginRight: "6px",
-          color: "#999",
-          fontFamily: "monospace",
+          fontSize: '10px',
+          textAlign: 'right',
+          marginRight: '6px',
+          color: '#999',
+          fontFamily: 'monospace',
         }}
       >
         선택
       </Box>
 
-      <div style={{ flex: 1, display: "flex", gap: "1px" }}>
+      <div style={{ flex: 1, display: 'flex', gap: '1px' }}>
         {LOTTO_NUMBERS.map((num) => {
           const isSelected = selectedNumbers.includes(num);
           const shouldShowNumber = showNumbers || isSelected;
           const bgColor = getPredictCellColor(theme, num, isSelected);
-          const textColor = (isSelected || theme !== 'default') ? '#fff' : '#555';
+          const textColor = isSelected || theme !== 'default' ? '#fff' : '#555';
 
           return (
             <LottoCell
               key={num}
               num={num}
               bgColor={bgColor}
-              textColor={shouldShowNumber ? textColor : "transparent"}
-              content={shouldShowNumber ? num : ""}
+              textColor={shouldShowNumber ? textColor : 'transparent'}
+              content={shouldShowNumber ? num : ''}
               onClick={() => handleNumberClick(num)}
               cursor="pointer"
             />
@@ -155,8 +169,8 @@ function PredictRow({
       {/* 결과 행의 등수 표시 영역과 동일한 너비의 빈 공간 */}
       <Box
         sx={{
-          width: { xs: "40px", sm: "80px" },
-          marginLeft: "6px",
+          width: { xs: '40px', sm: '80px' },
+          marginLeft: '6px',
           flexShrink: 0,
         }}
       />
@@ -176,7 +190,11 @@ function ResultRow({
   showNumbers: boolean;
   theme: ThemeType;
 }) {
-  let { matchCount, rank, hasBonus } = calculatePrizeRank(selectedNumbers, round.numbers, round.bonus);
+  let { matchCount, rank, hasBonus } = calculatePrizeRank(
+    selectedNumbers,
+    round.numbers,
+    round.bonus
+  );
 
   // 번호를 선택하지 않은 경우(초기 상태)에는 해당 회차의 당첨 번호 그 자체이므로 1등으로 표시
   if (selectedNumbers.length === 0) {
@@ -184,21 +202,21 @@ function ResultRow({
   }
 
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
       <Box
         sx={{
-          width: "40px",
-          fontSize: "10px",
-          textAlign: "right",
-          marginRight: "6px",
-          color: "#999",
-          fontFamily: "monospace",
+          width: '40px',
+          fontSize: '10px',
+          textAlign: 'right',
+          marginRight: '6px',
+          color: '#999',
+          fontFamily: 'monospace',
         }}
       >
         {round.drwNo}
       </Box>
 
-      <div style={{ flex: 1, display: "flex", gap: "1px" }}>
+      <div style={{ flex: 1, display: 'flex', gap: '1px' }}>
         {LOTTO_NUMBERS.map((num) => {
           const isWinning = round.numbers.includes(num);
           const isBonus = round.bonus === num;
@@ -220,10 +238,10 @@ function ResultRow({
               key={num}
               num={num}
               bgColor={bgColor}
-              textColor={shouldShowNumber ? "#fff" : "transparent"}
-              content={shouldShowNumber ? num : ""}
+              textColor={shouldShowNumber ? '#fff' : 'transparent'}
+              content={shouldShowNumber ? num : ''}
               cursor="default"
-              borderColor={isBonusMatch ? "#d54dff" : undefined}
+              borderColor={isBonusMatch ? '#d54dff' : undefined}
             />
           );
         })}
@@ -232,10 +250,10 @@ function ResultRow({
       {/* 결과 표시 */}
       <Box
         sx={{
-          width: { xs: "40px", sm: "80px" },
-          marginLeft: "6px",
-          display: "flex",
-          alignItems: "center",
+          width: { xs: '40px', sm: '80px' },
+          marginLeft: '6px',
+          display: 'flex',
+          alignItems: 'center',
           gap: 0.5,
         }}
       >
@@ -259,7 +277,7 @@ function ResultRow({
             sx={{
               color: '#FFD700',
               width: { xs: 10, sm: 14 },
-              height: { xs: 10, sm: 14 }
+              height: { xs: 10, sm: 14 },
             }}
           />
         )}
@@ -282,13 +300,16 @@ export function OverviewHistoryView() {
     setData(sortedDesc);
   }, []);
 
-  const handleNumberClick = useCallback((num: number) => {
-    if (selectedNumbers.includes(num)) {
-      setSelectedNumbers((prev) => prev.filter((n) => n !== num));
-    } else if (selectedNumbers.length < 6) {
-      setSelectedNumbers((prev) => [...prev, num].sort((a, b) => a - b));
-    }
-  }, [selectedNumbers]);
+  const handleNumberClick = useCallback(
+    (num: number) => {
+      if (selectedNumbers.includes(num)) {
+        setSelectedNumbers((prev) => prev.filter((n) => n !== num));
+      } else if (selectedNumbers.length < 6) {
+        setSelectedNumbers((prev) => [...prev, num].sort((a, b) => a - b));
+      }
+    },
+    [selectedNumbers]
+  );
 
   const handleClear = useCallback(() => {
     setSelectedNumbers([]);
@@ -303,13 +324,13 @@ export function OverviewHistoryView() {
     if (selectedNumbers.length === 6) {
       // 6개 선택 시: 5등 이상 당첨된 회차만 (3개 이상 일치)
       return data.filter((round) => {
-        const matchCount = selectedNumbers.filter(n => round.numbers.includes(n)).length;
+        const matchCount = selectedNumbers.filter((n) => round.numbers.includes(n)).length;
         return matchCount >= 3;
       });
     } else {
       // 1-5개 선택 시: 선택한 번호가 모두 포함된 회차만
       return data.filter((round) => {
-        return selectedNumbers.every(n => round.numbers.includes(n) || round.bonus === n);
+        return selectedNumbers.every((n) => round.numbers.includes(n) || round.bonus === n);
       });
     }
   }, [data, selectedNumbers]);
@@ -358,14 +379,26 @@ export function OverviewHistoryView() {
             '& .MuiCardHeader-action': { m: 0, width: { xs: '100%', sm: 'auto' } },
           }}
           action={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexWrap: 'wrap', justifyContent: { xs: 'center', sm: 'flex-end' } }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                flexWrap: 'wrap',
+                justifyContent: { xs: 'center', sm: 'flex-end' },
+              }}
+            >
               <Button
                 variant="soft"
                 color="error"
                 size="small"
                 onClick={handleClear}
                 disabled={selectedNumbers.length === 0}
-                sx={{ minWidth: 40, height: { xs: 22, sm: 26, md: 28 }, fontSize: { xs: 10, sm: 12 } }}
+                sx={{
+                  minWidth: 40,
+                  height: { xs: 22, sm: 26, md: 28 },
+                  fontSize: { xs: 10, sm: 12 },
+                }}
               >
                 초기화
               </Button>
@@ -380,8 +413,16 @@ export function OverviewHistoryView() {
               >
                 {(Object.keys(THEME_NAMES) as ThemeType[]).map((themeKey) => (
                   <Tooltip key={themeKey} title={THEME_NAMES[themeKey]}>
-                    <ToggleButton value={themeKey} aria-label={THEME_NAMES[themeKey]} sx={{ width: { xs: 18, sm: 22, md: 24 }, height: { xs: 18, sm: 22, md: 24 } }}>
-                      <Iconify icon={themeKey === 'default' ? 'mdi:format-color-fill' : 'mdi:palette'} width={24} sx={{ width: { xs: 12, sm: 15, md: 16 } }} />
+                    <ToggleButton
+                      value={themeKey}
+                      aria-label={THEME_NAMES[themeKey]}
+                      sx={{ width: { xs: 18, sm: 22, md: 24 }, height: { xs: 18, sm: 22, md: 24 } }}
+                    >
+                      <Iconify
+                        icon={themeKey === 'default' ? 'mdi:format-color-fill' : 'mdi:palette'}
+                        width={24}
+                        sx={{ width: { xs: 12, sm: 15, md: 16 } }}
+                      />
                     </ToggleButton>
                   </Tooltip>
                 ))}
@@ -389,10 +430,7 @@ export function OverviewHistoryView() {
 
               <ToggleButtonGroup
                 size="small"
-                value={[
-                  showNumbers && 'showNumbers',
-                  sortByRank && 'sortByRank',
-                ].filter(Boolean)}
+                value={[showNumbers && 'showNumbers', sortByRank && 'sortByRank'].filter(Boolean)}
                 onChange={(event, newValues) => {
                   setShowNumbers(newValues.includes('showNumbers'));
                   setSortByRank(newValues.includes('sortByRank'));
@@ -400,25 +438,41 @@ export function OverviewHistoryView() {
                 aria-label="view settings"
               >
                 <Tooltip title="숫자 보기">
-                  <ToggleButton value="showNumbers" aria-label="show numbers" sx={{ width: { xs: 18, sm: 22, md: 24 }, height: { xs: 18, sm: 22, md: 24 } }}>
-                    <Iconify icon="mdi:numeric" width={24} sx={{ width: { xs: 12, sm: 15, md: 16 } }} />
+                  <ToggleButton
+                    value="showNumbers"
+                    aria-label="show numbers"
+                    sx={{ width: { xs: 18, sm: 22, md: 24 }, height: { xs: 18, sm: 22, md: 24 } }}
+                  >
+                    <Iconify
+                      icon="mdi:numeric"
+                      width={24}
+                      sx={{ width: { xs: 12, sm: 15, md: 16 } }}
+                    />
                   </ToggleButton>
                 </Tooltip>
                 <Tooltip title="등수별 정렬">
-                  <ToggleButton value="sortByRank" aria-label="sort by rank" sx={{ width: { xs: 18, sm: 22, md: 24 }, height: { xs: 18, sm: 22, md: 24 } }}>
-                    <Iconify icon="mdi:sort-descending" width={24} sx={{ width: { xs: 12, sm: 15, md: 16 } }} />
+                  <ToggleButton
+                    value="sortByRank"
+                    aria-label="sort by rank"
+                    sx={{ width: { xs: 18, sm: 22, md: 24 }, height: { xs: 18, sm: 22, md: 24 } }}
+                  >
+                    <Iconify
+                      icon="mdi:sort-descending"
+                      width={24}
+                      sx={{ width: { xs: 12, sm: 15, md: 16 } }}
+                    />
                   </ToggleButton>
                 </Tooltip>
               </ToggleButtonGroup>
-
-
             </Box>
           }
         />
 
         <Box sx={{ p: 2 }}>
-          <Box sx={{ overflowX: "auto", width: "100%" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "1px", minWidth: "600px" }}>
+          <Box sx={{ overflowX: 'auto', width: '100%' }}>
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '1px', minWidth: '600px' }}
+            >
               {/* 예측/선택 행 */}
               <PredictRow
                 selectedNumbers={selectedNumbers}
@@ -428,14 +482,16 @@ export function OverviewHistoryView() {
               />
 
               {/* 선택 정보 표시 */}
-              <Box sx={{
-                py: { xs: 1, sm: 1.5 },
-                display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: { xs: 1, sm: 1 },
-              }}>
+              <Box
+                sx={{
+                  py: { xs: 1, sm: 1.5 },
+                  display: 'flex',
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: { xs: 1, sm: 1 },
+                }}
+              >
                 <Typography
                   variant="body2"
                   color="text.secondary"
@@ -447,7 +503,14 @@ export function OverviewHistoryView() {
                   {selectionInfo}
                 </Typography>
                 {selectedNumbers.length > 0 && (
-                  <Box sx={{ display: 'flex', gap: { xs: 0.5, sm: 0.5 }, flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      gap: { xs: 0.5, sm: 0.5 },
+                      flexWrap: 'wrap',
+                      justifyContent: 'center',
+                    }}
+                  >
                     {selectedNumbers.map((num) => (
                       <Chip
                         key={num}
@@ -458,7 +521,7 @@ export function OverviewHistoryView() {
                           height: { xs: 20, sm: 22 },
                           fontSize: { xs: 10, sm: 11 },
                           '& .MuiChip-label': { px: { xs: 0.8, sm: 1 } },
-                          '& .MuiChip-deleteIcon': { fontSize: { xs: 14, sm: 15 } }
+                          '& .MuiChip-deleteIcon': { fontSize: { xs: 14, sm: 15 } },
                         }}
                       />
                     ))}
@@ -481,11 +544,13 @@ export function OverviewHistoryView() {
 
           {/* 더 보기 버튼 */}
           {visibleCount < filteredResults.length && (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 3, mb: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3, mb: 1 }}>
               <Button
                 variant="soft"
                 color="inherit"
-                onClick={() => setVisibleCount((prev) => Math.min(prev + 50, filteredResults.length))}
+                onClick={() =>
+                  setVisibleCount((prev) => Math.min(prev + 50, filteredResults.length))
+                }
                 sx={{ minWidth: 100 }}
               >
                 더 보기 ({filteredResults.length - visibleCount}개 남음)

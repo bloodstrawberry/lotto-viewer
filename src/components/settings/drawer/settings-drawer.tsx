@@ -32,7 +32,7 @@ export function SettingsDrawer({ sx, defaultSettings }: SettingsDrawerProps) {
 
   // Visible options by default settings
   const visibility = {
-    fontSize: hasKeys(defaultSettings, ['fontSize']),    
+    fontSize: hasKeys(defaultSettings, ['fontSize']),
     fontFamily: hasKeys(defaultSettings, ['fontFamily']),
   };
 
@@ -78,7 +78,6 @@ export function SettingsDrawer({ sx, defaultSettings }: SettingsDrawerProps) {
       </Tooltip>
     </Box>
   );
-
 
   const renderFont = () => (
     <LargeBlock title="Font" sx={{ gap: 2.5 }}>

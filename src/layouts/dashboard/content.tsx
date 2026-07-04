@@ -46,7 +46,7 @@ export function DashboardContent({
           [theme.breakpoints.up(layoutQuery)]: {
             px: 'var(--layout-dashboard-content-px)',
             ...(isNavHorizontal && { '--layout-dashboard-content-pt': '40px' }),
-            ...({ maxWidth: '90%' }),
+            ...{ maxWidth: '90%' },
           },
           ...(disablePadding && {
             p: {

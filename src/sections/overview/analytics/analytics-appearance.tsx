@@ -183,7 +183,8 @@ export function AnalyticsAppearance({ rounds, includeBonus }: Props) {
                         color: '#fff',
                         fontWeight: 700,
                         fontSize: '0.9rem',
-                        boxShadow: (theme) => `inset 0 0 8px rgba(255,255,255,0.3), ${theme.shadows[2]}`,
+                        boxShadow: (theme) =>
+                          `inset 0 0 8px rgba(255,255,255,0.3), ${theme.shadows[2]}`,
                       }}
                     >
                       {row.number}

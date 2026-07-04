@@ -63,16 +63,22 @@ export const getBallColor = (num: number) => {
 };
 
 // Theme-based cell colors for pattern view
-export const getCellColorByTheme = (theme: ThemeType, num: number, isWinning: boolean, isBonus: boolean, isClicked: boolean): string => {
+export const getCellColorByTheme = (
+  theme: ThemeType,
+  num: number,
+  isWinning: boolean,
+  isBonus: boolean,
+  isClicked: boolean
+): string => {
   // Bonus always has priority
   if (isBonus) return '#d54dffff';
-  
+
   // Clicked state
   if (isClicked) return '#000000ff';
-  
+
   // Non-winning cells
   if (!isWinning) return '#F1F3F4';
-  
+
   // Winning cells - apply theme
   if (theme === 'range') {
     // Range-based colors (same as getBallColor)
@@ -82,7 +88,7 @@ export const getCellColorByTheme = (theme: ThemeType, num: number, isWinning: bo
     if (num <= 40) return '#aaaaaa';
     return '#b0d840';
   }
-  
+
   // Default theme
   return '#658effff';
 };
@@ -90,7 +96,7 @@ export const getCellColorByTheme = (theme: ThemeType, num: number, isWinning: bo
 // Get predict cell color (for user selection row)
 export const getPredictCellColor = (theme: ThemeType, num: number, isSelected: boolean): string => {
   if (isSelected) return '#000000ff';
-  
+
   // Non-selected cells show theme preview
   if (theme === 'range') {
     // Show range colors even when not selected
@@ -100,14 +106,14 @@ export const getPredictCellColor = (theme: ThemeType, num: number, isSelected: b
     if (num <= 40) return '#aaaaaa';
     return '#b0d840';
   }
-  
+
   // Default theme
   return '#E8EAED';
 };
 
 export const getLength = () => {
-    return lottoNumber.length;
-}
+  return lottoNumber.length;
+};
 
 export const getLatestLottoNumber = () => {
   if (!lottoNumber || lottoNumber.length === 0) {
@@ -118,8 +124,15 @@ export const getLatestLottoNumber = () => {
 
   return {
     ...latest,
-    numbers: [latest.drwtNo1, latest.drwtNo2, latest.drwtNo3, latest.drwtNo4, latest.drwtNo5, latest.drwtNo6],
-    bonus: latest.bnusNo
+    numbers: [
+      latest.drwtNo1,
+      latest.drwtNo2,
+      latest.drwtNo3,
+      latest.drwtNo4,
+      latest.drwtNo5,
+      latest.drwtNo6,
+    ],
+    bonus: latest.bnusNo,
   };
 };
 
@@ -132,8 +145,15 @@ export const getLottoByIndex = (index: number) => {
 
   return {
     ...target,
-    numbers: [target.drwtNo1, target.drwtNo2, target.drwtNo3, target.drwtNo4, target.drwtNo5, target.drwtNo6],
-    bonus: target.bnusNo
+    numbers: [
+      target.drwtNo1,
+      target.drwtNo2,
+      target.drwtNo3,
+      target.drwtNo4,
+      target.drwtNo5,
+      target.drwtNo6,
+    ],
+    bonus: target.bnusNo,
   };
 };
 

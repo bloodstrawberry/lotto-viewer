@@ -41,57 +41,51 @@ export function ShareButton() {
 ${LOTTO_URL}`;
   }, []);
 
+  const handleShare = async () => {
+    const shareText = generateShareText();
 
-
-const handleShare = async () => {
-  const shareText = generateShareText();
-
-  if (!shareText) {
-    setSnackbarMessage('데이터를 불러올 수 없습니다.');
-    setOpenSnackbar(true);
-    return;
-  }
-
-  const isMobile = getIsMobile();
-
-  /**
-   * ✅ 모바일에서만 Web Share API 사용
-   */
-  if (isMobile && navigator.share) {
-    try {
-      await navigator.share({
-        title: '로또 당첨 결과',
-        text: shareText,
-      });
+    if (!shareText) {
+      setSnackbarMessage('데이터를 불러올 수 없습니다.');
+      setOpenSnackbar(true);
       return;
-    } catch (error) {
-      // 사용자가 취소한 경우 → 정상
-      console.warn('Share cancelled or failed:', error);
     }
-  }
 
-  /**
-   * ✅ 웹 환경 → 무조건 복사
-   */
-  try {
-    await navigator.clipboard.writeText(shareText);
-    setSnackbarMessage('최신 로또 1등 정보가 복사되었습니다!');
-    setOpenSnackbar(true);
-  } catch (error) {
-    console.error('Clipboard copy failed:', error);
-    setSnackbarMessage('복사에 실패했습니다.');
-    setOpenSnackbar(true);
-  }
-};
+    const isMobile = getIsMobile();
 
+    /**
+     * ✅ 모바일에서만 Web Share API 사용
+     */
+    if (isMobile && navigator.share) {
+      try {
+        await navigator.share({
+          title: '로또 당첨 결과',
+          text: shareText,
+        });
+        return;
+      } catch (error) {
+        // 사용자가 취소한 경우 → 정상
+        console.warn('Share cancelled or failed:', error);
+      }
+    }
+
+    /**
+     * ✅ 웹 환경 → 무조건 복사
+     */
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setSnackbarMessage('최신 로또 1등 정보가 복사되었습니다!');
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error('Clipboard copy failed:', error);
+      setSnackbarMessage('복사에 실패했습니다.');
+      setOpenSnackbar(true);
+    }
+  };
 
   return (
     <>
       <Tooltip title="공유하기">
-        <IconButton
-          onClick={handleShare}
-          sx={{ width: 40, height: 40 }}
-        >
+        <IconButton onClick={handleShare} sx={{ width: 40, height: 40 }}>
           <Iconify icon="mdi:share-variant" width={24} />
         </IconButton>
       </Tooltip>

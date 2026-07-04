@@ -30,7 +30,8 @@ type PeriodType = '5weeks' | '10weeks' | '6months' | '1year' | 'all';
 export function OverviewAnalyticsView() {
   const allLotto = useMemo(() => getAllLottoNumbers(), []);
   const latestRound = allLotto.length > 0 ? allLotto[allLotto.length - 1].drwNo : 0;
-  const latestDate = allLotto.length > 0 ? new Date(allLotto[allLotto.length - 1].drwNoDate) : new Date();
+  const latestDate =
+    allLotto.length > 0 ? new Date(allLotto[allLotto.length - 1].drwNoDate) : new Date();
 
   const [startRound, setStartRound] = useState(1);
   const [endRound, setEndRound] = useState(latestRound);
@@ -39,45 +40,48 @@ export function OverviewAnalyticsView() {
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>('all');
 
   // 기간에 따른 시작 회차 계산
-  const getStartRoundByPeriod = useCallback((period: PeriodType): number => {
-    if (period === 'all') return 1;
+  const getStartRoundByPeriod = useCallback(
+    (period: PeriodType): number => {
+      if (period === 'all') return 1;
 
-    const targetDate = new Date(latestDate);
+      const targetDate = new Date(latestDate);
 
-    switch (period) {
-      case '5weeks':
-        targetDate.setDate(targetDate.getDate() - 4 * 7);
-        break;
-      case '10weeks':
-        targetDate.setDate(targetDate.getDate() - 9 * 7);
-        break;
-      case '6months':
-        targetDate.setMonth(targetDate.getMonth() - 6);
-        break;
-      case '1year':
-        targetDate.setFullYear(targetDate.getFullYear() - 1);
-        break;
-      default:
-        return 1;
-    }
+      switch (period) {
+        case '5weeks':
+          targetDate.setDate(targetDate.getDate() - 4 * 7);
+          break;
+        case '10weeks':
+          targetDate.setDate(targetDate.getDate() - 9 * 7);
+          break;
+        case '6months':
+          targetDate.setMonth(targetDate.getMonth() - 6);
+          break;
+        case '1year':
+          targetDate.setFullYear(targetDate.getFullYear() - 1);
+          break;
+        default:
+          return 1;
+      }
 
-    // targetDate 이후의 첫 번째 회차 찾기
-    const foundRound = allLotto.find((r) => new Date(r.drwNoDate) >= targetDate);
-    return foundRound ? foundRound.drwNo : 1;
-  }, [allLotto, latestDate]);
+      // targetDate 이후의 첫 번째 회차 찾기
+      const foundRound = allLotto.find((r) => new Date(r.drwNoDate) >= targetDate);
+      return foundRound ? foundRound.drwNo : 1;
+    },
+    [allLotto, latestDate]
+  );
 
   // 기간 버튼 클릭 핸들러
-  const handlePeriodChange = useCallback((
-    _event: React.MouseEvent<HTMLElement>,
-    newPeriod: PeriodType | null
-  ) => {
-    if (newPeriod !== null) {
-      setSelectedPeriod(newPeriod);
-      const newStartRound = getStartRoundByPeriod(newPeriod);
-      setStartRound(newStartRound);
-      setEndRound(latestRound);
-    }
-  }, [getStartRoundByPeriod, latestRound]);
+  const handlePeriodChange = useCallback(
+    (_event: React.MouseEvent<HTMLElement>, newPeriod: PeriodType | null) => {
+      if (newPeriod !== null) {
+        setSelectedPeriod(newPeriod);
+        const newStartRound = getStartRoundByPeriod(newPeriod);
+        setStartRound(newStartRound);
+        setEndRound(latestRound);
+      }
+    },
+    [getStartRoundByPeriod, latestRound]
+  );
 
   // 수동으로 회차 입력 시 기간 선택 해제
   const handleStartRoundChange = useCallback((value: number) => {
@@ -85,9 +89,12 @@ export function OverviewAnalyticsView() {
     setSelectedPeriod('all'); // 수동 입력 시 전체로 변경 (또는 선택 해제)
   }, []);
 
-  const handleEndRoundChange = useCallback((value: number) => {
-    setEndRound(Math.min(latestRound, value));
-  }, [latestRound]);
+  const handleEndRoundChange = useCallback(
+    (value: number) => {
+      setEndRound(Math.min(latestRound, value));
+    },
+    [latestRound]
+  );
 
   const filteredRounds = useMemo(() => {
     return allLotto.filter((r) => r.drwNo >= startRound && r.drwNo <= endRound);
@@ -99,12 +106,20 @@ export function OverviewAnalyticsView() {
         <Typography variant="h4">통계분석</Typography>
       </Stack>
 
-      <Typography variant="subtitle1" sx={{ mb: 2, color: 'text.secondary', fontWeight: 'bold', textAlign: 'center' }}>
+      <Typography
+        variant="subtitle1"
+        sx={{ mb: 2, color: 'text.secondary', fontWeight: 'bold', textAlign: 'center' }}
+      >
         분석 범위: {startRound}회 ~ {endRound}회 ({filteredRounds.length}회)
       </Typography>
 
       <Card sx={{ mb: 3, p: 3, borderRadius: 2 }}>
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="center" justifyContent="center">
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          spacing={3}
+          alignItems="center"
+          justifyContent="center"
+        >
           <Stack direction="row" spacing={1} alignItems="center">
             <TextField
               label="시작 회차"
@@ -155,7 +170,6 @@ export function OverviewAnalyticsView() {
             <ToggleButton value="1year">1년</ToggleButton>
             <ToggleButton value="all">전체</ToggleButton>
           </ToggleButtonGroup>
-
 
           <ToggleButtonGroup
             size="small"
@@ -215,11 +229,7 @@ export function OverviewAnalyticsView() {
       )}
 
       {currentTab === 1 && (
-        <AnalyticsMissing
-          allLotto={allLotto}
-          endRound={endRound}
-          includeBonus={includeBonus}
-        />
+        <AnalyticsMissing allLotto={allLotto} endRound={endRound} includeBonus={includeBonus} />
       )}
 
       {currentTab === 2 && (

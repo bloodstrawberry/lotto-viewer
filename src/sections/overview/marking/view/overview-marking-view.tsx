@@ -59,7 +59,7 @@ export function OverviewMarkingView() {
     const prevRounds = data.slice(index + 1, index + 1 + overlapCount);
     return prevRounds.map((d, idx) => ({
       numbers: d.numbers,
-      color: OVERLAP_COLORS[idx % OVERLAP_COLORS.length]
+      color: OVERLAP_COLORS[idx % OVERLAP_COLORS.length],
     }));
   }, [data, selectedRound, overlapCount]);
 
@@ -84,7 +84,7 @@ export function OverviewMarkingView() {
                     '& .MuiToggleButton-root': {
                       border: '1px solid',
                       borderColor: 'divider',
-                    }
+                    },
                   }}
                 >
                   {[1, 2, 3, 4, 5].map((num) => (
@@ -116,7 +116,7 @@ export function OverviewMarkingView() {
                   '& .MuiToggleButton-root': {
                     border: '1px solid',
                     borderColor: 'divider',
-                  }
+                  },
                 }}
               >
                 <Tooltip title="마킹 끔">
@@ -142,7 +142,7 @@ export function OverviewMarkingView() {
                   sx={{
                     width: 40,
                     height: 40,
-                    display: { xs: 'none', md: 'inline-flex' }
+                    display: { xs: 'none', md: 'inline-flex' },
                   }}
                 >
                   <Iconify icon={showGrid ? 'solar:list-bold' : 'solar:widget-5-bold'} width={24} />
@@ -152,7 +152,7 @@ export function OverviewMarkingView() {
           }
           sx={{
             py: 2,
-            '& .MuiCardHeader-action': { alignSelf: 'center', m: 0 }
+            '& .MuiCardHeader-action': { alignSelf: 'center', m: 0 },
           }}
         />
 
@@ -187,9 +187,9 @@ export function OverviewMarkingView() {
                 const itemExtraLines =
                   overlapCount > 0 && itemIndex !== -1
                     ? data.slice(itemIndex + 1, itemIndex + 1 + overlapCount).map((prev, idx) => ({
-                      numbers: prev.numbers,
-                      color: OVERLAP_COLORS[idx % OVERLAP_COLORS.length],
-                    }))
+                        numbers: prev.numbers,
+                        color: OVERLAP_COLORS[idx % OVERLAP_COLORS.length],
+                      }))
                     : [];
 
                 return (

@@ -361,7 +361,9 @@ export function CalendarView() {
               showBonus={showBonus.value}
               onToggleBonus={showBonus.onToggle}
               filterMode={filterMode.value ? 'calendar' : 'all'}
-              onToggleFilterMode={(mode: 'all' | 'calendar') => filterMode.setValue(mode === 'calendar')}
+              onToggleFilterMode={(mode: 'all' | 'calendar') =>
+                filterMode.setValue(mode === 'calendar')
+              }
               viewOptions={[
                 { value: 'dayGridMonth', label: 'Month', icon: 'mingcute:calendar-month-line' },
                 { value: 'timeGridWeek', label: 'Week', icon: 'mingcute:calendar-week-line' },

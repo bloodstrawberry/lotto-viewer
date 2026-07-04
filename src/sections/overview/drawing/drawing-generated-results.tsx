@@ -29,7 +29,13 @@ export function DrawingGeneratedResults({ results, includedNumbers, onShare }: P
 
       <Stack spacing={{ xs: 2.5, md: 3 }} sx={{ mt: 2 }}>
         {results.map((result, setIndex) => (
-          <Stack key={setIndex} direction="row" spacing={0} justifyContent="center" alignItems="center">
+          <Stack
+            key={setIndex}
+            direction="row"
+            spacing={0}
+            justifyContent="center"
+            alignItems="center"
+          >
             <Typography
               variant="body2"
               sx={{

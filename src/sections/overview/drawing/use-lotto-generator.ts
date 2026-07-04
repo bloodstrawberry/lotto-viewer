@@ -86,7 +86,9 @@ export function useLottoGenerator() {
       toast.info(`${type === 'included' ? '포함수' : '제외수'} 3개를 자동으로 선택합니다.`);
 
       const shuffledPool = [...LOTTO_NUMBERS]
-        .filter((n) => (type === 'included' ? !excludedNumbers.includes(n) : !includedNumbers.includes(n)))
+        .filter((n) =>
+          type === 'included' ? !excludedNumbers.includes(n) : !includedNumbers.includes(n)
+        )
         .sort(() => 0.5 - Math.random());
 
       const selected = shuffledPool.slice(0, 3).sort((a, b) => a - b);

@@ -16,7 +16,6 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 
 import { Label } from 'src/components/label';
 
-
 import { getBallColor } from 'src/api/lottolibrary';
 
 // ----------------------------------------------------------------------
@@ -86,7 +85,7 @@ export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonu
         const prevNumbers = [...prevRound.numbers];
         if (includeBonus) prevNumbers.push(prevRound.bonus);
 
-        currentNumbers.forEach(num => {
+        currentNumbers.forEach((num) => {
           if (num >= 1 && num <= 45 && prevNumbers.includes(num)) {
             stats[num - 1].count += 1;
             // 최신 이월 정보 업데이트 (첫 번째로 발견된 것이 가장 최신)
@@ -212,7 +211,8 @@ export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonu
                         color: '#fff',
                         fontWeight: 700,
                         fontSize: '0.9rem',
-                        boxShadow: (theme) => `inset 0 0 8px rgba(255,255,255,0.3), ${theme.shadows[2]}`,
+                        boxShadow: (theme) =>
+                          `inset 0 0 8px rgba(255,255,255,0.3), ${theme.shadows[2]}`,
                       }}
                     >
                       {row.number}

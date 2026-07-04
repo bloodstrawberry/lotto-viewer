@@ -17,7 +17,7 @@ const NUMBERS = Array.from({ length: 45 }, (_, i) => i + 1);
 
 export function LottoPickerPaper() {
   const theme = useTheme();
-  
+
   // State to track selected numbers for each column (A-E)
   // { A: [1, 2, ...], B: [], ... }
   const [selections, setSelections] = useState<Record<string, number[]>>({
@@ -89,20 +89,34 @@ export function LottoPickerPaper() {
     >
       <Stack direction="row" spacing={3} sx={{ minWidth: 800 }}>
         {/* Left Info Panel */}
-        <Stack spacing={2} sx={{ width: 180, flexShrink: 0, borderRight: '2px dashed #e0e0e0', pr: 3 }}>
-          <Typography variant="h4" sx={{ color: '#ff6b6b', fontWeight: 'bold', transform: 'rotate(-90deg)', whiteSpace: 'nowrap', mt: 10, mb: 10, textAlign: 'center' }}>
+        <Stack
+          spacing={2}
+          sx={{ width: 180, flexShrink: 0, borderRight: '2px dashed #e0e0e0', pr: 3 }}
+        >
+          <Typography
+            variant="h4"
+            sx={{
+              color: '#ff6b6b',
+              fontWeight: 'bold',
+              transform: 'rotate(-90deg)',
+              whiteSpace: 'nowrap',
+              mt: 10,
+              mb: 10,
+              textAlign: 'center',
+            }}
+          >
             Lotto 6/45
           </Typography>
           <Typography variant="caption" color="text.secondary">
             ※ 본 용지는 로또 번호선택용입니다.
           </Typography>
           <Box sx={{ mt: 'auto !important' }}>
-             <Typography variant="caption" display="block" color="text.secondary">
-               발행 기관: 복권위원회
-             </Typography>
-             <Typography variant="caption" display="block" color="text.secondary">
-               수탁사업자: (주)동행복권
-             </Typography>
+            <Typography variant="caption" display="block" color="text.secondary">
+              발행 기관: 복권위원회
+            </Typography>
+            <Typography variant="caption" display="block" color="text.secondary">
+              수탁사업자: (주)동행복권
+            </Typography>
           </Box>
         </Stack>
 
@@ -136,7 +150,14 @@ type LottoColumnProps = {
   onClear: () => void;
 };
 
-function LottoColumn({ columnId, selectedNumbers, isAuto, onToggleNumber, onToggleAuto, onClear }: LottoColumnProps) {
+function LottoColumn({
+  columnId,
+  selectedNumbers,
+  isAuto,
+  onToggleNumber,
+  onToggleAuto,
+  onClear,
+}: LottoColumnProps) {
   return (
     <Stack
       sx={{
@@ -157,7 +178,9 @@ function LottoColumn({ columnId, selectedNumbers, isAuto, onToggleNumber, onTogg
           py: 0.5,
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{columnId}</Typography>
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          {columnId}
+        </Typography>
         <Typography variant="subtitle2">1,000원</Typography>
       </Stack>
 
@@ -181,23 +204,25 @@ function LottoColumn({ columnId, selectedNumbers, isAuto, onToggleNumber, onTogg
                     cursor: 'pointer',
                     userSelect: 'none',
 
-                    ...(isSelected ? {
-                        bgcolor: '#333',
-                        color: 'white',
-                        border: '1px solid #333',
-                    } : {
-                        color: '#ff6b6b',
-                        bgcolor: 'transparent',
-                        borderLeft: '1px solid #ff6b6b',
-                        borderRight: '1px solid #ff6b6b',
-                        backgroundImage: `
+                    ...(isSelected
+                      ? {
+                          bgcolor: '#333',
+                          color: 'white',
+                          border: '1px solid #333',
+                        }
+                      : {
+                          color: '#ff6b6b',
+                          bgcolor: 'transparent',
+                          borderLeft: '1px solid #ff6b6b',
+                          borderRight: '1px solid #ff6b6b',
+                          backgroundImage: `
                             linear-gradient(to right, #ff6b6b 5px, transparent 5px, transparent calc(100% - 5px), #ff6b6b calc(100% - 5px)),
                             linear-gradient(to right, #ff6b6b 5px, transparent 5px, transparent calc(100% - 5px), #ff6b6b calc(100% - 5px))
                         `,
-                        backgroundPosition: 'top, bottom',
-                        backgroundSize: '100% 1px',
-                        backgroundRepeat: 'no-repeat',
-                    }),
+                          backgroundPosition: 'top, bottom',
+                          backgroundSize: '100% 1px',
+                          backgroundRepeat: 'no-repeat',
+                        }),
 
                     '&:hover': {
                       bgcolor: isSelected ? '#333' : alpha('#ff6b6b', 0.1),
@@ -215,29 +240,33 @@ function LottoColumn({ columnId, selectedNumbers, isAuto, onToggleNumber, onTogg
       {/* Footer Actions */}
       <Stack spacing={1} sx={{ p: 1, borderTop: '1px solid #eee' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Typography variant="caption" sx={{ fontSize: '10px' }}>자동 선택</Typography>
-            <Box 
-                onClick={onToggleAuto}
-                sx={{ 
-                    width: 12, 
-                    height: 12, 
-                    border: '1px solid #ccc',
-                    bgcolor: isAuto ? 'black' : 'transparent'
-                }} 
-            />
+          <Typography variant="caption" sx={{ fontSize: '10px' }}>
+            자동 선택
+          </Typography>
+          <Box
+            onClick={onToggleAuto}
+            sx={{
+              width: 12,
+              height: 12,
+              border: '1px solid #ccc',
+              bgcolor: isAuto ? 'black' : 'transparent',
+            }}
+          />
         </Stack>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Typography variant="caption" sx={{ fontSize: '10px' }}>취소</Typography>
-            <Box 
-                onClick={onClear}
-                sx={{ 
-                    width: 12, 
-                    height: 12, 
-                    border: '1px solid #ccc',
-                    cursor: 'pointer',
-                    '&:active': { bgcolor: 'black' }
-                }} 
-            />
+          <Typography variant="caption" sx={{ fontSize: '10px' }}>
+            취소
+          </Typography>
+          <Box
+            onClick={onClear}
+            sx={{
+              width: 12,
+              height: 12,
+              border: '1px solid #ccc',
+              cursor: 'pointer',
+              '&:active': { bgcolor: 'black' },
+            }}
+          />
         </Stack>
       </Stack>
     </Stack>

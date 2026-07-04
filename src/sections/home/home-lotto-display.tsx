@@ -74,9 +74,18 @@ export function HomeLottoDisplay() {
   };
 
   return (
-    <Container component={MotionViewport} sx={{ py: 10, px: { xs: 3, sm: 4, md: 0 }, textAlign: 'center' }}>
+    <Container
+      component={MotionViewport}
+      sx={{ py: 10, px: { xs: 3, sm: 4, md: 0 }, textAlign: 'center' }}
+    >
       <m.div variants={varFade('inUp')}>
-        <Stack direction="row" alignItems="center" justifyContent="center" spacing={{ xs: 0.5, md: 2 }} sx={{ mb: 5 }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="center"
+          spacing={{ xs: 0.5, md: 2 }}
+          sx={{ mb: 5 }}
+        >
           <IconButton onClick={handlePrev} disabled={currentIndex === 0}>
             <Iconify icon="eva:arrow-ios-back-fill" width={28} />
           </IconButton>
@@ -88,8 +97,17 @@ export function HomeLottoDisplay() {
             alignItems="center"
           >
             {/* Left Side: Draw No & Date */}
-            <Stack alignItems={{ xs: 'flex-end', md: 'flex-start' }} sx={{ minWidth: { xs: 'auto', md: 'auto' } }}>
-              <Box sx={{ minHeight: { xs: '2rem', sm: '2.5rem', md: '3.5rem' }, display: 'flex', alignItems: 'center' }}>
+            <Stack
+              alignItems={{ xs: 'flex-end', md: 'flex-start' }}
+              sx={{ minWidth: { xs: 'auto', md: 'auto' } }}
+            >
+              <Box
+                sx={{
+                  minHeight: { xs: '2rem', sm: '2.5rem', md: '3.5rem' },
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
                 {isEditing ? (
                   <TextField
                     variant="standard"
@@ -140,7 +158,14 @@ export function HomeLottoDisplay() {
                   </Typography>
                 )}
               </Box>
-              <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, whiteSpace: 'nowrap' }}>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' },
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 {drwNoDate}
               </Typography>
             </Stack>
@@ -173,10 +198,25 @@ export function HomeLottoDisplay() {
                 1등
               </Box>
               <Stack direction="row" alignItems="baseline" spacing={0.5} flexWrap="nowrap">
-                <Typography variant="h3" sx={{ color: '#007aff', fontWeight: 'bold', fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' }, whiteSpace: 'nowrap' }}>
+                <Typography
+                  variant="h3"
+                  sx={{
+                    color: '#007aff',
+                    fontWeight: 'bold',
+                    fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' },
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   {new Intl.NumberFormat('ko-KR').format(firstWinamnt)}원
                 </Typography>
-                <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' }, whiteSpace: 'nowrap' }}>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: 'text.secondary',
+                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' },
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   총 {firstPrzwnerCo}게임 당첨 😍
                 </Typography>
               </Stack>
@@ -219,7 +259,14 @@ export function HomeLottoDisplay() {
         ))}
 
         <m.div variants={varFade('inUp')} custom={6}>
-          <Typography variant="h3" sx={{ mx: { xs: 0.5, sm: 1, md: 2 }, fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' }, color: 'text.secondary' }}>
+          <Typography
+            variant="h3"
+            sx={{
+              mx: { xs: 0.5, sm: 1, md: 2 },
+              fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' },
+              color: 'text.secondary',
+            }}
+          >
             +
           </Typography>
         </m.div>

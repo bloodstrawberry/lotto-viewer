@@ -19,11 +19,7 @@ export function applySettingsToTheme(
   theme: ThemeOptions,
   settingsState?: SettingsState
 ): ThemeOptions {
-  const {
-    direction,
-    fontFamily,
-    contrast = 'default',
-  } = settingsState ?? {};
+  const { direction, fontFamily, contrast = 'default' } = settingsState ?? {};
 
   const isDefaultContrast = contrast === 'default';
 
