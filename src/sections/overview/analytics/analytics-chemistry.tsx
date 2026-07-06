@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -8,23 +8,24 @@ import Table from '@mui/material/Table';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import Switch from '@mui/material/Switch';
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
-import Switch from '@mui/material/Switch';
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import DialogTitle from '@mui/material/DialogTitle';
 import ToggleButton from '@mui/material/ToggleButton';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import TableContainer from '@mui/material/TableContainer';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TablePagination from '@mui/material/TablePagination';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { getBallColor } from 'src/api/lottolibrary';
+
 import { LottoPaper } from 'src/components/lotto/lotto-paper';
 
 // ----------------------------------------------------------------------
@@ -155,28 +156,30 @@ export function AnalyticsChemistry({ rounds, includeBonus }: Props) {
     return stats;
   }, [rounds, includeBonus, tupleSize, searchNumbers, matchAll]);
 
-  const sortedData = useMemo(() => {
-    return [...chemistryStats].sort((a, b) => {
-      const aValue = a[orderBy as keyof typeof a];
-      const bValue = b[orderBy as keyof typeof b];
+  const sortedData = useMemo(
+    () =>
+      [...chemistryStats].sort((a, b) => {
+        const aValue = a[orderBy as keyof typeof a];
+        const bValue = b[orderBy as keyof typeof b];
 
-      // Handle specific types if necessary, though simpler here
-      if (orderBy === 'numbers') {
-        // Sort by first number of the tuple for 'numbers' sort
-        const aNum = a.numbers[0];
-        const bNum = b.numbers[0];
-        if (order === 'asc') return aNum - bNum;
-        return bNum - aNum;
-      }
+        // Handle specific types if necessary, though simpler here
+        if (orderBy === 'numbers') {
+          // Sort by first number of the tuple for 'numbers' sort
+          const aNum = a.numbers[0];
+          const bNum = b.numbers[0];
+          if (order === 'asc') return aNum - bNum;
+          return bNum - aNum;
+        }
 
-      if (aValue !== bValue) {
-        if (order === 'asc') return aValue > bValue ? 1 : -1;
-        return aValue < bValue ? 1 : -1; // Default desc
-      }
+        if (aValue !== bValue) {
+          if (order === 'asc') return aValue > bValue ? 1 : -1;
+          return aValue < bValue ? 1 : -1; // Default desc
+        }
 
-      return 0;
-    });
-  }, [chemistryStats, orderBy, order]);
+        return 0;
+      }),
+    [chemistryStats, orderBy, order]
+  );
 
   // Pagination logic
   const paginatedData = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);

@@ -1,6 +1,11 @@
+import type { ThemeType } from 'src/api/lottolibrary';
+
 import React, { memo } from 'react';
+
 import Box from '@mui/material/Box';
-import { ThemeType, getPredictCellColor } from 'src/api/lottolibrary';
+
+import { getPredictCellColor } from 'src/api/lottolibrary';
+
 import { LottoCell } from './lotto-cell';
 import { getConsecutiveColors } from '../utils';
 

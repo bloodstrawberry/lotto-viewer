@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography';
 import { fDate } from 'src/utils/format-time';
 import { fCurrency } from 'src/utils/format-number';
 
+import { CONFIG } from 'src/global-config';
 import { INVOICE_STATUS_OPTIONS } from 'src/_mock';
 
 import { Label } from 'src/components/label';
@@ -23,8 +24,6 @@ import { Scrollbar } from 'src/components/scrollbar';
 
 import { InvoiceToolbar } from './invoice-toolbar';
 import { InvoiceTotalSummary } from './invoice-total-summary';
-
-import { CONFIG } from 'src/global-config';
 
 // ----------------------------------------------------------------------
 

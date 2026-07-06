@@ -1,26 +1,28 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import type { ThemeType } from 'src/api/lottolibrary';
+
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import CardHeader from '@mui/material/CardHeader';
+import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Tooltip from '@mui/material/Tooltip';
 
-import { Iconify } from 'src/components/iconify';
 import { DashboardContent } from 'src/layouts/dashboard';
 import {
-  getAllLottoNumbers,
-  ThemeType,
   THEME_NAMES,
+  getAllLottoNumbers,
   getCellColorByTheme,
   getPredictCellColor,
 } from 'src/api/lottolibrary';
+
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -329,14 +331,14 @@ export function OverviewHistoryView() {
       });
     } else {
       // 1-5개 선택 시: 선택한 번호가 모두 포함된 회차만
-      return data.filter((round) => {
-        return selectedNumbers.every((n) => round.numbers.includes(n) || round.bonus === n);
-      });
+      return data.filter((round) =>
+        selectedNumbers.every((n) => round.numbers.includes(n) || round.bonus === n)
+      );
     }
   }, [data, selectedNumbers]);
 
   const displayedResults = useMemo(() => {
-    let results = [...filteredResults];
+    const results = [...filteredResults];
 
     if (sortByRank && selectedNumbers.length === 6) {
       // 등수별 정렬 (등수가 낮을수록 좋음, 같은 등수면 회차가 큰 것이 우선)

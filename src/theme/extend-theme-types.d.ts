@@ -26,7 +26,6 @@ import type {
   ButtonExtendColor,
   ButtonExtendVariant,
 } from './core/components/button';
-import type { PaletteColorKey, CommonColorsKeys, PaletteColorNoChannels } from './theme-config';
 
 // ----------------------------------------------------------------------
 

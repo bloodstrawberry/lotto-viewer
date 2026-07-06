@@ -1,7 +1,10 @@
 import { useState, useCallback } from 'react';
-import { toast } from 'src/components/snackbar';
-import * as LottoLibrary from 'src/api/lottolibrary';
+
 import { getIsMobile } from 'src/utils/is-mobile';
+
+import * as LottoLibrary from 'src/api/lottolibrary';
+
+import { toast } from 'src/components/snackbar';
 
 const LOTTO_NUMBERS = Array.from({ length: 45 }, (_, i) => i + 1);
 
@@ -59,7 +62,7 @@ export function useLottoGenerator() {
     let attempts = 0;
     while (resultsSet.size < 5 && attempts < 100) {
       const result = [...includedNumbers];
-      let pool = [...availablePool];
+      const pool = [...availablePool];
 
       for (let i = 0; i < needed; i++) {
         const randomIndex = Math.floor(Math.random() * pool.length);

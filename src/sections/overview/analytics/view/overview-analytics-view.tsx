@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 
-import Card from '@mui/material/Card';
 import Tab from '@mui/material/Tab';
+import Card from '@mui/material/Card';
 import Tabs from '@mui/material/Tabs';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
@@ -12,16 +12,16 @@ import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-import { Iconify } from 'src/components/iconify';
-
 import { DashboardContent } from 'src/layouts/dashboard';
 import { getAllLottoNumbers } from 'src/api/lottolibrary';
 
-import { AnalyticsAppearance } from '../analytics-appearance';
+import { Iconify } from 'src/components/iconify';
+
 import { AnalyticsMissing } from '../analytics-missing';
 import { AnalyticsRollover } from '../analytics-rollover';
-import { AnalyticsCarryOver } from '../analytics-carry-over';
 import { AnalyticsChemistry } from '../analytics-chemistry';
+import { AnalyticsCarryOver } from '../analytics-carry-over';
+import { AnalyticsAppearance } from '../analytics-appearance';
 
 // ----------------------------------------------------------------------
 
@@ -96,9 +96,10 @@ export function OverviewAnalyticsView() {
     [latestRound]
   );
 
-  const filteredRounds = useMemo(() => {
-    return allLotto.filter((r) => r.drwNo >= startRound && r.drwNo <= endRound);
-  }, [allLotto, startRound, endRound]);
+  const filteredRounds = useMemo(
+    () => allLotto.filter((r) => r.drwNo >= startRound && r.drwNo <= endRound),
+    [allLotto, startRound, endRound]
+  );
 
   return (
     <DashboardContent maxWidth="xl">

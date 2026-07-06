@@ -5,12 +5,12 @@ import type { Metadata, Viewport } from 'next';
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 
+import { ThemeProvider } from 'src/theme';
 import { CONFIG } from 'src/global-config';
 import { LocalizationProvider } from 'src/locales';
 import { detectLanguage } from 'src/locales/server';
-import { I18nProvider } from 'src/locales/i18n-provider';
-import { ThemeProvider } from 'src/theme';
 import { themeConfig } from 'src/theme/theme-config';
+import { I18nProvider } from 'src/locales/i18n-provider';
 
 import { Snackbar } from 'src/components/snackbar';
 import { ProgressBar } from 'src/components/progress-bar';

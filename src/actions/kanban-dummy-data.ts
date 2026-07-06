@@ -1,5 +1,6 @@
+import type { IKanban } from 'src/types/kanban';
+
 import { _mock } from 'src/_mock';
-import { IKanban } from 'src/types/kanban';
 
 // ----------------------------------------------------------------------
 

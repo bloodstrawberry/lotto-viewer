@@ -81,20 +81,22 @@ export function AnalyticsMissing({ allLotto, endRound, includeBonus }: Props) {
     return stats;
   }, [allLotto, endRound, includeBonus]);
 
-  const sortedData = useMemo(() => {
-    return [...missingStats].sort((a, b) => {
-      let aValue: number | string = a[orderBy as keyof MissingStat];
-      let bValue: number | string = b[orderBy as keyof MissingStat];
+  const sortedData = useMemo(
+    () =>
+      [...missingStats].sort((a, b) => {
+        const aValue: number | string = a[orderBy as keyof MissingStat];
+        const bValue: number | string = b[orderBy as keyof MissingStat];
 
-      if (aValue !== bValue) {
-        if (order === 'asc') return aValue > bValue ? 1 : -1;
-        return aValue < bValue ? 1 : -1;
-      }
+        if (aValue !== bValue) {
+          if (order === 'asc') return aValue > bValue ? 1 : -1;
+          return aValue < bValue ? 1 : -1;
+        }
 
-      // 값이 같을 경우 번호 오름차순
-      return a.number - b.number;
-    });
-  }, [missingStats, orderBy, order]);
+        // 값이 같을 경우 번호 오름차순
+        return a.number - b.number;
+      }),
+    [missingStats, orderBy, order]
+  );
 
   // 날짜 포맷팅 함수
   const formatDate = (dateStr: string) => {

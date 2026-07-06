@@ -14,9 +14,9 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TableSortLabel from '@mui/material/TableSortLabel';
 
-import { Label } from 'src/components/label';
-
 import { getBallColor } from 'src/api/lottolibrary';
+
+import { Label } from 'src/components/label';
 
 // ----------------------------------------------------------------------
 
@@ -113,26 +113,28 @@ export function AnalyticsCarryOver({ allLotto, startRound, endRound, includeBonu
     return nums;
   }, [allLotto, endRound, includeBonus]);
 
-  const sortedData = useMemo(() => {
-    return [...carryOverStats].sort((a, b) => {
-      let aValue: number | string = a[orderBy as keyof CarryOverStat];
-      let bValue: number | string = b[orderBy as keyof CarryOverStat];
+  const sortedData = useMemo(
+    () =>
+      [...carryOverStats].sort((a, b) => {
+        let aValue: number | string = a[orderBy as keyof CarryOverStat];
+        let bValue: number | string = b[orderBy as keyof CarryOverStat];
 
-      // 날짜 정렬 처리
-      if (orderBy === 'latestCarryDate') {
-        aValue = a.latestCarryRound;
-        bValue = b.latestCarryRound;
-      }
+        // 날짜 정렬 처리
+        if (orderBy === 'latestCarryDate') {
+          aValue = a.latestCarryRound;
+          bValue = b.latestCarryRound;
+        }
 
-      if (aValue !== bValue) {
-        if (order === 'asc') return aValue > bValue ? 1 : -1;
-        return aValue < bValue ? 1 : -1;
-      }
+        if (aValue !== bValue) {
+          if (order === 'asc') return aValue > bValue ? 1 : -1;
+          return aValue < bValue ? 1 : -1;
+        }
 
-      // If values are equal (e.g., same count), always sort by number ascending
-      return a.number - b.number;
-    });
-  }, [carryOverStats, orderBy, order]);
+        // If values are equal (e.g., same count), always sort by number ascending
+        return a.number - b.number;
+      }),
+    [carryOverStats, orderBy, order]
+  );
 
   // 날짜 포맷팅 함수
   const formatDate = (dateStr: string) => {

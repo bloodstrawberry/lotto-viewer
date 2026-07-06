@@ -139,6 +139,7 @@ export function OverviewRoundView() {
   const [modalRounds, setModalRounds] = useState<any[]>([]);
   const [highlightNumbers, setHighlightNumbers] = useState<number[]>([]);
   const [modalSortOrder, setModalSortOrder] = useState<'desc' | 'asc'>('desc');
+  const [companionSortOrder, setCompanionSortOrder] = useState<'desc' | 'asc'>('desc');
 
   const sortedModalRounds = useMemo(
     () =>
@@ -150,6 +151,13 @@ export function OverviewRoundView() {
       }),
     [modalRounds, modalSortOrder]
   );
+
+  const lastMatchedRound = useMemo(() => {
+    if (modalRounds.length === 0) return 0;
+    return Math.max(...modalRounds.map((r) => r.drwNo));
+  }, [modalRounds]);
+
+  const unappearedRounds = latestRound - lastMatchedRound;
 
   // Initialize values when component mounts and data is loaded
   useEffect(() => {
@@ -174,7 +182,7 @@ export function OverviewRoundView() {
     if (analysisMode === 'round') {
       return targetNumbers.length === 6;
     }
-    return targetNumbers.length >= 2;
+    return targetNumbers.length >= 1;
   }, [analysisMode, targetNumbers]);
 
   // Adjust combo size if selected numbers decrease below current combo size
@@ -187,6 +195,20 @@ export function OverviewRoundView() {
       setComboSize(targetNumbers.length);
     }
   }, [targetNumbers.length, comboSize, analysisMode]);
+
+  // Switch to Companion numbers tab if only 1 number is selected
+  useEffect(() => {
+    if (analysisMode === 'custom' && targetNumbers.length === 1 && currentTab !== 3) {
+      setCurrentTab(3);
+    }
+  }, [targetNumbers.length, currentTab, analysisMode]);
+
+  const safeTabValue = useMemo(() => {
+    if (analysisMode === 'custom' && targetNumbers.length === 1) {
+      return 3;
+    }
+    return currentTab;
+  }, [analysisMode, targetNumbers.length, currentTab]);
 
   // Mode change handler
   const handleModeChange = (newMode: 'round' | 'custom') => {
@@ -350,6 +372,39 @@ export function OverviewRoundView() {
     return stats.sort((a, b) => b.count - a.count);
   }, [isAnalysisReady, targetNumbers, A, B, includeBonus, allLotto]);
 
+  // 4. Calculate Unappeared Companion Number Statistics
+  const companionNumberStats = useMemo(() => {
+    if (!isAnalysisReady) return [];
+
+    const remainingNumbers = LOTTO_NUMBERS.filter((num) => !targetNumbers.includes(num));
+
+    const stats = remainingNumbers.map((x) => {
+      const combo = [...targetNumbers, x];
+      const matchedRounds = allLotto.filter((r) => {
+        const pool = includeBonus ? [...r.numbers, r.bonus] : r.numbers;
+        return combo.every((num) => pool.includes(num));
+      });
+
+      const lastDrwNo =
+        matchedRounds.length > 0 ? Math.max(...matchedRounds.map((r) => r.drwNo)) : 0;
+      const gap = lastDrwNo > 0 ? latestRound - lastDrwNo : latestRound;
+
+      return {
+        number: x,
+        lastDrwNo,
+        gap,
+        matchedRounds,
+      };
+    });
+
+    return stats.sort((a, b) => {
+      if (companionSortOrder === 'desc') {
+        return b.gap - a.gap;
+      }
+      return a.gap - b.gap;
+    });
+  }, [isAnalysisReady, targetNumbers, includeBonus, allLotto, latestRound, companionSortOrder]);
+
   const totalRounds = B - A + 1;
 
   // Max count for progress bar scaling
@@ -360,6 +415,10 @@ export function OverviewRoundView() {
   const maxSingleCount = useMemo(
     () => Math.max(1, ...singleNumberStats.map((s) => s.count)),
     [singleNumberStats]
+  );
+  const maxCompanionGap = useMemo(
+    () => Math.max(1, ...companionNumberStats.map((s) => s.gap)),
+    [companionNumberStats]
   );
 
   const handleOpenMatchModal = (k: number) => {
@@ -582,7 +641,7 @@ export function OverviewRoundView() {
               <Card sx={{ p: 3 }}>
                 <SectionLabel icon="solar:hand-stars-bold-duotone" label="직접 번호 선택" />
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  분석에 사용할 번호(2~6개)를 아래 숫자 판에서 선택하세요.
+                  분석에 사용할 번호(1~6개)를 아래 숫자 판에서 선택하세요.
                 </Typography>
 
                 <Stack
@@ -593,7 +652,7 @@ export function OverviewRoundView() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     border: '1px dashed',
-                    borderColor: customNumbers.length >= 2 ? 'primary.main' : 'divider',
+                    borderColor: customNumbers.length >= 1 ? 'primary.main' : 'divider',
                     borderRadius: 1,
                     mb: 2,
                     p: 1,
@@ -603,7 +662,7 @@ export function OverviewRoundView() {
                 >
                   {customNumbers.length === 0 ? (
                     <Typography variant="body2" color="text.disabled">
-                      번호를 선택해 주세요 (최소 2개)
+                      번호를 선택해 주세요 (최소 1개)
                     </Typography>
                   ) : (
                     <Stack direction="row" spacing={0.8}>
@@ -616,7 +675,7 @@ export function OverviewRoundView() {
                           color="text.secondary"
                           sx={{ alignSelf: 'center', ml: 1 }}
                         >
-                          ({customNumbers.length}/6{customNumbers.length < 2 && ' - 최소 2개 필요'})
+                          ({customNumbers.length}/6)
                         </Typography>
                       )}
                     </Stack>
@@ -727,7 +786,7 @@ export function OverviewRoundView() {
                 분석할 번호를 선택해 주세요
               </Typography>
               <Typography variant="body2" color="text.disabled" sx={{ mt: 1, maxWidth: 320 }}>
-                왼쪽 &apos;직접 번호 선택&apos; 영역에서 번호를 최소 2개 이상 선택하면 분석 결과가
+                왼쪽 &apos;직접 번호 선택&apos; 영역에서 번호를 최소 1개 이상 선택하면 분석 결과가
                 나타납니다. (최대 6개)
               </Typography>
             </Card>
@@ -742,29 +801,41 @@ export function OverviewRoundView() {
                 }}
               >
                 <Tabs
-                  value={currentTab}
+                  value={safeTabValue}
                   onChange={(e, val) => setCurrentTab(val)}
                   sx={{
                     px: 2,
                     '& .MuiTab-root': { fontWeight: 'bold', minHeight: 48 },
                   }}
                 >
+                  {targetNumbers.length >= 2 && (
+                    <Tab
+                      value={0}
+                      label="번호 조합별 분석"
+                      icon={<Iconify icon="solar:layers-bold" width={20} />}
+                      iconPosition="start"
+                    />
+                  )}
+                  {targetNumbers.length >= 2 && (
+                    <Tab
+                      value={1}
+                      label="일치 개수별 통계"
+                      icon={<Iconify icon="solar:chart-2-bold" width={20} />}
+                      iconPosition="start"
+                    />
+                  )}
+                  {targetNumbers.length >= 2 && (
+                    <Tab
+                      value={2}
+                      label="개별 번호 통계"
+                      icon={<Iconify icon="solar:hashtag-bold" width={20} />}
+                      iconPosition="start"
+                    />
+                  )}
                   <Tab
-                    value={0}
-                    label="번호 조합별 분석"
-                    icon={<Iconify icon="solar:layers-bold" width={20} />}
-                    iconPosition="start"
-                  />
-                  <Tab
-                    value={1}
-                    label="일치 개수별 통계"
-                    icon={<Iconify icon="solar:chart-2-bold" width={20} />}
-                    iconPosition="start"
-                  />
-                  <Tab
-                    value={2}
-                    label="개별 번호 통계"
-                    icon={<Iconify icon="solar:hashtag-bold" width={20} />}
+                    value={3}
+                    label="미출현 짝번호"
+                    icon={<Iconify icon="solar:link-broken-bold" width={20} />}
                     iconPosition="start"
                   />
                 </Tabs>
@@ -1142,6 +1213,144 @@ export function OverviewRoundView() {
                   </TableContainer>
                 </Box>
               )}
+
+              {/* Tab 3: Unappeared Companion Number Statistics */}
+              {currentTab === 3 && (
+                <Box sx={{ p: 3 }}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    sx={{ mb: 3 }}
+                  >
+                    <Typography variant="body2" color="text.secondary" sx={{ maxWidth: '55%' }}>
+                      선택한 번호 {targetNumbers.length}개와 나머지 번호 각각의 조합이 마지막으로
+                      동반 출현한 이후 현재(<strong>{latestRound}회차</strong>)까지 미출현한 기간을
+                      분석합니다.
+                    </Typography>
+
+                    <ToggleButtonGroup
+                      value={companionSortOrder}
+                      exclusive
+                      onChange={(e, val) => val !== null && setCompanionSortOrder(val)}
+                      size="small"
+                      color="primary"
+                    >
+                      <ToggleButton value="desc" sx={{ px: 1.5, py: 0.3, fontSize: '0.75rem' }}>
+                        <Iconify
+                          icon="solar:sort-from-top-to-bottom-bold"
+                          width={16}
+                          sx={{ mr: 0.5 }}
+                        />
+                        미출현 긴 순
+                      </ToggleButton>
+                      <ToggleButton value="asc" sx={{ px: 1.5, py: 0.3, fontSize: '0.75rem' }}>
+                        <Iconify
+                          icon="solar:sort-from-bottom-to-top-bold"
+                          width={16}
+                          sx={{ mr: 0.5 }}
+                        />
+                        미출현 짧은 순
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                  </Stack>
+
+                  <TableContainer>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell sx={headerCellSx}>짝번호</TableCell>
+                          <TableCell align="center" sx={headerCellSx}>
+                            최근 출현 회차
+                          </TableCell>
+                          <TableCell align="center" sx={{ ...headerCellSx, minWidth: 160 }}>
+                            미출현 기간
+                          </TableCell>
+                          <TableCell align="center" sx={headerCellSx}>
+                            조회
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {companionNumberStats.map((stat, idx) => {
+                          const hasAppearance = stat.lastDrwNo > 0;
+                          const progressValue = (stat.gap / maxCompanionGap) * 100;
+                          return (
+                            <TableRow
+                              key={idx}
+                              hover
+                              sx={{
+                                '&:nth-of-type(even)': {
+                                  bgcolor: (theme) =>
+                                    varAlpha(theme.vars.palette.grey['500Channel'], 0.03),
+                                },
+                              }}
+                            >
+                              <TableCell>
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                  <LottoBall number={stat.number} size={32} />
+                                  <Typography variant="caption" color="text.secondary">
+                                    [ {targetNumbers.join(', ')}, {stat.number} ]
+                                  </Typography>
+                                </Stack>
+                              </TableCell>
+                              <TableCell align="center">
+                                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                                  {hasAppearance ? `${stat.lastDrwNo}회` : '출현 기록 없음'}
+                                </Typography>
+                              </TableCell>
+                              <TableCell align="center">
+                                <Stack spacing={0.5} alignItems="center">
+                                  <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: 'error.main' }}
+                                  >
+                                    {stat.gap}회차 동안 미출현
+                                  </Typography>
+                                  <LinearProgress
+                                    variant="determinate"
+                                    value={progressValue}
+                                    color="error"
+                                    sx={{
+                                      width: '100%',
+                                      height: 6,
+                                      borderRadius: 3,
+                                      bgcolor: (theme) =>
+                                        varAlpha(theme.vars.palette.error.mainChannel, 0.08),
+                                      '& .MuiLinearProgress-bar': { borderRadius: 3 },
+                                    }}
+                                  />
+                                </Stack>
+                              </TableCell>
+                              <TableCell align="center">
+                                <Tooltip title="동반 출현 회차 목록 보기">
+                                  <span>
+                                    <Button
+                                      size="small"
+                                      variant="soft"
+                                      onClick={() =>
+                                        handleOpenComboModal(
+                                          [...targetNumbers, stat.number],
+                                          stat.matchedRounds.length,
+                                          stat.matchedRounds
+                                        )
+                                      }
+                                      disabled={stat.matchedRounds.length === 0}
+                                      startIcon={<Iconify icon="solar:eye-bold" />}
+                                    >
+                                      보기
+                                    </Button>
+                                  </span>
+                                </Tooltip>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+              )}
             </Card>
           )}
         </Grid>
@@ -1157,16 +1366,25 @@ export function OverviewRoundView() {
             pb: 1,
           }}
         >
-          <Typography component="span" variant="h6">{modalTitle}</Typography>
+          <Typography component="span" variant="h6">
+            {modalTitle}
+          </Typography>
           <IconButton onClick={() => setModalOpen(false)} size="small">
             <Iconify icon="mingcute:close-line" width={20} />
           </IconButton>
         </DialogTitle>
         <DialogContent dividers sx={{ p: 2 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-            <Typography variant="caption" color="text.secondary">
-              회차를 클릭하면 해당 회차 정보를 가져옵니다.
-            </Typography>
+            <Stack spacing={0.5}>
+              <Typography variant="caption" color="text.secondary">
+                회차를 클릭하면 해당 회차 정보를 가져옵니다.
+              </Typography>
+              {modalRounds.length > 0 && (
+                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: 'error.main' }}>
+                  현재 {latestRound}회차 동안 &ldquo;총 {unappearedRounds}회 미출현&rdquo;
+                </Typography>
+              )}
+            </Stack>
             <ToggleButtonGroup
               value={modalSortOrder}
               exclusive

@@ -1,22 +1,24 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import type { ThemeType } from 'src/api/lottolibrary';
+
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
 import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import CardHeader from '@mui/material/CardHeader';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Tooltip from '@mui/material/Tooltip';
+
+import { DashboardContent } from 'src/layouts/dashboard';
+import { THEME_NAMES, getAllLottoNumbers } from 'src/api/lottolibrary';
 
 import { Iconify } from 'src/components/iconify';
 
-import { DashboardContent } from 'src/layouts/dashboard';
-import { getAllLottoNumbers, ThemeType, THEME_NAMES } from 'src/api/lottolibrary';
-
-import { PredictRow } from './components/predict-row';
 import { DataRow } from './components/data-row';
+import { PredictRow } from './components/predict-row';
 import { useLottoPattern } from './hooks/use-lotto-pattern';
 import { useLottoMissing } from './hooks/use-lotto-missing';
 
@@ -134,7 +136,7 @@ export function OverviewPatternView() {
                 // Trace back
                 const traceMatches: { drwNo: number; num: number }[] = [];
                 let currentNum = nPrev;
-                let currentIdx = prevIdx;
+                const currentIdx = prevIdx;
 
                 // Collect first match
                 traceMatches.push({ drwNo: rPrev.drwNo, num: currentNum });
@@ -544,7 +546,7 @@ export function OverviewPatternView() {
                 const roundTrace = traceStats[round.drwNo];
 
                 // Merge consecutive and jump stats
-                let mergedStats: Record<number, Set<number>> = {};
+                const mergedStats: Record<number, Set<number>> = {};
 
                 if (consecutiveOption !== 0 && roundHistory) {
                   Object.entries(roundHistory).forEach(([k, v]) => {

@@ -1,10 +1,12 @@
-import { useMemo, useRef, useState, useLayoutEffect, useCallback } from 'react';
+import { useRef, useMemo, useState, useCallback, useLayoutEffect } from 'react';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
+
 import { getBallColor, Ball as LottoBall } from 'src/api/lottolibrary';
 
 // ----------------------------------------------------------------------
@@ -51,9 +53,7 @@ export function AnalyticsRollover({ rounds, includeBonus }: Props) {
   const [lines, setLines] = useState<LineCoords[]>([]);
 
   // Sort rounds descending (latest first)
-  const sortedRounds = useMemo(() => {
-    return [...rounds].sort((a, b) => b.drwNo - a.drwNo);
-  }, [rounds]);
+  const sortedRounds = useMemo(() => [...rounds].sort((a, b) => b.drwNo - a.drwNo), [rounds]);
 
   // Helper to check if a round contains a number
   const roundHasNumber = useCallback(
@@ -367,7 +367,7 @@ function Ball({ num, size, fontSize, onRef }: BallProps) {
         sx={{
           width: size,
           height: size,
-          fontSize: fontSize,
+          fontSize,
           flexShrink: 0,
           background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%), ${getBallColor(
             num

@@ -1,6 +1,8 @@
 import type { Shadows } from '@mui/material/styles';
-import { createTheme } from '@mui/material/styles';
+
 import { varAlpha } from 'minimal-shared/utils';
+
+import { createTheme } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 

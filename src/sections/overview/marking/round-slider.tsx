@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { m, useMotionValue, animate } from 'framer-motion';
-import { Box, Typography, InputBase, Paper } from '@mui/material';
-import { styled, alpha, useTheme } from '@mui/material/styles';
+import { m, animate, useMotionValue } from 'framer-motion';
+import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
+
+import { alpha, styled, useTheme } from '@mui/material/styles';
+import { Box, Paper, InputBase, Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 

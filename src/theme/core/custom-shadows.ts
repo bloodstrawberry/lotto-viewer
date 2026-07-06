@@ -1,5 +1,5 @@
+import type { CustomShadows } from '../types';
 import type { ThemeConfig } from '../theme-config';
-import type { SchemesRecord, CustomShadows } from '../types';
 
 export type { CustomShadows };
 

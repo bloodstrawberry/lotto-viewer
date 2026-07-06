@@ -4,13 +4,14 @@ import type { Theme, Components } from '@mui/material/styles';
 import type { ThemeOptions } from './types';
 import type { SettingsState } from 'src/components/settings';
 
-import { createTheme as createMuiTheme } from '@mui/material/styles';
 import { hexToRgbChannel, createPaletteChannel } from 'minimal-shared/utils';
+
+import { createTheme as createMuiTheme } from '@mui/material/styles';
 
 import { mixins } from './core/mixins';
 import { opacity } from './core/opacity';
-import { createShadows } from './core/shadows';
 import { themeConfig } from './theme-config';
+import { createShadows } from './core/shadows';
 import { components } from './core/components';
 import { typography } from './core/typography';
 import { createCustomShadows } from './core/custom-shadows';

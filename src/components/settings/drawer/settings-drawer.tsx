@@ -1,6 +1,6 @@
 'use client';
 
-import type { SettingsState, SettingsDrawerProps } from '../types';
+import type { SettingsDrawerProps } from '../types';
 
 import { useEffect, useCallback } from 'react';
 import { hasKeys, varAlpha } from 'minimal-shared/utils';

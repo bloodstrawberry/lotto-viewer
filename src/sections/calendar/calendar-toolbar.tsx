@@ -5,7 +5,6 @@ import type { UseCalendarReturn } from './hooks/use-calendar';
 import { usePopover } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
-import Badge from '@mui/material/Badge';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import Tooltip from '@mui/material/Tooltip';

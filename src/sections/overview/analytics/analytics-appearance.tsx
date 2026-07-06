@@ -85,26 +85,28 @@ export function AnalyticsAppearance({ rounds, includeBonus }: Props) {
     return stats;
   }, [rounds, includeBonus]);
 
-  const sortedData = useMemo(() => {
-    return [...appearanceStats].sort((a, b) => {
-      let aValue: number | string = a[orderBy as keyof AppearanceStat];
-      let bValue: number | string = b[orderBy as keyof AppearanceStat];
+  const sortedData = useMemo(
+    () =>
+      [...appearanceStats].sort((a, b) => {
+        let aValue: number | string = a[orderBy as keyof AppearanceStat];
+        let bValue: number | string = b[orderBy as keyof AppearanceStat];
 
-      // 날짜 정렬 처리
-      if (orderBy === 'latestDate') {
-        aValue = a.latestRound; // 날짜 대신 회차로 정렬 (더 정확함)
-        bValue = b.latestRound;
-      }
+        // 날짜 정렬 처리
+        if (orderBy === 'latestDate') {
+          aValue = a.latestRound; // 날짜 대신 회차로 정렬 (더 정확함)
+          bValue = b.latestRound;
+        }
 
-      if (aValue !== bValue) {
-        if (order === 'asc') return aValue > bValue ? 1 : -1;
-        return aValue < bValue ? 1 : -1;
-      }
+        if (aValue !== bValue) {
+          if (order === 'asc') return aValue > bValue ? 1 : -1;
+          return aValue < bValue ? 1 : -1;
+        }
 
-      // If values are equal (e.g., same count), always sort by number ascending
-      return a.number - b.number;
-    });
-  }, [appearanceStats, orderBy, order]);
+        // If values are equal (e.g., same count), always sort by number ascending
+        return a.number - b.number;
+      }),
+    [appearanceStats, orderBy, order]
+  );
 
   // 날짜 포맷팅 함수
   const formatDate = (dateStr: string) => {

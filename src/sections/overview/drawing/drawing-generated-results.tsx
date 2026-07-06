@@ -4,8 +4,9 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { Iconify } from 'src/components/iconify';
 import * as LottoLibrary from 'src/api/lottolibrary';
+
+import { Iconify } from 'src/components/iconify';
 
 type Props = {
   results: number[][];

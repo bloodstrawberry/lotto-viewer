@@ -3,33 +3,28 @@
 import type { Theme, SxProps } from '@mui/material/styles';
 import type { ICalendarEvent, ICalendarFilters } from 'src/types/calendar';
 
-import { useMemo, useCallback, startTransition } from 'react';
 import Calendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { useMemo, useCallback, startTransition } from 'react';
 import { useBoolean, useSetState } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-
-import * as LottoLibrary from 'src/api/lottolibrary';
-
 import DialogTitle from '@mui/material/DialogTitle';
 
 import { fIsAfter, fIsBetween } from 'src/utils/format-time';
 
+import * as LottoLibrary from 'src/api/lottolibrary';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { CALENDAR_COLOR_OPTIONS } from 'src/_mock/_calendar';
 import { updateEvent, useGetEvents } from 'src/actions/calendar';
-
-import { Iconify } from 'src/components/iconify';
 
 import { CalendarRoot } from '../styles';
 import { useEvent } from '../hooks/use-event';

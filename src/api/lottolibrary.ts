@@ -1,6 +1,7 @@
+import lottoNumber from 'json/lottoNumber.json';
+
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
-import lottoNumber from 'json/lottoNumber.json';
 
 export type LottoRound = {
   totSellamnt: number;
@@ -111,9 +112,7 @@ export const getPredictCellColor = (theme: ThemeType, num: number, isSelected: b
   return '#E8EAED';
 };
 
-export const getLength = () => {
-  return lottoNumber.length;
-};
+export const getLength = () => lottoNumber.length;
 
 export const getLatestLottoNumber = () => {
   if (!lottoNumber || lottoNumber.length === 0) {
@@ -157,10 +156,9 @@ export const getLottoByIndex = (index: number) => {
   };
 };
 
-export const getAllLottoNumbers = () => {
-  return lottoNumber.map((item) => ({
+export const getAllLottoNumbers = () =>
+  lottoNumber.map((item) => ({
     ...item,
     numbers: [item.drwtNo1, item.drwtNo2, item.drwtNo3, item.drwtNo4, item.drwtNo5, item.drwtNo6],
     bonus: item.bnusNo,
   }));
-};
