@@ -331,7 +331,12 @@ export function OverviewRoundView() {
   const combinationStats = useMemo(() => {
     if (!isAnalysisReady || A > B) return [];
 
-    const combos = getCombinations(targetNumbers, comboSize);
+    const combos =
+      analysisMode === 'custom'
+        ? LOTTO_NUMBERS.filter((num) => !targetNumbers.includes(num)).map((num) =>
+            [...targetNumbers, num].sort((a, b) => a - b)
+          )
+        : getCombinations(targetNumbers, comboSize);
     const historicalRounds = allLotto.filter((r) => r.drwNo >= A && r.drwNo <= B);
 
     const stats = combos.map((combo) => {
@@ -348,7 +353,7 @@ export function OverviewRoundView() {
     });
 
     return stats.sort((a, b) => b.count - a.count);
-  }, [isAnalysisReady, targetNumbers, A, B, comboSize, includeBonus, allLotto]);
+  }, [isAnalysisReady, targetNumbers, A, B, comboSize, includeBonus, allLotto, analysisMode]);
 
   // 3. Calculate Single Number Statistics
   const singleNumberStats = useMemo(() => {
@@ -861,7 +866,7 @@ export function OverviewRoundView() {
                         </>
                       ) : (
                         <>
-                          선택한 {targetNumbers.length}개 번호 중 {comboSize}개씩 조합하여{' '}
+                          선택한 <strong>{targetNumbers.length}개 번호</strong>에 나머지 번호 1개를 추가하여{' '}
                           <strong>
                             {A} ~ {B}회차
                           </strong>
@@ -870,21 +875,23 @@ export function OverviewRoundView() {
                       )}
                     </Typography>
 
-                    <ToggleButtonGroup
-                      value={comboSize}
-                      exclusive
-                      onChange={(e, val) => val !== null && setComboSize(val)}
-                      size="small"
-                      color="primary"
-                    >
-                      {[2, 3, 4, 5]
-                        .filter((size) => size <= targetNumbers.length)
-                        .map((size) => (
-                          <ToggleButton key={size} value={size} sx={{ px: 1.5 }}>
-                            {size}개
-                          </ToggleButton>
-                        ))}
-                    </ToggleButtonGroup>
+                    {analysisMode === 'round' && (
+                      <ToggleButtonGroup
+                        value={comboSize}
+                        exclusive
+                        onChange={(e, val) => val !== null && setComboSize(val)}
+                        size="small"
+                        color="primary"
+                      >
+                        {[2, 3, 4, 5]
+                          .filter((size) => size <= targetNumbers.length)
+                          .map((size) => (
+                            <ToggleButton key={size} value={size} sx={{ px: 1.5 }}>
+                              {size}개
+                            </ToggleButton>
+                          ))}
+                      </ToggleButtonGroup>
+                    )}
                   </Stack>
 
                   <TableContainer>
@@ -910,6 +917,10 @@ export function OverviewRoundView() {
                               ? ((stat.count / totalRounds) * 100).toFixed(2)
                               : '0.00';
                           const progressValue = (stat.count / maxComboCount) * 100;
+                          const extraNumber =
+                            analysisMode === 'custom'
+                              ? stat.combo.find((num) => !targetNumbers.includes(num))
+                              : undefined;
                           return (
                             <TableRow
                               key={idx}
@@ -922,11 +933,28 @@ export function OverviewRoundView() {
                               }}
                             >
                               <TableCell>
-                                <Stack direction="row" spacing={0.8}>
-                                  {stat.combo.map((num) => (
-                                    <LottoBall key={num} number={num} size={28} />
-                                  ))}
-                                </Stack>
+                                {analysisMode === 'custom' ? (
+                                  <Stack direction="row" spacing={0.8} alignItems="center">
+                                    {targetNumbers.map((num) => (
+                                      <LottoBall key={num} number={num} size={28} />
+                                    ))}
+                                    <Typography
+                                      variant="body2"
+                                      sx={{ mx: 0.5, color: 'text.secondary', fontWeight: 'bold' }}
+                                    >
+                                      +
+                                    </Typography>
+                                    {extraNumber !== undefined && (
+                                      <LottoBall number={extraNumber} size={28} />
+                                    )}
+                                  </Stack>
+                                ) : (
+                                  <Stack direction="row" spacing={0.8}>
+                                    {stat.combo.map((num) => (
+                                      <LottoBall key={num} number={num} size={28} />
+                                    ))}
+                                  </Stack>
+                                )}
                               </TableCell>
                               <TableCell align="center">
                                 <Typography

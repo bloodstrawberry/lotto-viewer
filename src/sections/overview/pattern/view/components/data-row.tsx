@@ -22,6 +22,7 @@ type DataRowProps = {
   consecutiveMap?: Record<number, Set<number>>;
   onPatternClick?: (drwNo: number, num: number) => void;
   highlightedMap?: Set<number>;
+  latestPatternMap?: Set<number>;
 };
 
 export const DataRow = memo(function DataRow({
@@ -35,6 +36,7 @@ export const DataRow = memo(function DataRow({
   consecutiveMap,
   onPatternClick,
   highlightedMap,
+  latestPatternMap,
 }: DataRowProps) {
   const [clicked, setClicked] = useState<number[]>([]);
 
@@ -84,9 +86,13 @@ export const DataRow = memo(function DataRow({
           const isWinning = round.numbers.includes(num);
           const isBonus = showBonus && round.bonus === num;
           const isPatternHighlighted = highlightedMap?.has(num);
+          const isLatestPattern = latestPatternMap?.has(num);
           const isClicked = clicked.includes(num);
 
           let bgColor = getCellColorByTheme(theme, num, isWinning, isBonus, isClicked);
+          if (isLatestPattern) {
+            bgColor = '#2e7d32';
+          }
           if (isPatternHighlighted) {
             bgColor = '#333333';
           }

@@ -174,6 +174,81 @@ export function OverviewPatternView() {
     return stats;
   }, [selectedNumbers, mergedPredictCandidates, data, consecutiveOption, jumpInterval]);
 
+  const latestPatternNodes = useMemo(() => {
+    const nodes: Record<number, Set<number>> = {};
+    const interval = consecutiveOption > 0 ? 1 : jumpInterval > 0 ? jumpInterval : 0;
+    if (interval === 0 || !data || data.length < 3) return nodes;
+
+    const getRoundNumbers = (r: any) => (showBonus ? [...r.numbers, r.bonus] : r.numbers);
+
+    // 연속: 1~5 차이, 점프: 0~5 차이
+    const allowedDiffs = consecutiveOption > 0
+      ? (consecutiveOption === 99 ? [1, 2, 3, 4, 5] : [consecutiveOption])
+      : [0, 1, 2, 3, 4, 5];
+
+    const visited = new Set<string>();
+
+    for (const absDiff of allowedDiffs) {
+      const signs = absDiff === 0 ? [0] : [1, -1];
+      for (const sign of signs) {
+        const signedDiff = sign * absDiff;
+
+        for (let i = 0; i < data.length; i++) {
+          const nums = getRoundNumbers(data[i]);
+          for (const val of nums) {
+            const key = `${i}-${val}-${signedDiff}`;
+            if (visited.has(key)) continue;
+
+            let canExtendForward = false;
+            const prevIdx = i - interval;
+            if (prevIdx >= 0) {
+              const prevVal = val - signedDiff;
+              if (prevVal >= 1 && prevVal <= 45 && getRoundNumbers(data[prevIdx]).includes(prevVal)) {
+                canExtendForward = true;
+              }
+            }
+
+            if (canExtendForward) continue;
+
+            const chain: { idx: number; val: number }[] = [{ idx: i, val }];
+            let currentIdx = i;
+            let currentVal = val;
+
+            while (true) {
+              const nextIdx = currentIdx + interval;
+              if (nextIdx >= data.length) break;
+
+              const nextVal = currentVal + signedDiff;
+              if (nextVal < 1 || nextVal > 45) break;
+
+              if (getRoundNumbers(data[nextIdx]).includes(nextVal)) {
+                chain.push({ idx: nextIdx, val: nextVal });
+                currentIdx = nextIdx;
+                currentVal = nextVal;
+              } else {
+                break;
+              }
+            }
+
+            if (chain.length >= 3) {
+              chain.forEach((node) => {
+                visited.add(`${node.idx}-${node.val}-${signedDiff}`);
+              });
+              const head = chain[0];
+              const headDrwNo = data[head.idx].drwNo;
+              if (!nodes[headDrwNo]) {
+                nodes[headDrwNo] = new Set();
+              }
+              nodes[headDrwNo].add(head.val);
+            }
+          }
+        }
+      }
+    }
+
+    return nodes;
+  }, [data, consecutiveOption, jumpInterval, showBonus]);
+
   useEffect(() => {
     const allData = getAllLottoNumbers();
     const sortedDesc = [...allData].sort((a, b) => b.drwNo - a.drwNo);
@@ -586,6 +661,7 @@ export function OverviewPatternView() {
                     consecutiveMap={mergedStats}
                     onPatternClick={handlePatternClick}
                     highlightedMap={patternHighlights[round.drwNo]}
+                    latestPatternMap={latestPatternNodes[round.drwNo]}
                   />
                 );
               })}
