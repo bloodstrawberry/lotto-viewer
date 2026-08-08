@@ -12,7 +12,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
 
 <script type="text/javascript">
-	var rsaModulus = '9a2fb62c9c2576e86ee3507cd5e16253284fa2487f16486529289c0f12a4223b4da066fc06f708412902c9dbe16533b97f5c166694b428eb816165e51078240ce9dc9796f9c21c37046183f3a45d778e667ce4cdb1f36744b5ea190fea74533991c7692817d56d7b89765b18a1fad084804c30fad1bbc019238496ecf1dc4aa8cc8b0ab37397893744419ca035a4fa0156cc5d2bec4cb86fa57e47b316064cd246ccf5e4b34b4ab4d2959c2cbff61181c396dbf70feb69d79b0055183efa0988566d84a7a3f442db6287fcf6f3c9884adc2f64ab21bb5a45cca69d5f4e75a83d0641738885a47f9e296eb40a4bf2584fa07cabb300703c6e9c8db493a51c6c0d';
+	var rsaModulus = 'a5d55bb98d6cf8f36ebbd60335cf4bf6534f63818cc1fc531cf1d4816a12e5e500720641c7cdd07232e185e03008341423bd2893eb707c9c4ffb9d0f93cf6f401b686240394d503bb57938d7700af2d75c57d00a03f81289ec8ce875afbe085dcbad397b61612b6fa1c369344718cc7b6e30f7b19b0f0eca279e57461b88eeaf1871226c3cf4be3318caea09d1fa2162b7d25bc799c4c4a0915451365c63ca4f214a50621cb3e2235496a1df502dcc721c0574769deb97b0ce0135d41f2dfac86759eb6d32972cd23d7942cc214b3b477d7768bedbde7adfb63465b91531db1a9617689f74ec51b5871bcd0b6f61c83d02d6cfe0eb7e3c75badb54845318deb1';
 	var publicExponent = '10001';
 	
 	const layoutsL = {
@@ -116,8 +116,8 @@
 			var host="www.dhlottery.co.kr";
 			var port="443";
 			var pageUrl = window.location.pathname.substr(1);	// 현재 페이지 정보
-			var ip ='132.196.19.19';							// 클라이언트 IP
-			var loginId ='132.196.19.19';						// 클라이언트 IP 또는 로그인 ID
+			var ip ='172.184.210.242';							// 클라이언트 IP
+			var loginId ='172.184.210.242';						// 클라이언트 IP 또는 로그인 ID
 			
 			if(pageUrl === undefined || pageUrl == null || pageUrl == "") {
 				pageUrl = 'main';
@@ -131,8 +131,8 @@
 			var host="www.dhlottery.co.kr";
 			var port="443";
 			var pageUrl=window.location.pathname.substr(1);	// 현재 페이지 정보
-			var ip ='132.196.19.19';        				// 클라이언트 IP
-			var loginId ='132.196.19.19';   				// 클라이언트 IP 또는 로그인 ID
+			var ip ='172.184.210.242';        				// 클라이언트 IP
+			var loginId ='172.184.210.242';   				// 클라이언트 IP 또는 로그인 ID
 			
 			if(pageUrl === undefined || pageUrl == null || pageUrl == "") {
 				pageUrl = 'main';
@@ -2422,6 +2422,11 @@ const topL = {
                             </div>
                             <div class="tbody-etc">
                                 
+                                    1등
+                                    <br>자동 5
+                                    <br>수동 5
+                                    <br>반자동 1
+                                
                             </div>
                         </div>
                     </div>
@@ -2533,6 +2538,11 @@ const topL = {
                                     <p class="num">비고</p>
                                 </div>
                                 <div class="col-in-row remarks">
+                                    
+                                        1등
+                                        &nbsp;자동 5
+                                        &nbsp;수동 5
+                                        &nbsp;반자동 1
                                     
                                 </div>
                             </li>
