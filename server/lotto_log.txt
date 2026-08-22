@@ -12,7 +12,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
 
 <script type="text/javascript">
-	var rsaModulus = '85738821adf4ce5b80d683f34c4c091b465f5f0f24ef47020b33a33583f67ba1a9c18d8e48c523d3e29b13274f21c86aafa90104e00ea8ece1b858991f7c63605846c64121a935a48d5745dd4e1514245946b19ae5c5a376d97c1fe32f5780ed5d2b8e944cc7b9d504992a712bd0bef01a739807b05449ce6dac5405e7483446fedfea9f23d4f2de3d8fd4feb2337e053d669131735574782183b7e1ab9bc3dfe54c0cb481983ae2429cfc4f9cce4cee1df28b90631f90d324e26f452b294c768d8c2a8a271e6f0329a0796fff20e904ad80cda3226966879a4574f23a6dbb61165aab63738a3dbd063a022b4e9659a7b25308de96dc331076b3304960d90429';
+	var rsaModulus = '99c08a2e4370012ff93ac16a68350ba06571d7b2638291c1b7bfbe93cc9155af8782267ab119bf71f233ed113bbf1501e96d3f6450b7a664d7df44a68b689f9592c9532cd0dd9bb656285632aa3c9d458bd4348fa55936ff4bb77991b6806af2561e78e5dc9baff898c006311cfd52bcc4fa5bfc6c4566924ea6a0c727c16d3cacedad8df303827c5ce38ad156a7ee5a2efe564f193192d852a4cd30c3deba24614c0cf7b46e31758913a71e691c4714aa6fdb5e800f9ad1f018c86e0d863ec491ec9fc0148be6d1f4542190f3b423328ef70e34d3333ec1697f53ba443f4760d7fa2d292f5027fe1eaba3c713768f6a7821f6724ffec734fc4f704711f67ce7';
 	var publicExponent = '10001';
 	
 	const layoutsL = {
@@ -116,8 +116,8 @@
 			var host="www.dhlottery.co.kr";
 			var port="443";
 			var pageUrl = window.location.pathname.substr(1);	// 현재 페이지 정보
-			var ip ='145.132.102.100';							// 클라이언트 IP
-			var loginId ='145.132.102.100';						// 클라이언트 IP 또는 로그인 ID
+			var ip ='20.169.74.16';							// 클라이언트 IP
+			var loginId ='20.169.74.16';						// 클라이언트 IP 또는 로그인 ID
 			
 			if(pageUrl === undefined || pageUrl == null || pageUrl == "") {
 				pageUrl = 'main';
@@ -131,8 +131,8 @@
 			var host="www.dhlottery.co.kr";
 			var port="443";
 			var pageUrl=window.location.pathname.substr(1);	// 현재 페이지 정보
-			var ip ='145.132.102.100';        				// 클라이언트 IP
-			var loginId ='145.132.102.100';   				// 클라이언트 IP 또는 로그인 ID
+			var ip ='20.169.74.16';        				// 클라이언트 IP
+			var loginId ='20.169.74.16';   				// 클라이언트 IP 또는 로그인 ID
 			
 			if(pageUrl === undefined || pageUrl == null || pageUrl == "") {
 				pageUrl = 'main';
