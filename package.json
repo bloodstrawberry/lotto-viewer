@@ -25,7 +25,9 @@
     "re:build-npm": "npm run clean && npm install && npm run build",
     "tsc:dev": "yarn dev & yarn tsc:watch",
     "tsc:watch": "tsc --noEmit --watch",
-    "tsc:print": "npx tsc --showConfig"
+    "tsc:print": "npx tsc --showConfig",
+    "lotto:update": "node server/update_lotto.js",
+    "lotto:test": "node --test server/update_lotto.test.js"
   },
   "engines": {
     "node": ">=20"
